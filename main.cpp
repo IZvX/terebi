@@ -15,9 +15,6 @@
 #include "imgui/backends/imgui_impl_sdlrenderer2.h"
 #include "imgui/imgui.h"
 
-// Components
-#include "./comps/search_button.cpp"
-
 // =============================================
 // Forward Declarations
 // =============================================

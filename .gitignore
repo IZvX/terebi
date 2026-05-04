@@ -1,0 +1,19 @@
+# Build output
+build/
+*.o
+*.out
+
+# Executable
+sdl_app
+
+# ImGui config (generated at runtime)
+imgui.ini
+
+# mock ui
+ui.html
+# Editor
+.vscode/
+
+# OS garbage
+.DS_Store
+Thumbs.db
