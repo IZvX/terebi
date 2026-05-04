@@ -26,6 +26,16 @@ inline void UpdateUIAnimations(float dt)
       anim.focusProgress = std::clamp(anim.focusProgress, 0.0f, 1.0f);
     }
 
+    if (anim.manualDuration > 0.001f)
+    {
+      if (anim.isManuallyAnimated)
+        anim.manualProgress += dt / anim.manualDuration;
+      else
+        anim.manualProgress -= dt / anim.manualDuration;
+        
+      anim.manualProgress = std::clamp(anim.manualProgress, 0.0f, 1.0f);
+    }
+
     // --- Click Animation ---
     if (anim.isClicked)
     {
@@ -172,6 +182,7 @@ inline SDL_Texture *GetShadowTexture(SDL_Renderer *renderer, int w, int h, int r
 
   return g_ShadowCache[key] = tex;
 }
+
 
 inline void BoxBlurSurface(SDL_Surface *surf, int radius)
 {
@@ -377,6 +388,109 @@ inline void RenderGPUGaussian(SDL_Renderer *renderer, SDL_Texture *srcTexture, i
   SDL_DestroyTexture(tDown);
   SDL_DestroyTexture(tX);
   SDL_DestroyTexture(tY);
+}
+
+inline void DrawBoxOutline(SDL_Renderer *renderer, SDL_Rect rect, int borderWidth, SDL_Color color)
+{
+    if (rect.w <= 0 || rect.h <= 0 || borderWidth <= 0 || color.a == 0) return;
+    
+    SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+    SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
+    
+    // Draw 4 rectangles OUTWARD from the edges of rect
+    SDL_Rect top   = {rect.x - borderWidth, rect.y - borderWidth, rect.w + borderWidth * 2, borderWidth};
+    SDL_Rect bot   = {rect.x - borderWidth, rect.y + rect.h, rect.w + borderWidth * 2, borderWidth};
+    SDL_Rect left  = {rect.x - borderWidth, rect.y, borderWidth, rect.h};
+    SDL_Rect right = {rect.x + rect.w, rect.y, borderWidth, rect.h};
+
+    SDL_RenderFillRect(renderer, &top);
+    SDL_RenderFillRect(renderer, &bot);
+    SDL_RenderFillRect(renderer, &left);
+    SDL_RenderFillRect(renderer, &right);
+}
+
+inline void DrawRoundedBoxOutlineAA(SDL_Renderer *renderer, SDL_Rect rect, int radius, int borderWidth, SDL_Color color)
+{
+    if (rect.w <= 0 || rect.h <= 0 || borderWidth <= 0 || color.a == 0) return;
+
+    SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+
+    float half_AA = 0.5f;
+
+    // Centers are based on the main rect
+    float cx1 = rect.x + radius;
+    float cx2 = rect.x + rect.w - radius;
+    float cy1 = rect.y + radius;
+    float cy2 = rect.y + rect.h - radius;
+
+    if (cx1 > cx2) { cx1 = cx2 = rect.x + rect.w / 2.0f; }
+    if (cy1 > cy2) { cy1 = cy2 = rect.y + rect.h / 2.0f; }
+
+    int N = 10;
+    struct Corner { float cx, cy, start_angle; };
+    Corner corners[4] = {
+        {cx2, cy2, 0.0f},                             // Bottom-right
+        {cx1, cy2, (float)M_PI / 2.0f},               // Bottom-left
+        {cx1, cy1, (float)M_PI},                      // Top-left
+        {cx2, cy1, 3.0f * (float)M_PI / 2.0f}         // Top-right
+    };
+
+    std::vector<SDL_Vertex> vertices;
+    std::vector<int> indices;
+
+    SDL_Color transColor = {color.r, color.g, color.b, 0};
+
+    auto add_vert = [&](float px, float py, SDL_Color c) {
+        vertices.push_back({{px, py}, c, {0, 0}});
+    };
+
+    for (int i = 0; i < 4; ++i)
+    {
+        for (int j = 0; j <= N; ++j) 
+        {
+            float angle = corners[i].start_angle + (j / (float)N) * (M_PI / 2.0f);
+            float c_cos = std::cos(angle);
+            float c_sin = std::sin(angle);
+
+            // CHANGED: Inner edge is exactly at `radius`, outer edge pushes out by `borderWidth`
+            float r_in_aa   = std::max(0.0f, radius - half_AA);
+            float r_in_sol  = radius + half_AA;
+            float r_out_sol = radius + borderWidth - half_AA;
+            float r_out_aa  = radius + borderWidth + half_AA;
+
+            add_vert(corners[i].cx + r_in_aa * c_cos,  corners[i].cy + r_in_aa * c_sin,  transColor);
+            add_vert(corners[i].cx + r_in_sol * c_cos, corners[i].cy + r_in_sol * c_sin, color);
+            add_vert(corners[i].cx + r_out_sol * c_cos, corners[i].cy + r_out_sol * c_sin, color);
+            add_vert(corners[i].cx + r_out_aa * c_cos,  corners[i].cy + r_out_aa * c_sin,  transColor);
+        }
+    }
+
+    int num_sections = 4 * (N + 1);
+    for (int i = 0; i < num_sections; ++i)
+    {
+        int next_i = (i + 1) % num_sections;
+        
+        int curr_in_aa   = i * 4 + 0;
+        int curr_in_sol  = i * 4 + 1;
+        int curr_out_sol = i * 4 + 2;
+        int curr_out_aa  = i * 4 + 3;
+
+        int next_in_aa   = next_i * 4 + 0;
+        int next_in_sol  = next_i * 4 + 1;
+        int next_out_sol = next_i * 4 + 2;
+        int next_out_aa  = next_i * 4 + 3;
+
+        indices.push_back(curr_in_aa); indices.push_back(next_in_aa); indices.push_back(curr_in_sol);
+        indices.push_back(curr_in_sol); indices.push_back(next_in_aa); indices.push_back(next_in_sol);
+
+        indices.push_back(curr_in_sol); indices.push_back(next_in_sol); indices.push_back(curr_out_sol);
+        indices.push_back(curr_out_sol); indices.push_back(next_in_sol); indices.push_back(next_out_sol);
+
+        indices.push_back(curr_out_sol); indices.push_back(next_out_sol); indices.push_back(curr_out_aa);
+        indices.push_back(curr_out_aa); indices.push_back(next_out_sol); indices.push_back(next_out_aa);
+    }
+
+    SDL_RenderGeometry(renderer, nullptr, vertices.data(), vertices.size(), indices.data(), indices.size());
 }
 
 inline void FillRoundedBoxAA(SDL_Renderer *renderer, SDL_Rect rect, int radius, SDL_Color color, Gradient grad)

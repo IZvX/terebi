@@ -1,0 +1,3 @@
+/home/yfz/Documents/Projects/terebi/build/CMakeFiles/sdl_app.dir
+/home/yfz/Documents/Projects/terebi/build/CMakeFiles/edit_cache.dir
+/home/yfz/Documents/Projects/terebi/build/CMakeFiles/rebuild_cache.dir

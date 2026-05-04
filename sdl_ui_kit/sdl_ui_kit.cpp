@@ -39,3 +39,5 @@
 #include "widgets/row.cpp"
 #include "widgets/column.cpp"
 #include "widgets/expanded.cpp"
+#include "widgets/text_field.cpp"
+#include "widgets/clip.cpp"
