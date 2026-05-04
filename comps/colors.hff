@@ -1,0 +1,16 @@
+typedef class colors
+{
+private:
+    /* data */
+public:
+    colors(/* args */);
+    ~colors();
+};
+
+colors::colors(/* args */)
+{
+}
+
+colors::~colors()
+{
+}

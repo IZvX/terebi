@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google TV • Home</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&amp;display=swap');
+        
+        :root {
+            --accent: #3b82f6;
+        }
+        
+        body {
+            font-family: 'Roboto', system-ui, sans-serif;
+        }
+        
+        .hero-bg {
+            background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.75)), 
+                             url('https://picsum.photos/id/1015/1920/1080');
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .card {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .card:hover,
+        .card:focus {
+            transform: scale(1.08);
+            z-index: 10;
+        }
+        
+        .nav-item {
+            transition: all 0.2s;
+        }
+        
+        .focused {
+            outline: 4px solid #60a5fa;
+            outline-offset: 4px;
+        }
+        
+        .app-icon {
+            transition: all 0.2s;
+        }
+        
+        .row {
+            scrollbar-width: none;
+        }
+        
+        .row::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+</head>
+<body class="bg-zinc-950 text-white overflow-hidden h-screen flex flex-col">
+    <!-- Top Bar -->
+    <div class="bg-black/70 backdrop-blur-md border-b border-white/10 z-50">
+        <div class="max-w-screen-2xl mx-auto px-8 py-3 flex items-center justify-between">
+            <div class="flex items-center gap-8">
+                <!-- Profile -->
+                <div class="w-9 h-9 rounded-full overflow-hidden border-2 border-white/30 cursor-pointer focus:outline-none focus:border-blue-400">
+                    <img src="https://picsum.photos/id/64/128/128" alt="Profile" class="w-full h-full object-cover">
+                </div>
+                
+                <!-- Search -->
+                <div onclick="fakeSearch()" 
+                     class="flex items-center gap-3 bg-white/10 hover:bg-white/20 transition-colors px-5 py-2 rounded-3xl cursor-pointer">
+                    <i class="fa-solid fa-magnifying-glass text-xl"></i>
+                    <span class="text-sm font-medium">Search</span>
+                </div>
+                
+                <!-- Navigation -->
+                <div class="flex items-center gap-8 text-sm font-medium">
+                    <a href="#" onclick="setActive(this)" class="nav-item text-blue-400 border-b-2 border-blue-400 pb-1">Home</a>
+                    <a href="#" onclick="setActive(this)" class="nav-item text-white/70 hover:text-white transition-colors">Live</a>
+                    <a href="#" onclick="setActive(this)" class="nav-item text-white/70 hover:text-white transition-colors">Apps</a>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-6">
+                <div class="flex items-center gap-2 text-sm">
+                    <i class="fa-solid fa-house"></i>
+                </div>
+                <div class="text-sm font-medium">9:02</div>
+                <div class="flex items-center gap-1.5 bg-white/10 px-4 py-1 rounded-3xl text-sm">
+                    <span class="font-semibold">Google TV</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <div class="hero-bg h-[52vh] relative flex items-end">
+        <div class="absolute inset-0 bg-gradient-to-r from-black/80 via-black/30 to-transparent"></div>
+        
+        <div class="relative max-w-screen-2xl mx-auto px-8 pb-12 z-10">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="bg-white text-black text-xs font-bold px-3 py-1 rounded">YouTube</div>
+                <div class="text-sm text-white/70">TRENDING</div>
+            </div>
+            
+            <h1 class="text-6xl font-bold tracking-tighter mb-4">DESPICABLE ME 4</h1>
+            
+            <p class="max-w-md text-lg mb-8 text-white/90">
+                Gru and the Minions are back! A new criminal mastermind threatens the family.
+            </p>
+            
+            <div class="flex items-center gap-4">
+                <button onclick="playTrailer()" 
+                        class="flex items-center gap-3 bg-white text-black px-8 py-4 rounded-2xl font-semibold hover:bg-white/90 transition-all">
+                    <i class="fa-solid fa-play"></i>
+                    <span>Play Trailer</span>
+                </button>
+                
+                <button onclick="moreInfo()" 
+                        class="flex items-center gap-3 bg-white/20 hover:bg-white/30 backdrop-blur px-8 py-4 rounded-2xl font-medium transition-all">
+                    <i class="fa-solid fa-circle-info"></i>
+                    <span>More Info</span>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Right side badge -->
+        <div class="absolute bottom-12 right-12 bg-black/70 px-4 py-2 rounded-xl text-sm flex items-center gap-2">
+            <span class="text-emerald-400">●</span>
+            <span>Now Trending</span>
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div class="flex-1 overflow-auto max-w-screen-2xl mx-auto px-8 py-8 space-y-10">
+        
+        <!-- Top Picks -->
+        <div>
+            <h2 class="text-2xl font-semibold mb-5">Top picks for you</h2>
+            <div id="top-picks" class="row flex gap-6 overflow-x-auto pb-6 snap-x">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+        
+        <!-- Continue Watching -->
+        <div>
+            <h2 class="text-2xl font-semibold mb-5">Continue watching</h2>
+            <div id="continue" class="row flex gap-6 overflow-x-auto pb-6 snap-x">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+        
+        <!-- Apps -->
+        <div>
+            <h2 class="text-2xl font-semibold mb-5">Your apps</h2>
+            <div id="apps" class="grid grid-cols-8 gap-6">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom hint -->
+    <div class="fixed bottom-4 right-8 bg-black/70 text-xs px-4 py-2 rounded-3xl flex items-center gap-2 text-white/60">
+        <span>Use arrow keys to navigate</span>
+        <i class="fa-solid fa-arrow-up-long"></i>
+    </div>
+
+    <script>
+        // Tailwind script already loaded
+        
+        function initTailwind() {
+            // Already using CDN
+        }
+        
+        // Sample data
+        const topPicksData = [
+            {
+                title: "Barry",
+                img: "https://picsum.photos/id/201/300/170",
+                service: "max"
+            },
+            {
+                title: "X-Men '97",
+                img: "https://picsum.photos/id/237/300/170",
+                service: "disney"
+            },
+            {
+                title: "The Summer I Turned Pretty",
+                img: "https://picsum.photos/id/251/300/170",
+                service: "prime"
+            },
+            {
+                title: "Masters of the Air",
+                img: "https://picsum.photos/id/870/300/170",
+                service: "apple"
+            },
+            {
+                title: "Shōgun",
+                img: "https://picsum.photos/id/1015/300/170",
+                service: "hulu"
+            }
+        ];
+        
+        const continueData = [
+            {
+                title: "House of the Dragon",
+                img: "https://picsum.photos/id/133/300/170",
+                progress: 65
+            },
+            {
+                title: "Fallout",
+                img: "https://picsum.photos/id/180/300/170",
+                progress: 30
+            },
+            {
+                title: "The Boys",
+                img: "https://picsum.photos/id/201/300/170",
+                progress: 85
+            }
+        ];
+        
+        const appsData = [
+            { name: "NETFLIX", color: "bg-red-600", icon: "N" },
+            { name: "YouTube", color: "bg-red-500", icon: "▶" },
+            { name: "Freeplay", color: "bg-gradient-to-br from-purple-500 to-pink-500", icon: "🎮" },
+            { name: "Prime Video", color: "bg-blue-600", icon: "📦" },
+            { name: "Disney+", color: "bg-cyan-500", icon: "🏰" },
+            { name: "Apple TV", color: "bg-black", icon: "" },
+            { name: "HBO Max", color: "bg-purple-700", icon: "H" },
+            { name: "Hulu", color: "bg-emerald-500", icon: "H" },
+            { name: "Spotify", color: "bg-green-500", icon: "♪" }
+        ];
+        
+        function createCard(item) {
+            const card = document.createElement('div');
+            card.className = `card min-w-[280px] bg-zinc-900 rounded-3xl overflow-hidden cursor-pointer snap-start focus:outline-none`;
+            card.tabIndex = 0;
+            card.innerHTML = `
+                <div class="relative">
+                    <img src="${item.img}" class="w-full h-40 object-cover" alt="${item.title}">
+                    ${item.progress ? `
+                    <div class="absolute bottom-0 left-0 right-0 h-1 bg-white/30">
+                        <div class="h-1 bg-blue-500" style="width: ${item.progress}%"></div>
+                    </div>` : ''}
+                </div>
+                <div class="p-4">
+                    <div class="font-medium">${item.title}</div>
+                </div>
+            `;
+            return card;
+        }
+        
+        function createAppIcon(app) {
+            const div = document.createElement('div');
+            div.className = `app-icon flex flex-col items-center gap-2 cursor-pointer focus:outline-none`;
+            div.tabIndex = 0;
+            div.innerHTML = `
+                <div class="${app.color} w-20 h-20 rounded-3xl flex items-center justify-center text-4xl shadow-lg">
+                    ${app.icon}
+                </div>
+                <div class="text-sm text-center font-medium">${app.name}</div>
+            `;
+            return div;
+        }
+        
+        function populateRows() {
+            // Top picks
+            const topPicksContainer = document.getElementById('top-picks');
+            topPicksData.forEach(item => {
+                topPicksContainer.appendChild(createCard(item));
+            });
+            
+            // Continue watching
+            const continueContainer = document.getElementById('continue');
+            continueData.forEach(item => {
+                continueContainer.appendChild(createCard(item));
+            });
+            
+            // Apps
+            const appsContainer = document.getElementById('apps');
+            appsData.forEach(app => {
+                appsContainer.appendChild(createAppIcon(app));
+            });
+        }
+        
+        // Keyboard navigation
+        let currentFocusIndex = 0;
+        let currentRow = 0;
+        const rows = [];
+        
+        function updateFocusableElements() {
+            rows.length = 0;
+            rows.push(...document.querySelectorAll('#top-picks .card'));
+            rows.push(...document.querySelectorAll('#continue .card'));
+            rows.push(...document.querySelectorAll('#apps .app-icon'));
+        }
+        
+        function setFocus(index) {
+            const allItems = Array.from(document.querySelectorAll('.card, .app-icon'));
+            allItems.forEach(el => el.classList.remove('focused'));
+            
+            if (allItems[index]) {
+                allItems[index].classList.add('focused');
+                allItems[index].scrollIntoView({ behavior: "smooth", inline: "center" });
+                currentFocusIndex = index;
+            }
+        }
+        
+        function handleKeyDown(e) {
+            const allItems = Array.from(document.querySelectorAll('.card, .app-icon'));
+            
+            if (allItems.length === 0) return;
+            
+            switch(e.key) {
+                case 'ArrowRight':
+                    e.preventDefault();
+                    setFocus((currentFocusIndex + 1) % allItems.length);
+                    break;
+                    
+                case 'ArrowLeft':
+                    e.preventDefault();
+                    setFocus((currentFocusIndex - 1 + allItems.length) % allItems.length);
+                    break;
+                    
+                case 'ArrowDown':
+                    e.preventDefault();
+                    // Rough row movement (every 5 items)
+                    setFocus(Math.min(currentFocusIndex + 5, allItems.length - 1));
+                    break;
+                    
+                case 'ArrowUp':
+                    e.preventDefault();
+                    setFocus(Math.max(currentFocusIndex - 5, 0));
+                    break;
+                    
+                case 'Enter':
+                    const focused = document.querySelector('.focused');
+                    if (focused) {
+                        focused.click();
+                    }
+                    break;
+            }
+        }
+        
+        // Fake interactions
+        function fakeSearch() {
+            alert("Search opened! (demo)");
+        }
+        
+        function playTrailer() {
+            alert("🎬 Playing Despicable Me 4 trailer...");
+        }
+        
+        function moreInfo() {
+            alert("Showing more info about Despicable Me 4");
+        }
+        
+        function setActive(el) {
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('text-blue-400', 'border-b-2', 'border-blue-400');
+            });
+            el.classList.add('text-blue-400', 'border-b-2', 'border-blue-400');
+        }
+        
+        // Initialize everything
+        window.onload = function() {
+            populateRows();
+            updateFocusableElements();
+            
+            // Set initial focus
+            setTimeout(() => {
+                const firstItem = document.querySelector('.card');
+                if (firstItem) {
+                    firstItem.classList.add('focused');
+                    currentFocusIndex = 0;
+                }
+            }, 300);
+            
+            // Keyboard listener
+            document.addEventListener('keydown', handleKeyDown);
+            
+            // Make hero clickable too
+            console.log('%cGoogle TV Mockup ready! Use arrow keys to navigate.', 'color: #60a5fa; font-size: 14px');
+        };
+    </script>
+</body>
+</html>

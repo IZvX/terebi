@@ -1,0 +1,15 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "build sdl app",
+      "type": "shell",
+      "command": "bash",
+      "args": [
+        "-c",
+        "g++ main.cpp -o sdl_app $(sdl2-config --cflags --libs) -lSDL2_gfx -lSDL2_ttf"
+      ],
+      "problemMatcher": []
+    }
+  ]
+}

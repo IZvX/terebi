@@ -1,0 +1,16 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Run SDL App",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/sdl_app",
+      "args": [],
+      "cwd": "${workspaceFolder}",
+      "stopAtEntry": false,
+      "externalConsole": true,
+      "preLaunchTask": "build sdl app",
+    }
+  ]
+}

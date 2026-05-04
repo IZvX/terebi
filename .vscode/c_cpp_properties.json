@@ -1,0 +1,18 @@
+{
+    "configurations":[
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/**"
+            ],
+            "forcedInclude":[
+                "${workspaceFolder}/sdl_ui_kit/sdl_ui_kit.cpp"
+            ],
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "c17",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "linux-gcc-x64"
+        }
+    ],
+    "version": 4
+}
