@@ -2,12 +2,11 @@
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
 #include <iostream>
+#include <string>
 
 // Include your UI Kit
 #include "sdl_ui_kit/sdl_ui_kit.cpp"
 #include "sdl_ui_kit/utils/cursors.h"
-
-// Font Awesome
 #include "fontawesome/fontawesome.h"
 
 // ImGui
@@ -15,250 +14,59 @@
 #include "imgui/backends/imgui_impl_sdlrenderer2.h"
 #include "imgui/imgui.h"
 
-// =============================================
+// --- Include your new separated files ---
+#include "components/shared.h"
+#include "components/inspector.h"
+#include "screens/home_page.h" 
+
 // Forward Declarations
-// =============================================
 void initUIKit();
 InputState gatherInputState(SDL_Event &e, bool &quit);
-
-#include <string>
-#include <unordered_map>
-
-// ─── SearchButton
-// ───────────────────────────────────────────────────────────── A
-// NavItemRounded that morphs into a TextField on click/focus.
-//
-// State lives in a static map so it survives frame recreation.
-// ONE bool (expanded) drives everything — no conflicting OnClick vs OnFocus
-// size mutations.
-// ─────────────────────────────────────────────────────────────────────────────
-struct SearchButtonState
-{
-    bool expanded = false;  // are we in expanded mode?
-    float t = 0.0f;         // animation progress [0, 1]
-    bool focusSent = false; // have we handed focus to the inner TextField?
-};
-inline std::unordered_map<std::string, SearchButtonState> g_SearchState;
-
-// --- 1. The Override State ---
-// This stores our real-time tweaks so they survive the frame-by-frame
-// recreation
-struct WidgetOverrides
-{
-    bool hasExpandX = false;
-    float expandX = 0.0f;
-    bool hasExpandY = false;
-    float expandY = 0.0f;
-    bool hasColor = false;
-    SDL_Color color = {0, 0, 0, 0};
-    bool hasRadius = false;
-    int radius = 0;
-    bool hasPadding = false;
-    Vector2 padding = {0, 0};
-    bool hasDebugBounds = false;
-    bool showBounds = false;
-
-    // A quick way to clear live edits on a widget
-    void Reset()
-    {
-        *this = WidgetOverrides();
-    }
-};
-
-inline std::unordered_map<std::string, WidgetOverrides> g_InspectorOverrides;
-
-// --- 2. The Dynamic Inspector ---
-void DrawWidgetInspector(Widget &widget, std::string parentPath = "root", int index = 0)
-{
-    // Generate a unique ID based on the widget's ID, or its structural path
-    // (e.g., root[0][1])
-    std::string uid =
-        widget.id.empty() ? (parentPath + "[" + std::to_string(index) + "]") : widget.id;
-
-    // --- APPLY OVERRIDES BEFORE DRAWING ---
-    WidgetOverrides &ov = g_InspectorOverrides[uid];
-    if (ov.hasExpandX)
-        widget.expandX = ov.expandX;
-    if (ov.hasExpandY)
-        widget.expandY = ov.expandY;
-    if (ov.hasColor)
-        widget.style.color = ov.color;
-    if (ov.hasRadius)
-        widget.style.radius = ov.radius;
-    if (ov.hasPadding)
-        widget.style.padding = ov.padding;
-    if (ov.hasDebugBounds)
-        widget.debug.showBounds = ov.showBounds;
-
-    // --- DRAW IMGUI HIERARCHY ---
-    ImGui::PushID(uid.c_str());
-
-    std::string displayName = widget.id.empty() ? ("Widget " + std::to_string(index)) : widget.id;
-
-    ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow;
-    if (widget.children.empty())
-        flags |= ImGuiTreeNodeFlags_Leaf;
-
-    if (ImGui::TreeNodeEx(displayName.c_str(), flags))
-    {
-
-        // Show path / ID
-        ImGui::TextDisabled("UID: %s", uid.c_str());
-        ImGui::SameLine();
-        if (ImGui::Button("Reset Overrides"))
-            ov.Reset();
-
-        // 1. Layout Adjustments
-        ImGui::Text("Layout Options");
-        if (ImGui::DragFloat("Expand X", &widget.expandX, 0.05f, 0.0f, 1.0f))
-        {
-            ov.hasExpandX = true;
-            ov.expandX = widget.expandX;
-        }
-        if (ImGui::DragFloat("Expand Y", &widget.expandY, 0.05f, 0.0f, 1.0f))
-        {
-            ov.hasExpandY = true;
-            ov.expandY = widget.expandY;
-        }
-
-        // 2. Style Adjustments
-        if (ImGui::TreeNode("Style Properties"))
-        {
-            float col[4] = {widget.style.color.r / 255.0f,
-                            widget.style.color.g / 255.0f,
-                            widget.style.color.b / 255.0f,
-                            widget.style.color.a / 255.0f};
-            if (ImGui::ColorEdit4("Color", col))
-            {
-                ov.hasColor = true;
-                ov.color = {(Uint8)(col[0] * 255),
-                            (Uint8)(col[1] * 255),
-                            (Uint8)(col[2] * 255),
-                            (Uint8)(col[3] * 255)};
-                widget.style.color = ov.color; // Apply instantly to current frame
-            }
-
-            if (ImGui::SliderInt("Radius", &widget.style.radius, 0, 100))
-            {
-                ov.hasRadius = true;
-                ov.radius = widget.style.radius;
-            }
-
-            if (ImGui::DragInt2("Padding", &widget.style.padding.x, 1, 0, 200))
-            {
-                ov.hasPadding = true;
-                ov.padding = widget.style.padding;
-            }
-            ImGui::TreePop();
-        }
-
-        // 3. Specific Debugging
-        if (ImGui::Checkbox("Highlight Bounds", &widget.debug.showBounds))
-        {
-            ov.hasDebugBounds = true;
-            ov.showBounds = widget.debug.showBounds;
-        }
-
-        // 4. Recursive Children
-        if (!widget.children.empty())
-        {
-            ImGui::Separator();
-            for (size_t i = 0; i < widget.children.size(); i++)
-            {
-                DrawWidgetInspector(widget.children[i], uid, i);
-            }
-        }
-
-        ImGui::TreePop();
-    }
-    ImGui::PopID();
-}
 
 int main(int argc, char *args[])
 {
     // ====================== INITIALIZATION ======================
-    if (SDL_Init(SDL_INIT_VIDEO) < 0)
-    {
-        std::cerr << "SDL_Init failed: " << SDL_GetError() << std::endl;
-        return -1;
-    }
-
-    if (TTF_Init() == -1)
-    {
-        std::cerr << "TTF_Init failed: " << TTF_GetError() << std::endl;
-        SDL_Quit();
-        return -1;
-    }
-
+    if (SDL_Init(SDL_INIT_VIDEO) < 0) return -1;
+    if (TTF_Init() == -1) return -1;
     IMG_Init(IMG_INIT_PNG);
 
-    SDL_Window *window = SDL_CreateWindow("Navigation Scaffold",
-                                          SDL_WINDOWPOS_CENTERED,
-                                          SDL_WINDOWPOS_CENTERED,
-                                          800,
-                                          600,
+    SDL_Window *window = SDL_CreateWindow("Terebi UI",
+                                          SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+                                          800, 600,
                                           SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
 
-    if (!window)
-    {
-        std::cerr << "Window creation failed: " << SDL_GetError() << std::endl;
-        TTF_Quit();
-        SDL_Quit();
-        return -1;
-    }
+    SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
-    SDL_Renderer *renderer =
-        SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-
-    if (!renderer)
-    {
-        std::cerr << "Renderer creation failed: " << SDL_GetError() << std::endl;
-        SDL_DestroyWindow(window);
-        TTF_Quit();
-        SDL_Quit();
-        return -1;
-    }
-
-    // ====================== ImGui INITIALIZATION ======================
+    // ====================== ImGui INIT ======================
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
-    ImGuiIO &io = ImGui::GetIO();
-    (void)io;
-    ImGui::StyleColorsDark();
-
     ImGui_ImplSDL2_InitForSDLRenderer(window, renderer);
     ImGui_ImplSDLRenderer2_Init(renderer);
 
-    // ===================== FONT LOADING ===================
-    auto loadFont = [](const std::string &path, int size) -> TTF_Font *
-    {
+    // ===================== FONT LOADING =====================
+    auto loadFont = [](const std::string &path, int size) -> TTF_Font * {
         TTF_Font *font = TTF_OpenFont(path.c_str(), size);
-        if (!font)
-            std::cout << "Warning: Failed to load font: " << TTF_GetError() << std::endl;
-
-        std::cout << "Loaded font" << path << std::endl;
+        if (!font) std::cout << "Warning: Failed to load: " << path << std::endl;
         return font;
     };
-    TTF_Font *fontSpaceGrotesk_w700_24p =
-        loadFont("assets/fonts/spacegrotesk/SpaceGrotesk-700.ttf", 24);
-    TTF_Font *fontArial18p = loadFont("assets/fonts/Arial.ttf", 18);
-    TTF_Font *fontArial20p = loadFont("assets/fonts/Arial.ttf", 20);
-    TTF_Font *fontAwesome = loadFont("fontawesome/fa-solid-900.otf", 24);
 
-    std::cout << "SDL + ImGui App started successfully!" << std::endl;
+    AppFonts fonts;
+    fonts.spaceGrotesk24 = loadFont("assets/fonts/spacegrotesk/SpaceGrotesk-700.ttf", 24);
+    fonts.arial18       = loadFont("assets/fonts/Arial.ttf", 18);
+    fonts.arial20       = loadFont("assets/fonts/Arial.ttf", 20);
+    fonts.fontAwesome24 = loadFont("fontawesome/fa-solid-900.otf", 24);
 
-    // ====================== UI Kit Init ======================
+    // ====================== APP STATE =======================
     initUIKit();
     Cursors_Init();
-    g_NextFocusedWidgetId = "navbar_home";
+    g_NextFocusedWidgetId = "navbar_home"; // Default focus
+    std::string searchString = "";
 
-    std::string search;
-
-    // ====================== MAIN LOOP ======================
     bool quit = false;
     SDL_Event e;
     Uint32 lastTime = SDL_GetTicks();
 
+    // ====================== MAIN LOOP =======================
     while (!quit)
     {
         InputState input = gatherInputState(e, quit);
@@ -267,434 +75,46 @@ int main(int argc, char *args[])
         float dt = (currentTime - lastTime) / 1000.0f;
         lastTime = currentTime;
 
+        // Start Frames
         ImGui_ImplSDL2_NewFrame();
         ImGui_ImplSDLRenderer2_NewFrame();
         ImGui::NewFrame();
 
-        // ── MOVE THIS UP: commit last frame's focus before building widgets ──
-        StartUIFrame();         // ← was after screen.render(), move it HERE
-        UpdateUIAnimations(dt); // ← same, move together with StartUIFrame
+        // UI Kit Frame Management
+        StartUIFrame();         
+        UpdateUIAnimations(dt); 
+        ResetCursor();
 
         int ww, wh;
         SDL_GetWindowSize(window, &ww, &wh);
 
-        using namespace Widgets;
-
-        auto NavItem = [&](uint32_t iconCode,
-                           const std::string &label,
-                           const std::string &id,
-                           const WidgetNav &nav = {"", "", "", "", "", ""})
-        {
-            WidgetStyle style;
-            style.color = {0, 0, 0, 0};
-            style.radius = 12;
-            Widget w = RoundedBox(
-                {}, style, {Padding({16, 8}, Text(label, fontArial18p, {161, 161, 170, 255}))});
-            w.id = id;
-
-            return w
-                .OnHover(id,
-                         0.25f,
-                         [](Widget &w, float t)
-                         {
-                             SetCursor(CursorType::Hand);
-                             w.animateColor({255, 255, 255, 25}, t);
-                             w.children[0].children[0].animateColor({255, 255, 255, 255}, t);
-                         })
-                .OnFocus(id,
-                         0.25f,
-                         [](Widget &w, float t)
-                         {
-                             w.animateColor({255, 255, 255, 25}, t);
-                             w.children[0].children[0].animateColor({255, 255, 255, 255}, t);
-                         })
-                .WithNav(nav.up, nav.down, nav.left, nav.right, nav.next, nav.prev);
-        };
-
-        auto NavItemRounded = [&](uint32_t iconCode,
-                                  const std::string &label,
-                                  const std::string &id,
-                                  const WidgetNav &nav = {"", "", "", "", "", ""})
-        {
-            SDL_Color bgColor = {255, 255, 255, 13};
-            SDL_Color borderColor = {244, 244, 245, 255};
-            SDL_Color iconColor = {255, 255, 255, 255};
-
-            WidgetStyle style;
-            style.color = bgColor;
-            style.radius = 22;
-
-            Widget w =
-                RoundedBox({44, 44}, style, {Icon({iconCode}, fontAwesome, 18, iconColor, {}, 0)});
-            w.id = id;
-
-            return w
-                .OnHover(id,
-                         0.25f,
-                         [](Widget &w, float t)
-                         {
-                             SetCursor(CursorType::Hand);
-
-                             // FIX: Background -> Semi-transparent White (alpha 50)
-                             w.animateBorder({255, 255, 255, 255}, 3, t);
-                         })
-                .OnFocus(id,
-                         0.25f,
-                         [](Widget &w, float t) { w.animateBorder({255, 255, 255, 255}, 3, t); })
-                .WithNav(nav.up, nav.down, nav.left, nav.right, nav.next, nav.prev);
-        };
-
-        auto SearchButton =
-            [&](uint32_t iconCode, const std::string &id, const WidgetNav &nav) -> Widget
-        {
-            SearchButtonState &ss = g_SearchState[id];
-
-            const float expandSpeed = 1.0f / 0.35f;
-            const float collapseSpeed = 1.0f / 0.25f;
-
-            // ── isActive: check BOTH current and pending focus
-            // ────────────────────── g_NextFocusedWidgetId catches the click on the
-            // same frame it happens, before StartUIFrame has committed it to
-            // g_FocusedWidgetId.
-            bool isActive = (g_FocusedWidgetId == id || g_FocusedWidgetId == "nav_searchbar_text" ||
-                             g_NextFocusedWidgetId == id ||                  // ← KEY FIX
-                             g_NextFocusedWidgetId == "nav_searchbar_text"); // ← KEY FIX
-
-            // Collapse only when truly inactive
-            if (ss.expanded && !isActive)
-            {
-                ss.expanded = false;
-                ss.focusSent = false;
-            }
-
-            if (ss.expanded)
-                ss.t = std::min(ss.t + dt * expandSpeed, 1.0f);
-            else
-                ss.t = std::max(ss.t - dt * collapseSpeed, 0.0f);
-
-            float ease = 1.0f - (1.0f - ss.t) * (1.0f - ss.t) * (1.0f - ss.t);
-
-            const int kCollapsed = 44;
-            const int kExpanded = 250;
-            const int kTextW = kExpanded - kCollapsed;
-
-            int totalW = static_cast<int>(kCollapsed + (kExpanded - kCollapsed) * ease);
-            int textW = static_cast<int>(kTextW * ease);
-
-            auto lerpU8 = [](Uint8 a, Uint8 b, float t) -> Uint8
-            { return static_cast<Uint8>(a + (b - a) * t); };
-
-            SDL_Color bgColor = {255, 255, 255, 13};
-            SDL_Color borderColor = {244, 244, 245, 255};
-            SDL_Color iconColor = {255, 255, 255, 255};
-
-            if (ss.t >= 0.99f && !ss.focusSent)
-            {
-                g_NextFocusedWidgetId = "nav_searchbar_text";
-                ss.focusSent = true;
-            }
-
-            TextFieldStyle tfStyle;
-            tfStyle.font = fontArial18p;
-            tfStyle.backgroundColor = {255, 255, 255, 0};
-            tfStyle.borderColor = {0, 0, 0, 0};
-            tfStyle.focusedBorderColor = {0, 0, 0, 0};
-            tfStyle.textColor = {255, 255, 255, 255};
-            tfStyle.placeholderColor = {120, 120, 120, 255};
-            tfStyle.cursorColor = {255, 255, 255, 255};
-            tfStyle.radius = 0;
-            tfStyle.padding = {22, 4};
-            tfStyle.borderWidth = 3;
-
-            WidgetStyle outerStyle;
-            outerStyle.color = bgColor;
-            outerStyle.radius = 22;
-            outerStyle.borderColor = borderColor;
-
-            Widget tf =
-                TextField("nav_searchbar_text", search, "Search…", {textW, kCollapsed}, tfStyle)
-                    .WithNav("",
-                             "",
-                             "navbar_library",
-                             "navbar_settings",
-                             "navbar_settings",
-                             "navbar_library")
-                    .OnFocus(id,
-                             0.25f,
-                             [](Widget &w, float t) { w.animateBorder({255, 0, 255, 255}, 3, t); })
-                    .OnSubmit(
-                        [&](std::string val)
-                        {
-                            search = val;
-                            std::cout << "Search submitted: " << search << std::endl;
-                        });
-
-            Widget w =
-                RoundedBox({totalW, kCollapsed},
-                           outerStyle,
-                           {Row(MainAxisAlignment::End,
-                                CrossAxisAlignment::Center,
-                                0,
-                                {
-                                    Clip("sb_clip", {textW, kCollapsed}, 0, tf),
-                                    Box({kCollapsed, kCollapsed},
-                                        {},
-                                        {Icon({iconCode}, fontAwesome, 18, iconColor, {}, 0)}),
-                                })});
-
-            w.id = id;
-
-            w.OnHover(id,
-                      0.25f,
-                      [](Widget &w, float t)
-                      {
-                          SetCursor(CursorType::Hand);
-
-                          w.animateBorder({255, 255, 255, 255}, 3, t);
-                      });
-            w.OnFocus(
-                id, 0.25f, [](Widget &w, float t) { w.animateBorder({255, 255, 255, 255}, 3, t); });
-
-            return w.WithNav(nav.up, nav.down, nav.left, nav.right, nav.next, nav.prev);
-        };
-
-        Widget settingsDrawer =
-            Expanded(1,
-                     1,
-                     RoundedBox({300, wh},
-                                {30, 30, 35, 255},
-                                {Text("Settings Drawer", fontArial20p, {255, 255, 255, 255})}));
-        ResetCursor();
-
-        WidgetStyle logoStyle;
-        logoStyle.color = {0, 0, 0, 0};
-
-        std::string test_field;
-        Widget screen = Scaffold(
-            // Stack(
-            // {}),
-            Column(MainAxisAlignment::Start,
-                   CrossAxisAlignment::Start,
-                   0,
-                   {Expanded(
-                       0,
-                       1,
-                       Padding(
-                           {60, 40},
-                           Expanded(0,
-                                    1,
-                                    Row(MainAxisAlignment::SpaceBetween,
-                                        CrossAxisAlignment::Center,
-                                        0,
-                                        {Row(MainAxisAlignment::Start,
-                                             CrossAxisAlignment::Center,
-                                             30,
-                                             {
-                                                 RoundedBox({},
-                                                            logoStyle,
-                                                            {
-                                                                Text("terebi",
-                                                                     fontSpaceGrotesk_w700_24p,
-                                                                     {255, 255, 255, 255},
-                                                                     {}),
-                                                            }),
-                                                 NavItem(FontAwesome::Home().codepoint,
-                                                         "Home",
-                                                         "navbar_home",
-                                                         {"",
-                                                          "",
-                                                          "navbar_settings",
-                                                          "navbar_movies",
-                                                          "navbar_movies",
-                                                          "navbar_settings"}),
-                                                 NavItem(FontAwesome::Home().codepoint,
-                                                         "Movies",
-                                                         "navbar_movies",
-                                                         {"",
-                                                          "",
-                                                          "navbar_home",
-                                                          "navbar_shows",
-                                                          "navbar_shows",
-                                                          "navbar_home"}),
-                                                 NavItem(FontAwesome::Home().codepoint,
-                                                         "Shows",
-                                                         "navbar_shows",
-                                                         {"",
-                                                          "",
-                                                          "navbar_movies",
-                                                          "navbar_apps",
-                                                          "navbar_apps",
-                                                          "navbar_movies"}),
-                                                 NavItem(FontAwesome::Home().codepoint,
-                                                         "Apps",
-                                                         "navbar_apps",
-                                                         {"",
-                                                          "",
-                                                          "navbar_shows",
-                                                          "navbar_library",
-                                                          "navbar_library",
-                                                          "navbar_shows"}),
-                                                 NavItem(FontAwesome::Home().codepoint,
-                                                         "Library",
-                                                         "navbar_library",
-                                                         {"",
-                                                          "",
-                                                          "navbar_apps",
-                                                          "navbar_search",
-                                                          "navbar_search",
-                                                          "navbar_apps"}),
-                                             }),
-                                         Row(MainAxisAlignment::Start,
-                                             CrossAxisAlignment::Center,
-                                             30,
-                                             {SearchButton(FontAwesome::Search().codepoint,
-                                                           "navbar_search",
-                                                           {"",
-                                                            "",
-                                                            "navbar_library",
-                                                            "navbar_settings",
-                                                            "navbar_settings",
-                                                            "navbar_library"})
-                                                  // FIX 1: Change "navbar_settings" to
-                                                  // "navbar_search" here
-                                                  .OnClick(
-                                                      "navbar_search",
-                                                      0.25f,
-                                                      []() {},
-                                                      [](Widget &w, float t)
-                                                      {
-                                                          g_SearchState["navbar_search"].expanded =
-                                                              true;
-                                                          g_SearchState["navbar_search"].focusSent =
-                                                              false;
-                                                          g_NextFocusedWidgetId = "navbar_search";
-                                                      }),
-                                              NavItemRounded(FontAwesome::Cog().codepoint,
-                                                             "Search",
-                                                             "navbar_settings",
-                                                             {"",
-                                                              "",
-                                                              "navbar_search",
-                                                              "navbar_home",
-                                                              "navbar_search",
-                                                              "navbar_home"})})}))))}),
-
-            ForegroundBlur(0,
-                           Stack({Image("assets/images/frieren.jpg", {ww, wh}),
-                                  Box({ww, wh}, {{0, 0, 0, 205}})})));
-
-        StartUIFrame();
-        UpdateUIAnimations(dt);
+        // ====================== RENDER SCREEN ======================
+        // We call our separated screen here
+        Widget screen = HomePage(ww, wh, dt, searchString, fonts);
 
         SDL_SetRenderDrawColor(renderer, 30, 30, 35, 255);
         SDL_RenderClear(renderer);
 
         screen.render(renderer, {0, 0, ww, wh}, input);
 
-        // ====================== ImGui DEBUG WINDOW ======================
+        // ====================== DEBUG WINDOW ======================
         ImGui::Begin("Debug Info");
         ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);
-        ImGui::Text("Mouse: %d, %d", input.mouseX, input.mouseY);
         ImGui::Text("Focused: %s", g_FocusedWidgetId.c_str());
-        ImGui::Text("Next Focus: %s", g_NextFocusedWidgetId.c_str());
-
+        
         ImGui::Separator();
-
         ImGui::Checkbox("Enable Debug", &g_GlobalDebug.enabled);
         ImGui::Checkbox("Show Bounds", &g_GlobalDebug.showBounds);
-        ImGui::Checkbox("Show Padding", &g_GlobalDebug.showPadding);
-        ImGui::Checkbox("Show Spacing", &g_GlobalDebug.showSpacing);
-        ImGui::Checkbox("Show Nav Arrows", &g_GlobalDebug.showNavArrows);
-
-        ImGui::Text("SearchButton State");
-        SearchButtonState &dbgSS = g_SearchState["navbar_search"];
-        ImGui::Text("expanded:  %s", dbgSS.expanded ? "true" : "false");
-        ImGui::Text("t:         %.3f", dbgSS.t);
-        ImGui::Text("focusSent: %s", dbgSS.focusSent ? "true" : "false");
-        ImGui::Text("isActive:  %s",
-                    (g_FocusedWidgetId == "navbar_search" ||
-                     g_FocusedWidgetId == "nav_searchbar_text" ||
-                     g_NextFocusedWidgetId == "navbar_search" ||
-                     g_NextFocusedWidgetId == "nav_searchbar_text")
-                        ? "true"
-                        : "false");
-        ImGui::Text("FocusedId:     %s", g_FocusedWidgetId.c_str());
-        ImGui::Text("NextFocusedId: %s", g_NextFocusedWidgetId.c_str());
-
-        if (ImGui::Button("Expand SearchButton"))
-        {
-            g_SearchState["navbar_search"].expanded = true;
-            g_SearchState["navbar_search"].focusSent = false;
-            g_NextFocusedWidgetId = "navbar_search";
-        }
-        ImGui::SameLine();
-        if (ImGui::Button("Collapse SearchButton"))
-        {
-            g_SearchState["navbar_search"].expanded = false;
-            g_SearchState["navbar_search"].focusSent = false;
-            g_NextFocusedWidgetId = "";
-        }
-
-        ImGui::SliderFloat("t (manual)", &dbgSS.t, 0.0f, 1.0f);
-
-        ImGui::Separator();
-        ImGui::Text("Colors:");
-
-        // Color controls
-        if (g_GlobalDebug.showBounds)
-        {
-            float boundsCol[4] = {g_GlobalDebug.boundsColor.r / 255.0f,
-                                  g_GlobalDebug.boundsColor.g / 255.0f,
-                                  g_GlobalDebug.boundsColor.b / 255.0f,
-                                  g_GlobalDebug.boundsColor.a / 255.0f};
-            if (ImGui::ColorEdit4("Bounds Color", boundsCol, ImGuiColorEditFlags_AlphaBar))
-            {
-                g_GlobalDebug.boundsColor.r = (Uint8)(boundsCol[0] * 255.0f);
-                g_GlobalDebug.boundsColor.g = (Uint8)(boundsCol[1] * 255.0f);
-                g_GlobalDebug.boundsColor.b = (Uint8)(boundsCol[2] * 255.0f);
-                g_GlobalDebug.boundsColor.a = (Uint8)(boundsCol[3] * 255.0f);
-            }
-        }
-
-        if (g_GlobalDebug.showPadding)
-        {
-            float paddingCol[4] = {g_GlobalDebug.paddingColor.r / 255.0f,
-                                   g_GlobalDebug.paddingColor.g / 255.0f,
-                                   g_GlobalDebug.paddingColor.b / 255.0f,
-                                   g_GlobalDebug.paddingColor.a / 255.0f};
-            if (ImGui::ColorEdit4("Padding Color", paddingCol, ImGuiColorEditFlags_AlphaBar))
-            {
-                g_GlobalDebug.paddingColor.r = (Uint8)(paddingCol[0] * 255.0f);
-                g_GlobalDebug.paddingColor.g = (Uint8)(paddingCol[1] * 255.0f);
-                g_GlobalDebug.paddingColor.b = (Uint8)(paddingCol[2] * 255.0f);
-                g_GlobalDebug.paddingColor.a = (Uint8)(paddingCol[3] * 255.0f);
-            }
-        }
-
-        if (g_GlobalDebug.showSpacing)
-        {
-            float spacingCol[4] = {g_GlobalDebug.spacingColor.r / 255.0f,
-                                   g_GlobalDebug.spacingColor.g / 255.0f,
-                                   g_GlobalDebug.spacingColor.b / 255.0f,
-                                   g_GlobalDebug.spacingColor.a / 255.0f};
-            if (ImGui::ColorEdit4("Spacing Color", spacingCol, ImGuiColorEditFlags_AlphaBar))
-            {
-                g_GlobalDebug.spacingColor.r = (Uint8)(spacingCol[0] * 255.0f);
-                g_GlobalDebug.spacingColor.g = (Uint8)(spacingCol[1] * 255.0f);
-                g_GlobalDebug.spacingColor.b = (Uint8)(spacingCol[2] * 255.0f);
-                g_GlobalDebug.spacingColor.a = (Uint8)(spacingCol[3] * 255.0f);
-            }
+        
+        if (ImGui::CollapsingHeader("Widget Inspector")) {
+            DrawWidgetInspector(screen, "root", 0);
         }
         ImGui::End();
 
-        // ImGui::Begin("Widget Hierarchy Inspector");
-        // DrawWidgetInspector(screen, "root", 0);
-        // ImGui::End();
-        // ====================== RENDER ImGui ======================
+        // Render ImGui
         ImGui::Render();
         ImGui_ImplSDLRenderer2_RenderDrawData(ImGui::GetDrawData(), renderer);
 
-        // ====================== PRESENT ======================
         SDL_RenderPresent(renderer);
     }
 
@@ -710,16 +130,11 @@ int main(int argc, char *args[])
     SDL_Quit();
     Cursors_Quit();
 
-    std::cout << "Application closed cleanly." << std::endl;
     return 0;
 }
 
-// =============================================
-// Helper Functions
-// =============================================
-void initUIKit()
-{
-    std::cout << "[UI Kit] Initialized successfully." << std::endl;
+void initUIKit() {
+    std::cout << "[UI Kit] Initialized." << std::endl;
 }
 
 InputState gatherInputState(SDL_Event &e, bool &quit)
