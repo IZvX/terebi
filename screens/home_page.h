@@ -4,8 +4,11 @@
 #include "../components/nav_item.h"
 #include "../components/nav_item_rounded.h"
 #include "../components/search_button.h"
+#include "../components/drawer.h"
+#include "../components/drawer_item.h"
 
-inline Widget HomePage(int ww, int wh, float dt, std::string& search, AppFonts& fonts)
+#include "../components/settings_drawer.h" 
+inline Widget HomePage(int ww, int wh, float dt, std::string& search, AppFonts& fonts, GlobalContext& gctx)
 {
     using namespace Widgets;
     WidgetStyle logoStyle;
@@ -13,6 +16,7 @@ inline Widget HomePage(int ww, int wh, float dt, std::string& search, AppFonts& 
 
     return Scaffold(
         Column(MainAxisAlignment::Start, CrossAxisAlignment::Start, 0, {
+            
             Expanded(0, 1, Padding({60, 40}, Expanded(0, 1, Row(MainAxisAlignment::SpaceBetween, CrossAxisAlignment::Center, 0, {
                 Row(MainAxisAlignment::Start, CrossAxisAlignment::Center, 30, {
                     RoundedBox({}, logoStyle, {Text("terebi", fonts.spaceGrotesk24, {255, 255, 255, 255}, {})}),
@@ -30,8 +34,13 @@ inline Widget HomePage(int ww, int wh, float dt, std::string& search, AppFonts& 
                             g_NextFocusedWidgetId = "navbar_search";
                         }),
                     NavItemRounded(FontAwesome::Cog().codepoint, "Search", "navbar_settings", {"", "", "navbar_search", "navbar_home", "navbar_search", "navbar_home"}, fonts)
+                        .OnClick("navbar_settings", 0.25f, []() {g_Context.settingsOpen = !g_Context.settingsOpen; g_NextFocusedWidgetId = "drawer_settings_closesettings";}, [](Widget &w, float t) {
+                            
+                        })
                 })
-            }))))
+            })))),
+            RenderSettingsDrawer(ww, wh, dt, fonts)
+            
         }),
         ForegroundBlur(0, Stack({
             Image("assets/images/frieren.jpg", {ww, wh}),

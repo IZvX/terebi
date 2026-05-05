@@ -2,11 +2,11 @@
 
 namespace Widgets
 {
-    inline Widget RoundedBox(Vector2 size, WidgetStyle style, Widget child = {})
+    inline Widget RoundedBox(Vector2 size, WidgetStyle style, Widget child = {}, Vector2 align = {0, 0})
     {
         const bool shouldAutoSize = (size.x <= 0.0f || size.y <= 0.0f);
 
-        Widget w = {"RoundedBox", size, style, {}, {}, [style, shouldAutoSize](SDL_Renderer *renderer, SDL_Rect rect, const WidgetStyle &s, const InputState &input, const std::vector<Widget> &childrenList, WidgetDebug dbg)
+        Widget w = {"RoundedBox", size, style, {}, {}, [style, shouldAutoSize, align](SDL_Renderer *renderer, SDL_Rect rect, const WidgetStyle &s, const InputState &input, const std::vector<Widget> &childrenList, WidgetDebug dbg)
                     {
                         if (rect.w <= 0 || rect.h <= 0) return;
                         // 1. Shadow
@@ -54,7 +54,7 @@ namespace Widgets
                             }
                         }
 
-                        // Render child (centered)
+                        // Render child (aligned)
                         if (!childrenList.empty())
                         {
                             const auto &c = childrenList[0];
@@ -72,8 +72,8 @@ namespace Widgets
                                 ch = rect.h;
 
                             SDL_Rect cRect = {
-                                rect.x + (rect.w - cw) / 2,
-                                rect.y + (rect.h - ch) / 2,
+                                rect.x + (int)((rect.w - cw) / 2.0f + align.x * (rect.w - cw) / 2.0f),
+                                rect.y + (int)((rect.h - ch) / 2.0f - align.y * (rect.h - ch) / 2.0f),
                                 cw, ch};
 
                             c.render(renderer, cRect, input, dbg);
@@ -95,11 +95,11 @@ namespace Widgets
         return w;
     }
 
-    inline Widget Box(Vector2 size, WidgetStyle style, Widget child = {})
+    inline Widget Box(Vector2 size, WidgetStyle style, Widget child = {}, Vector2 align = {0, 0})
     {
         const bool shouldAutoSize = (size.x <= 0.0f || size.y <= 0.0f);
 
-        Widget w = {"Box", size, style, {}, {}, [style, shouldAutoSize](SDL_Renderer *renderer, SDL_Rect rect, const WidgetStyle &s, const InputState &input, const std::vector<Widget> &childrenList, WidgetDebug dbg)
+        Widget w = {"Box", size, style, {}, {}, [style, shouldAutoSize, align](SDL_Renderer *renderer, SDL_Rect rect, const WidgetStyle &s, const InputState &input, const std::vector<Widget> &childrenList, WidgetDebug dbg)
                     {
                         // 1. Shadow
                         if (s.shadowColor.a > 0)
@@ -128,7 +128,8 @@ namespace Widgets
                         {
                             DrawBoxOutline(renderer, rect, s.borderWidth, s.borderColor);
                         }
-                        // Render child (centered)
+                        
+                        // Render child (aligned)
                         if (!childrenList.empty())
                         {
                             const auto &c = childrenList[0];
@@ -146,8 +147,8 @@ namespace Widgets
                                 ch = rect.h;
 
                             SDL_Rect cRect = {
-                                rect.x + (rect.w - cw) / 2,
-                                rect.y + (rect.h - ch) / 2,
+                                rect.x + (int)((rect.w - cw) / 2.0f + align.x * (rect.w - cw) / 2.0f),
+                                rect.y + (int)((rect.h - ch) / 2.0f - align.y * (rect.h - ch) / 2.0f),
                                 cw, ch};
 
                             c.render(renderer, cRect, input, dbg);

@@ -8,7 +8,6 @@ namespace Widgets {
             
             if (children.empty() || rect.w <= 0 || rect.h <= 0) return;
 
-// ... inside Clip's paint lambda ...
 
             SDL_Texture* targetTex = GetClipTexture(renderer, rect.w, rect.h, id + "_target");
             SDL_Texture* oldTarget = SDL_GetRenderTarget(renderer);
