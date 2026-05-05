@@ -2,13 +2,20 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "build sdl app",
+      "label": "build",
       "type": "shell",
-      "command": "bash",
-      "args": [
-        "-c",
-        "g++ main.cpp -o sdl_app $(sdl2-config --cflags --libs) -lSDL2_gfx -lSDL2_ttf"
-      ],
+      "command": "ninja -C build",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "format",
+      "type": "shell",
+      "command": "astyle -A1 ${file}",
+      "group": "none",
       "problemMatcher": []
     }
   ]

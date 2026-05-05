@@ -8,6 +8,7 @@ namespace Widgets
 
         Widget w = {"RoundedBox", size, style, {}, {}, [style, shouldAutoSize](SDL_Renderer *renderer, SDL_Rect rect, const WidgetStyle &s, const InputState &input, const std::vector<Widget> &childrenList, WidgetDebug dbg)
                     {
+                        if (rect.w <= 0 || rect.h <= 0) return;
                         // 1. Shadow
                         if (s.shadowColor.a > 0)
                         {

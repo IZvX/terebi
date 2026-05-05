@@ -127,14 +127,16 @@ void DrawWidgetInspector(Widget &widget, std::string parentPath = "root", int in
             float col[4] = {widget.style.color.r / 255.0f,
                             widget.style.color.g / 255.0f,
                             widget.style.color.b / 255.0f,
-                            widget.style.color.a / 255.0f};
+                            widget.style.color.a / 255.0f
+                           };
             if (ImGui::ColorEdit4("Color", col))
             {
                 ov.hasColor = true;
                 ov.color = {(Uint8)(col[0] * 255),
                             (Uint8)(col[1] * 255),
                             (Uint8)(col[2] * 255),
-                            (Uint8)(col[3] * 255)};
+                            (Uint8)(col[3] * 255)
+                           };
                 widget.style.color = ov.color; // Apply instantly to current frame
             }
 
@@ -289,26 +291,26 @@ int main(int argc, char *args[])
             style.color = {0, 0, 0, 0};
             style.radius = 12;
             Widget w = RoundedBox(
-                {}, style, {Padding({16, 8}, Text(label, fontArial18p, {161, 161, 170, 255}))});
+                           {}, style, {Padding({16, 8}, Text(label, fontArial18p, {161, 161, 170, 255}))});
             w.id = id;
 
             return w
-                .OnHover(id,
-                         0.25f,
-                         [](Widget &w, float t)
-                         {
-                             SetCursor(CursorType::Hand);
-                             w.animateColor({255, 255, 255, 25}, t);
-                             w.children[0].children[0].animateColor({255, 255, 255, 255}, t);
-                         })
-                .OnFocus(id,
-                         0.25f,
-                         [](Widget &w, float t)
-                         {
-                             w.animateColor({255, 255, 255, 25}, t);
-                             w.children[0].children[0].animateColor({255, 255, 255, 255}, t);
-                         })
-                .WithNav(nav.up, nav.down, nav.left, nav.right, nav.next, nav.prev);
+                   .OnHover(id,
+                            0.25f,
+                            [](Widget &w, float t)
+            {
+                SetCursor(CursorType::Hand);
+                w.animateColor({255, 255, 255, 25}, t);
+                w.children[0].children[0].animateColor({255, 255, 255, 255}, t);
+            })
+            .OnFocus(id,
+                     0.25f,
+                     [](Widget &w, float t)
+            {
+                w.animateColor({255, 255, 255, 25}, t);
+                w.children[0].children[0].animateColor({255, 255, 255, 255}, t);
+            })
+            .WithNav(nav.up, nav.down, nav.left, nav.right, nav.next, nav.prev);
         };
 
         auto NavItemRounded = [&](uint32_t iconCode,
@@ -329,19 +331,21 @@ int main(int argc, char *args[])
             w.id = id;
 
             return w
-                .OnHover(id,
-                         0.25f,
-                         [](Widget &w, float t)
-                         {
-                             SetCursor(CursorType::Hand);
+                   .OnHover(id,
+                            0.25f,
+                            [](Widget &w, float t)
+            {
+                SetCursor(CursorType::Hand);
 
-                             // FIX: Background -> Semi-transparent White (alpha 50)
-                             w.animateBorder({255, 255, 255, 255}, 3, t);
-                         })
-                .OnFocus(id,
-                         0.25f,
-                         [](Widget &w, float t) { w.animateBorder({255, 255, 255, 255}, 3, t); })
-                .WithNav(nav.up, nav.down, nav.left, nav.right, nav.next, nav.prev);
+                // FIX: Background -> Semi-transparent White (alpha 50)
+                w.animateBorder({255, 255, 255, 255}, 3, t);
+            })
+            .OnFocus(id,
+                     0.25f,
+            [](Widget &w, float t) {
+                w.animateBorder({255, 255, 255, 255}, 3, t);
+            })
+            .WithNav(nav.up, nav.down, nav.left, nav.right, nav.next, nav.prev);
         };
 
         auto SearchButton =
@@ -413,47 +417,52 @@ int main(int argc, char *args[])
 
             Widget tf =
                 TextField("nav_searchbar_text", search, "Search…", {textW, kCollapsed}, tfStyle)
-                    .WithNav("",
-                             "",
-                             "navbar_library",
-                             "navbar_settings",
-                             "navbar_settings",
-                             "navbar_library")
-                    .OnFocus(id,
-                             0.25f,
-                             [](Widget &w, float t) { w.animateBorder({255, 0, 255, 255}, 3, t); })
-                    .OnSubmit(
-                        [&](std::string val)
-                        {
-                            search = val;
-                            std::cout << "Search submitted: " << search << std::endl;
-                        });
+                .WithNav("",
+                         "",
+                         "navbar_library",
+                         "navbar_settings",
+                         "navbar_settings",
+                         "navbar_library")
+                .OnFocus(id,
+                         0.25f,
+            [](Widget &w, float t) {
+                w.animateBorder({255, 0, 255, 255}, 3, t);
+            })
+            .OnSubmit(
+                [&](std::string val)
+            {
+                search = val;
+                std::cout << "Search submitted: " << search << std::endl;
+            });
 
             Widget w =
                 RoundedBox({totalW, kCollapsed},
                            outerStyle,
-                           {Row(MainAxisAlignment::End,
-                                CrossAxisAlignment::Center,
-                                0,
-                                {
-                                    Clip("sb_clip", {textW, kCollapsed}, 0, tf),
-                                    Box({kCollapsed, kCollapsed},
-                                        {},
-                                        {Icon({iconCode}, fontAwesome, 18, iconColor, {}, 0)}),
-                                })});
+            {   Row(MainAxisAlignment::End,
+                    CrossAxisAlignment::Center,
+                    0,
+                {
+                    Clip("sb_clip", {textW, kCollapsed}, 0, tf),
+                    Box({kCollapsed, kCollapsed},
+                    {},
+                    {Icon({iconCode}, fontAwesome, 18, iconColor, {}, 0)}),
+                })
+            });
 
             w.id = id;
 
             w.OnHover(id,
                       0.25f,
                       [](Widget &w, float t)
-                      {
-                          SetCursor(CursorType::Hand);
+            {
+                SetCursor(CursorType::Hand);
 
-                          w.animateBorder({255, 255, 255, 255}, 3, t);
-                      });
+                w.animateBorder({255, 255, 255, 255}, 3, t);
+            });
             w.OnFocus(
-                id, 0.25f, [](Widget &w, float t) { w.animateBorder({255, 255, 255, 255}, 3, t); });
+            id, 0.25f, [](Widget &w, float t) {
+                w.animateBorder({255, 255, 255, 255}, 3, t);
+            });
 
             return w.WithNav(nav.up, nav.down, nav.left, nav.right, nav.next, nav.prev);
         };
@@ -461,130 +470,146 @@ int main(int argc, char *args[])
         Widget settingsDrawer =
             Expanded(1,
                      1,
-                     RoundedBox({300, wh},
-                                {30, 30, 35, 255},
-                                {Text("Settings Drawer", fontArial20p, {255, 255, 255, 255})}));
+        RoundedBox({300, wh},
+        {30, 30, 35, 255},
+        {Text("Settings Drawer", fontArial20p, {255, 255, 255, 255})}));
         ResetCursor();
 
         WidgetStyle logoStyle;
         logoStyle.color = {0, 0, 0, 0};
 
         std::string test_field;
-        Widget screen = Scaffold(
-            // Stack(
-            // {}),
-            Column(MainAxisAlignment::Start,
-                   CrossAxisAlignment::Start,
-                   0,
-                   {Expanded(
-                       0,
-                       1,
-                       Padding(
-                           {60, 40},
-                           Expanded(0,
-                                    1,
-                                    Row(MainAxisAlignment::SpaceBetween,
-                                        CrossAxisAlignment::Center,
-                                        0,
-                                        {Row(MainAxisAlignment::Start,
-                                             CrossAxisAlignment::Center,
-                                             30,
-                                             {
-                                                 RoundedBox({},
-                                                            logoStyle,
-                                                            {
-                                                                Text("terebi",
-                                                                     fontSpaceGrotesk_w700_24p,
-                                                                     {255, 255, 255, 255},
-                                                                     {}),
-                                                            }),
-                                                 NavItem(FontAwesome::Home().codepoint,
-                                                         "Home",
-                                                         "navbar_home",
-                                                         {"",
-                                                          "",
-                                                          "navbar_settings",
-                                                          "navbar_movies",
-                                                          "navbar_movies",
-                                                          "navbar_settings"}),
-                                                 NavItem(FontAwesome::Home().codepoint,
-                                                         "Movies",
-                                                         "navbar_movies",
-                                                         {"",
-                                                          "",
-                                                          "navbar_home",
-                                                          "navbar_shows",
-                                                          "navbar_shows",
-                                                          "navbar_home"}),
-                                                 NavItem(FontAwesome::Home().codepoint,
-                                                         "Shows",
-                                                         "navbar_shows",
-                                                         {"",
-                                                          "",
-                                                          "navbar_movies",
-                                                          "navbar_apps",
-                                                          "navbar_apps",
-                                                          "navbar_movies"}),
-                                                 NavItem(FontAwesome::Home().codepoint,
-                                                         "Apps",
-                                                         "navbar_apps",
-                                                         {"",
-                                                          "",
-                                                          "navbar_shows",
-                                                          "navbar_library",
-                                                          "navbar_library",
-                                                          "navbar_shows"}),
-                                                 NavItem(FontAwesome::Home().codepoint,
-                                                         "Library",
-                                                         "navbar_library",
-                                                         {"",
-                                                          "",
-                                                          "navbar_apps",
-                                                          "navbar_search",
-                                                          "navbar_search",
-                                                          "navbar_apps"}),
-                                             }),
-                                         Row(MainAxisAlignment::Start,
-                                             CrossAxisAlignment::Center,
-                                             30,
-                                             {SearchButton(FontAwesome::Search().codepoint,
-                                                           "navbar_search",
-                                                           {"",
-                                                            "",
-                                                            "navbar_library",
-                                                            "navbar_settings",
-                                                            "navbar_settings",
-                                                            "navbar_library"})
-                                                  // FIX 1: Change "navbar_settings" to
-                                                  // "navbar_search" here
-                                                  .OnClick(
-                                                      "navbar_search",
-                                                      0.25f,
-                                                      []() {},
-                                                      [](Widget &w, float t)
-                                                      {
-                                                          g_SearchState["navbar_search"].expanded =
-                                                              true;
-                                                          g_SearchState["navbar_search"].focusSent =
-                                                              false;
-                                                          g_NextFocusedWidgetId = "navbar_search";
-                                                      }),
-                                              NavItemRounded(FontAwesome::Cog().codepoint,
-                                                             "Search",
-                                                             "navbar_settings",
-                                                             {"",
-                                                              "",
-                                                              "navbar_search",
-                                                              "navbar_home",
-                                                              "navbar_search",
-                                                              "navbar_home"})})}))))}),
+        Widget navbar =    Expanded(
+                0,
+                1,
+                Padding(
+            {60, 40},
+            Expanded(0,
+                     1,
+                     Row(MainAxisAlignment::SpaceBetween,
+                         CrossAxisAlignment::Center,
+                         0,
+            {   Row(MainAxisAlignment::Start,
+                    CrossAxisAlignment::Center,
+                    30,
+                {
+                    RoundedBox({},
+                    logoStyle,
+                    {
+                        Text("terebi",
+                             fontSpaceGrotesk_w700_24p,
+                        {255, 255, 255, 255},
+                        {}),
+                    }),
+                    NavItem(FontAwesome::Home().codepoint,
+                            "Home",
+                            "navbar_home",
+                    {   "",
+                        "",
+                        "navbar_settings",
+                        "navbar_movies",
+                        "navbar_movies",
+                        "navbar_settings"
+                    }),
+                    NavItem(FontAwesome::Home().codepoint,
+                            "Movies",
+                            "navbar_movies",
+                    {   "",
+                        "",
+                        "navbar_home",
+                        "navbar_shows",
+                        "navbar_shows",
+                        "navbar_home"
+                    }),
+                    NavItem(FontAwesome::Home().codepoint,
+                            "Shows",
+                            "navbar_shows",
+                    {   "",
+                        "",
+                        "navbar_movies",
+                        "navbar_apps",
+                        "navbar_apps",
+                        "navbar_movies"
+                    }),
+                    NavItem(FontAwesome::Home().codepoint,
+                            "Apps",
+                            "navbar_apps",
+                    {   "",
+                        "",
+                        "navbar_shows",
+                        "navbar_library",
+                        "navbar_library",
+                        "navbar_shows"
+                    }),
+                    NavItem(FontAwesome::Home().codepoint,
+                            "Library",
+                            "navbar_library",
+                    {   "",
+                        "",
+                        "navbar_apps",
+                        "navbar_search",
+                        "navbar_search",
+                        "navbar_apps"
+                    }),
+                }),
+                Row(MainAxisAlignment::Start,
+                    CrossAxisAlignment::Center,
+                    30,
+                {   SearchButton(FontAwesome::Search().codepoint,
+                                 "navbar_search",
+                    {   "",
+                        "",
+                        "navbar_library",
+                        "navbar_settings",
+                        "navbar_settings",
+                        "navbar_library"
+                    })
+                    // FIX 1: Change "navbar_settings" to
+                    // "navbar_search" here
+                    .OnClick(
+                        "navbar_search",
+                        0.25f,
+                    []() {},
+                    [](Widget &w, float t)
+                    {
+                        g_SearchState["navbar_search"].expanded =
+                        true;
+                        g_SearchState["navbar_search"].focusSent =
+                        false;
+                        g_NextFocusedWidgetId = "navbar_search";
+                    }),
+                    NavItemRounded(FontAwesome::Cog().codepoint,
+                                   "Search",
+                                   "navbar_settings",
+                    {   "",
+                        "",
+                        "navbar_search",
+                        "navbar_home",
+                        "navbar_search",
+                        "navbar_home"
+                    })
+                })
+            }))));
 
-            ForegroundBlur(0,
-                           Stack({Image("assets/images/frieren.jpg", {ww, wh}),
-                                  Box({ww, wh}, {{0, 0, 0, 205}})})));
+
+
+        Widget screen = Scaffold(
+        Stack({
+            navbar,
+        },{0,0}),
+        ForegroundBlur(0,
+                       Stack({Image("assets/images/frieren.jpg", {ww, wh}),
+        Box({ww, wh}, {{0, 0, 0, 205}})})));
 
         StartUIFrame();
         UpdateUIAnimations(dt);
+
+        //enabel debugging on Stack()
+        screen.children[0].debug.enabled = true;
+        screen.children[0].debug.showBounds = true;
+        screen.children[0].debug.showPadding = true;
+        screen.children[0].debug.showSpacing = true;
+        screen.children[0].debug.boundsColor = {0,0, 255, 255};
 
         SDL_SetRenderDrawColor(renderer, 30, 30, 35, 255);
         SDL_RenderClear(renderer);
@@ -616,8 +641,8 @@ int main(int argc, char *args[])
                      g_FocusedWidgetId == "nav_searchbar_text" ||
                      g_NextFocusedWidgetId == "navbar_search" ||
                      g_NextFocusedWidgetId == "nav_searchbar_text")
-                        ? "true"
-                        : "false");
+                    ? "true"
+                    : "false");
         ImGui::Text("FocusedId:     %s", g_FocusedWidgetId.c_str());
         ImGui::Text("NextFocusedId: %s", g_NextFocusedWidgetId.c_str());
 
@@ -646,7 +671,8 @@ int main(int argc, char *args[])
             float boundsCol[4] = {g_GlobalDebug.boundsColor.r / 255.0f,
                                   g_GlobalDebug.boundsColor.g / 255.0f,
                                   g_GlobalDebug.boundsColor.b / 255.0f,
-                                  g_GlobalDebug.boundsColor.a / 255.0f};
+                                  g_GlobalDebug.boundsColor.a / 255.0f
+                                 };
             if (ImGui::ColorEdit4("Bounds Color", boundsCol, ImGuiColorEditFlags_AlphaBar))
             {
                 g_GlobalDebug.boundsColor.r = (Uint8)(boundsCol[0] * 255.0f);
@@ -661,7 +687,8 @@ int main(int argc, char *args[])
             float paddingCol[4] = {g_GlobalDebug.paddingColor.r / 255.0f,
                                    g_GlobalDebug.paddingColor.g / 255.0f,
                                    g_GlobalDebug.paddingColor.b / 255.0f,
-                                   g_GlobalDebug.paddingColor.a / 255.0f};
+                                   g_GlobalDebug.paddingColor.a / 255.0f
+                                  };
             if (ImGui::ColorEdit4("Padding Color", paddingCol, ImGuiColorEditFlags_AlphaBar))
             {
                 g_GlobalDebug.paddingColor.r = (Uint8)(paddingCol[0] * 255.0f);
@@ -676,7 +703,8 @@ int main(int argc, char *args[])
             float spacingCol[4] = {g_GlobalDebug.spacingColor.r / 255.0f,
                                    g_GlobalDebug.spacingColor.g / 255.0f,
                                    g_GlobalDebug.spacingColor.b / 255.0f,
-                                   g_GlobalDebug.spacingColor.a / 255.0f};
+                                   g_GlobalDebug.spacingColor.a / 255.0f
+                                  };
             if (ImGui::ColorEdit4("Spacing Color", spacingCol, ImGuiColorEditFlags_AlphaBar))
             {
                 g_GlobalDebug.spacingColor.r = (Uint8)(spacingCol[0] * 255.0f);

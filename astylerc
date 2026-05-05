@@ -1,0 +1,6 @@
+style=kr
+indent=spaces=4
+max-code-length=100
+pad-oper
+pad-header
+unpad-paren

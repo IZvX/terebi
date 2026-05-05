@@ -11,6 +11,8 @@ namespace Widgets {
         return {"", {maxW, fixedH}, {}, {}, children,[mainAlign, crossAlign, spacing, fixedW=maxW, fixedH, scroll, axis, id]
             (SDL_Renderer *r, SDL_Rect rect, const WidgetStyle& st, const InputState& in, const std::vector<Widget>& childs, WidgetDebug dbg) {
             
+            if (rect.w <= 0 || rect.h <= 0) return;
+            
             int flexSpaceY = std::max(0, rect.h - fixedH);
             int actualTotalH = fixedH;
             for (const auto &c : childs) if (c.expandY > 0) actualTotalH += (int)(flexSpaceY * c.expandY);
