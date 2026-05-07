@@ -5,8 +5,8 @@
 #include <string>
 
 // Include your UI Kit
-#include "sdl_ui_kit/sdl_ui_kit.cpp"
-#include "sdl_ui_kit/utils/cursors.h"
+#include "nimble/nimble.cpp"
+#include "nimble/utils/cursors.h"
 #include "fontawesome/fontawesome.h"
 
 // ImGui
@@ -18,6 +18,7 @@
 #include "components/shared.h"
 #include "components/inspector.h"
 #include "screens/home_page.h"
+#include "utils/theme.h"
 
 // Forward Declarations
 void initUIKit();
@@ -52,8 +53,11 @@ int main(int argc, char *args[])
 
     AppFonts fonts;
     fonts.spaceGrotesk24 = loadFont("assets/fonts/spacegrotesk/SpaceGrotesk-700.ttf", 24);
+    fonts.arial14       = loadFont("assets/fonts/Arial.ttf", 14);
+    fonts.arial16       = loadFont("assets/fonts/Arial.ttf", 16);
     fonts.arial18       = loadFont("assets/fonts/Arial.ttf", 18);
     fonts.arial20       = loadFont("assets/fonts/Arial.ttf", 20);
+    fonts.arial28       = loadFont("assets/fonts/Arial.ttf", 28);
     fonts.fontAwesome24 = loadFont("fontawesome/fa-solid-900.otf", 24);
 
     // ====================== APP STATE =======================
@@ -61,6 +65,11 @@ int main(int argc, char *args[])
     Cursors_Init();
     g_NextFocusedWidgetId = "navbar_home"; // Default focus
     std::string searchString = "";
+    g_Context.wifiToggled = (bool)nmcli::enabled;
+    
+    // Pre-load pywal theme (but don't enable it - user controls that with the toggle)
+    g_Context.currentTheme = WalLoadTheme();
+    g_Context.pywalEnabled = false; // Start with pywal disabled
 
     bool quit = false;
     SDL_Event e;
@@ -151,7 +160,7 @@ int main(int argc, char *args[])
         }
 
         if (ImGui::CollapsingHeader("Settings Drawer Debug")) {
-            if (ImGui::Button("Toggle Settings Drawer")){
+            if (ImGui::Button("Toggle Settings Drawer")) {
                 g_Context.settingsOpen = !g_Context.settingsOpen;
             }
         }

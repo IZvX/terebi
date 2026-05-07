@@ -5,8 +5,8 @@
 #include <string>
 
 // Include your UI Kit
-#include "sdl_ui_kit/sdl_ui_kit.cpp"
-#include "sdl_ui_kit/utils/cursors.h"
+#include "nimble/nimble.cpp"
+#include "nimble/utils/cursors.h"
 #include "fontawesome/fontawesome.h"
 
 // ImGui
@@ -18,6 +18,7 @@
 #include "components/shared.h"
 #include "components/inspector.h"
 #include "screens/home_page.h"
+#include "utils/theme.h"
 
 // Forward Declarations
 void initUIKit();
@@ -33,7 +34,7 @@ int main(int argc, char *args[])
     SDL_Window *window = SDL_CreateWindow("Terebi UI",
                                           SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
                                           800, 600,
-                                          SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
+                                          SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL);
 
     SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
@@ -51,13 +52,17 @@ int main(int argc, char *args[])
     };
 
     AppFonts fonts;
+    fonts.spaceGrotesk12 = loadFont("assets/fonts/spacegrotesk/SpaceGrotesk-700.ttf", 12);
     fonts.spaceGrotesk24 = loadFont("assets/fonts/spacegrotesk/SpaceGrotesk-700.ttf", 24);
+    fonts.spaceGrotesk48 = loadFont("assets/fonts/spacegrotesk/SpaceGrotesk-700.ttf", 48);
+    fonts.arial12       = loadFont("assets/fonts/Arial.ttf", 12);
     fonts.arial14       = loadFont("assets/fonts/Arial.ttf", 14);
     fonts.arial16       = loadFont("assets/fonts/Arial.ttf", 16);
     fonts.arial18       = loadFont("assets/fonts/Arial.ttf", 18);
     fonts.arial20       = loadFont("assets/fonts/Arial.ttf", 20);
     fonts.arial28       = loadFont("assets/fonts/Arial.ttf", 28);
     fonts.fontAwesome24 = loadFont("fontawesome/fa-solid-900.otf", 24);
+    fonts.fontAwesomeB24 = loadFont("fontawesome/fa-brands-400.otf", 24);
 
     // ====================== APP STATE =======================
     initUIKit();
@@ -65,6 +70,10 @@ int main(int argc, char *args[])
     g_NextFocusedWidgetId = "navbar_home"; // Default focus
     std::string searchString = "";
     g_Context.wifiToggled = (bool)nmcli::enabled;
+
+    // Pre-load pywal theme (but don't enable it - user controls that with the toggle)
+    g_Context.currentTheme = WalLoadTheme();
+    g_Context.pywalEnabled = false; // Start with pywal disabled
 
     bool quit = false;
     SDL_Event e;
@@ -121,6 +130,9 @@ int main(int argc, char *args[])
         ImGui::Checkbox("Show Bounds", &g_GlobalDebug.showBounds);
         ImGui::Checkbox("Show Padding", &g_GlobalDebug.showPadding);
         ImGui::Checkbox("Show Spacing", &g_GlobalDebug.showSpacing);
+        ImGui::Checkbox("Show Expanded", &g_GlobalDebug.showExpanded);
+        ImGui::Checkbox("Show Row", &g_GlobalDebug.showRow);
+        ImGui::Checkbox("Show Column", &g_GlobalDebug.showColumn);
         ImGui::Checkbox("Show Nav Arrows", &g_GlobalDebug.showNavArrows);
 
         ImGui::Separator();
@@ -160,7 +172,72 @@ int main(int argc, char *args[])
             }
         }
 
+        if (ImGui::CollapsingHeader("Pywal Theme"))
+        {
+            ImGui::Checkbox("Enable Pywal", &g_Context.pywalEnabled);
 
+            if (ImGui::Button("Reload Pywal Theme"))
+            {
+                g_Context.currentTheme = WalLoadTheme();
+            }
+
+            ImGui::Separator();
+
+            WalTheme &wal = g_Context.currentTheme;
+
+            auto DrawColor = [](const char* name, SDL_Color col)
+            {
+                float color[4] = {
+                    col.r / 255.0f,
+                    col.g / 255.0f,
+                    col.b / 255.0f,
+                    col.a / 255.0f
+                };
+
+                ImGui::ColorEdit4(
+                    name,
+                    color,
+                    ImGuiColorEditFlags_NoInputs |
+                    ImGuiColorEditFlags_AlphaPreview |
+                    ImGuiColorEditFlags_AlphaBar
+                );
+
+                ImGui::SameLine();
+
+                ImGui::Text(
+                    "#%02X%02X%02X",
+                    col.r,
+                    col.g,
+                    col.b
+                );
+            };
+
+            DrawColor("background", wal.background);
+            DrawColor("foreground", wal.foreground);
+            DrawColor("cursor", wal.cursor);
+
+            ImGui::Separator();
+
+            DrawColor("color0", wal.color0);
+            DrawColor("color1", wal.color1);
+            DrawColor("color2", wal.color2);
+            DrawColor("color3", wal.color3);
+            DrawColor("color4", wal.color4);
+            DrawColor("color5", wal.color5);
+            DrawColor("color6", wal.color6);
+            DrawColor("color7", wal.color7);
+
+            ImGui::Separator();
+
+            DrawColor("color8", wal.color8);
+            DrawColor("color9", wal.color9);
+            DrawColor("color10", wal.color10);
+            DrawColor("color11", wal.color11);
+            DrawColor("color12", wal.color12);
+            DrawColor("color13", wal.color13);
+            DrawColor("color14", wal.color14);
+            DrawColor("color15", wal.color15);
+        }
         ImGui::Separator();
         ImGui::Text("Colors:");
 

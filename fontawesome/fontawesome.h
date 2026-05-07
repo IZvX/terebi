@@ -1,5 +1,5 @@
 #pragma once
-#include "../sdl_ui_kit/utils/helpers.h"
+#include "../nimble/utils/helpers.h"
 
 namespace FontAwesome {
     // Basic Navigation
@@ -55,4 +55,59 @@ namespace FontAwesome {
     inline IconData VolumeMute()       { return { 0xf6a9 }; }
     inline IconData PowerOff()         { return { 0xf011 }; }
     inline IconData EllipsisH()        { return { 0xf141 }; } // More menu
+
+    // =====================================================================
+    // BRANDS (Requires fontawesomebrands-400.otf)
+    // =====================================================================
+
+    // Requested
+    inline IconData Github()           { return { 0xf09b }; }
+    inline IconData Instagram()        { return { 0xf16d }; }
+    inline IconData Discord()          { return { 0xf392 }; }
+
+    // Social & Communication
+    inline IconData Twitter()          { return { 0xf099 }; }
+    inline IconData Facebook()         { return { 0xf09a }; }
+    inline IconData YouTube()          { return { 0xf167 }; }
+    inline IconData Twitch()           { return { 0xf1e8 }; }
+    inline IconData Reddit()           { return { 0xf1a1 }; }
+    inline IconData WhatsApp()         { return { 0xf232 }; }
+    inline IconData Telegram()         { return { 0xf2c6 }; }
+    inline IconData Slack()            { return { 0xf198 }; }
+    inline IconData LinkedIn()         { return { 0xf08c }; }
+    inline IconData TikTok()           { return { 0xe07b }; }
+
+    // Platforms & OS
+    inline IconData Apple()            { return { 0xf179 }; }
+    inline IconData Android()          { return { 0xf17b }; }
+    inline IconData Windows()          { return { 0xf17a }; }
+    inline IconData Linux()            { return { 0xf17c }; }
+    inline IconData Ubuntu()           { return { 0xf2df }; }
+
+    // Gaming
+    inline IconData Steam()            { return { 0xf1b6 }; }
+    inline IconData Xbox()             { return { 0xf412 }; }
+    inline IconData PlayStation()      { return { 0xf3df }; }
+    inline IconData ItchIo()           { return { 0xf83a }; }
+
+    // Tech & Dev
+    inline IconData Google()           { return { 0xf1a0 }; }
+    inline IconData Git()              { return { 0xf1d3 }; }
+    inline IconData Docker()           { return { 0xf395 }; }
+    inline IconData StackOverflow()    { return { 0xf16c }; }
+    inline IconData Npm()              { return { 0xf3d4 }; }
+    inline IconData Python()           { return { 0xf3e2 }; }
+
+    // Media & E-Commerce
+    inline IconData Spotify()          { return { 0xf1bc }; }
+    inline IconData Soundcloud()       { return { 0xf1be }; }
+    inline IconData Amazon()           { return { 0xf270 }; }
+    inline IconData Patreon()          { return { 0xf3f9 }; }
+    inline IconData Paypal()           { return { 0xf1ed }; }
+    inline IconData Stripe()           { return { 0xf42d }; }
+
+
+    inline IconData RaspberryPi()           { return { 0xf7bb }; }
+
+    // 
 }

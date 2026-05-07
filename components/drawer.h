@@ -31,6 +31,17 @@ inline Widget SideDrawer(
     const std::unordered_map<std::string, std::function<Widget()>>& tabs)
 {
     using namespace Widgets;
+        bool pywalEnabled = g_Context.pywalEnabled;
+    WalTheme wal = g_Context.currentTheme;
+
+
+    SDL_Color drawerBg = GetThemeColor(
+        DefaultTheme::BackgroundSecondary,
+        wal.background,
+        pywalEnabled
+    );
+
+    drawerBg.a = 217;
     DrawerState& state = g_DrawerStates[id];
 
     if (state.activeTab.empty() || tabs.find(state.activeTab) == tabs.end())
@@ -97,7 +108,7 @@ inline Widget SideDrawer(
 
     return Position(PositionType::Fixed, {xPos, 0},
         BackdropBlur(40, {
-            RoundedBox({drawerWidth, wh}, {.color = {15, 17, 21, 217}}, {
+            RoundedBox({drawerWidth, wh}, {.color = drawerBg}, {
                 Expanded(1, 1,
                     Padding({40, 40},
                         Expanded(1, 1, tabContent)

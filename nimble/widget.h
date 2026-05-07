@@ -39,6 +39,9 @@ struct WidgetDebug
     bool showBounds = false;
     bool showPadding = false;
     bool showSpacing = false;
+    bool showExpanded = false;
+    bool showRow = false;
+    bool showColumn = false;
     bool showNavArrows = false;
     bool childrenInherit = false;
 
@@ -159,6 +162,7 @@ inline WidgetStateProxy GetWidgetById(const std::string &id)
 }
 
 // --- Core Widget Struct ---
+// --- Core Widget Struct ---
 struct Widget
 {
     std::string id = "";
@@ -185,6 +189,9 @@ struct Widget
     std::function<void(std::string)> onTypeFn;
     std::function<void(std::string)> onValueChangeFn;
     std::function<void(std::string)> onSubmitFn;
+
+    // --- Parent Reference ---
+    Widget* parent = nullptr;
 
     Widget BindText(std::string *textPtr)
     {
@@ -308,6 +315,12 @@ struct Widget
 
     void render(SDL_Renderer *renderer, SDL_Rect rect, const InputState &input, WidgetDebug parentDebug = {false}) const
     {
+        // 0. AUTO-LINK PARENT POINTERS
+        // This guarantees `child.parent` is safely pointing to the actual layout memory during this frame
+        for (auto& child : const_cast<std::vector<Widget>&>(children)) {
+            child.parent = const_cast<Widget*>(this);
+        }
+
         // 1. CALCULATE RECTS (Position vs. Hitbox)
         // visualRect is where it's drawn.
         // hitbox is where the mouse interacts.

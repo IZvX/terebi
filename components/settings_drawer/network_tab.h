@@ -55,63 +55,92 @@ inline Widget NetworkDialogButton(
     w.id = id;
 
     w.OnKeyPress(SDLK_RETURN, onClick);
-    w.OnClick(id + "_click", 0, onClick, [](Widget&, float){});
+    w.OnClick(id + "_click", 0, onClick,[](Widget&, float){});
 
     // No Expanded wrapper — height is fixed (44), width comes from Column Stretch
     return w
-        .OnFocus(id, 0.2f, [](Widget &w, float t) {
+        .OnFocus(id, 0.2f,[](Widget &w, float t) {
             w.animateBorder({255, 255, 255, 255}, 2, t);
         })
-        .OnHover(id, 0.2f, [](Widget &w, float t) {
+        .OnHover(id, 0.2f,[](Widget &w, float t) {
             SetCursor(CursorType::Hand);
             w.animateBorder({255, 255, 255, 255}, 2, t);
         })
         .WithNav(up, down, left, right, "", "");
 }
 
-inline Widget DrawerItem(
+inline Widget NetDrawerItem(
     uint32_t iconCode,
     const std::string &label,
     const std::string &id,
     const WidgetNav &nav,
     std::function<void()> onClick,
-    AppFonts& fonts)
+    AppFonts& fonts, bool active = false)
 {
     using namespace Widgets;
 
+    bool pywalEnabled = g_Context.pywalEnabled;
+    WalTheme wal = g_Context.currentTheme;
+
+    SDL_Color surface = GetThemeColor(
+        active ? DefaultTheme::AccentPrimary : DefaultTheme::SurfaceLight,
+        active ? wal.color1 : wal.foreground,
+        pywalEnabled
+    );
+
+    surface.a = active ? 255 : 8;
+
+    SDL_Color text = GetThemeColor(
+        active ? DefaultTheme::TextPrimary : DefaultTheme::TextSecondary,
+        active ? wal.foreground : wal.color7,
+        pywalEnabled
+    );
+
+    SDL_Color hover = GetThemeColor(
+        DefaultTheme::Hover,
+        wal.color4,
+        pywalEnabled
+    );
+
+    hover.a = 30;
+
+    SDL_Color activeText = GetThemeColor(
+        DefaultTheme::TextPrimary,
+        wal.foreground,
+        pywalEnabled
+    );
+
     WidgetStyle style;
-    style.color  = {255, 255, 255, 8};
+    style.color = surface;
     style.radius = 12;
 
     // width=0 so Column Stretch fills it; height intrinsic from Padding+content
     Widget w = RoundedBox({0, 0}, style,
         Padding({20, 18},
             Row(MainAxisAlignment::Start, CrossAxisAlignment::Center, 20, {
-                Icon({iconCode}, fonts.fontAwesome24, 24, {161, 161, 170, 255}),
-                Text(label, fonts.arial18, {161, 161, 170, 255})
+                Icon({iconCode}, fonts.fontAwesome24, 24, text),
+                Text(label, fonts.arial18, text)
             })
         ),
         {-1, 0}   // left-align content inside the box
     );
 
     w.id = id;
-    w.OnClick(id + "_click", 0.0f, onClick, [](Widget&, float){});
+    w.OnClick(id + "_click", 0.0f, onClick,[](Widget&, float){});
     w.OnKeyPress(SDLK_RETURN, onClick);
 
     // No Expanded — height is intrinsic, width from Column Stretch
     return w
-        .OnHover(id, 0.25f, [](Widget &w, float t) {
+        .OnHover(id, 0.25f, [hover, activeText](Widget &w, float t) {
             SetCursor(CursorType::Hand);
-            w.animateColor({255, 255, 255, 25}, t);
-            w.animateBorder({255, 255, 255, 255}, 2, t);
-            w.children[0].children[0].children[0].animateColor({255, 255, 255, 255}, t);
-            w.children[0].children[0].children[1].animateColor({255, 255, 255, 255}, t);
+            w.animateBorder(activeText, 2, t);
+            w.children[0].children[0].children[0].animateColor(activeText, t);
+            w.children[0].children[0].children[1].animateColor(activeText, t);
         })
-        .OnFocus(id, 0.25f, [](Widget &w, float t) {
-            w.animateColor({255, 255, 255, 25}, t);
-            w.animateBorder({255, 255, 255, 255}, 2, t);
-            w.children[0].children[0].children[0].animateColor({255, 255, 255, 255}, t);
-            w.children[0].children[0].children[1].animateColor({255, 255, 255, 255}, t);
+        .OnFocus(id, 0.25f, [hover, activeText](Widget &w, float t) {
+            w.animateBorder(activeText, 2, t);
+            w.children[0].children[0].children[0].animateColor(activeText, t);
+            w.children[0].children[0].children[1].animateColor(activeText, t);
         })
         .WithNav(nav.up, nav.down, nav.left, nav.right, nav.next, nav.prev);
 }
@@ -124,25 +153,23 @@ inline Widget SettingsTab_NetworkDetails(AppFonts& fonts) {
     using namespace Widgets;
     using namespace NetworkTabState;
 
-    // Back nav row — intrinsic height, full width via outer Stretch
+    // Back nav row
     Widget backNav = Row(MainAxisAlignment::Start, CrossAxisAlignment::Center, 15, {
         NavItemRounded(FontAwesome::ArrowLeft().codepoint, "Back", "drawer_network_details_back",
             { "", selectedNetwork.active ? "drawer_network_btn_disconnect" : "drawer_network_details_tf", "", "", "", "" }, fonts)
-            .OnClick("drawer_network_details_back", 0.25f, []() {
+            .OnClick("drawer_network_details_back", 0.25f,[]() {
                 SetDrawerTab("settings_drawer", "network");
                 g_NextFocusedWidgetId = "drawer_settings_network_toggle_wifi";
-            }, [](Widget&, float){}),
+            },[](Widget&, float){}),
         Text(selectedNetwork.ssid, fonts.arial28, {255, 255, 255, 255}, {}),
     });
 
     std::vector<Widget> children;
 
     if (selectedNetwork.active) {
-        // Left-aligned status text — no centering, just Start alignment from Column
         children.push_back(
             Text("Status: Connected", fonts.arial18, {100, 210, 160, 255}, {})
         );
-        // Disconnect button — height=44 fixed, width from Stretch
         children.push_back(
             NetworkDialogButton("Disconnect", "drawer_network_btn_disconnect",
                 "drawer_network_details_back", "", "", "", [](){
@@ -155,7 +182,6 @@ inline Widget SettingsTab_NetworkDetails(AppFonts& fonts) {
                 }, fonts, false)
         );
     } else {
-        // Left-aligned status text
         children.push_back(
             Text("Status: Not Connected", fonts.arial18, {161, 161, 170, 255}, {})
         );
@@ -170,13 +196,11 @@ inline Widget SettingsTab_NetworkDetails(AppFonts& fonts) {
         tfStyle.radius              = 8;
         tfStyle.padding             = {15, 10};
 
-        // width=0 so Stretch fills it; height=44 fixed
         children.push_back(
             Widgets::TextField("drawer_network_details_tf", passwordBuffer, "Enter Password...", {0, 44}, tfStyle)
             .WithNav("drawer_network_details_back", "drawer_network_btn_connect", "", "", "", "")
         );
 
-        // Connect — height=44 fixed, width from Stretch
         children.push_back(
             NetworkDialogButton("Connect", "drawer_network_btn_connect",
                 "drawer_network_details_tf", "drawer_network_btn_cancel", "", "", [](){
@@ -189,18 +213,15 @@ inline Widget SettingsTab_NetworkDetails(AppFonts& fonts) {
                 }, fonts, true)
         );
 
-        // Cancel — height=44 fixed, width from Stretch
         children.push_back(
             NetworkDialogButton("Cancel", "drawer_network_btn_cancel",
-                "drawer_network_btn_connect", "drawer_network_details_back", "", "", [](){
+                "drawer_network_btn_connect", "drawer_network_details_back", "", "",[](){
                     SetDrawerTab("settings_drawer", "network");
                     g_NextFocusedWidgetId = "drawer_settings_network_toggle_wifi";
                 }, fonts, false)
         );
     }
 
-    // CrossAxisAlignment::Stretch: every child fills full panel width.
-    // All children have real intrinsic heights — no Expanded, nothing collapses.
     return Column(MainAxisAlignment::Start, CrossAxisAlignment::Stretch, 20, {
         backNav,
         Column(MainAxisAlignment::Start, CrossAxisAlignment::Stretch, 15, children)
@@ -228,26 +249,68 @@ inline Widget SettingsTab_Network(AppFonts& fonts) {
         hasScanned = false;
     }
 
-    auto getNavId = [](int i) { return "drawer_network_item_" + std::to_string(i); };
+    // Safely separate into Active and Available groups
+    std::vector<nmcli::Network> activeNets;
+    std::vector<nmcli::Network> availableNets;
+    
+    if (g_Context.wifiToggled && hasScanned && !isScanning) {
+        std::lock_guard<std::mutex> lock(networkMutex);
+        for (const auto& net : networks) {
+            if (net.active) activeNets.push_back(net);
+            else availableNets.push_back(net);
+        }
+    }
+
+    auto getNavId =[](int i) { return "drawer_network_item_" + std::to_string(i); };
 
     std::vector<Widget> listItems;
 
-    std::string toggleDown = (g_Context.wifiToggled && !isScanning) ? "drawer_network_btn_scan" : "";
+    std::string toggleDown = (g_Context.wifiToggled && !isScanning) 
+                             ? (activeNets.empty() ? "drawer_network_btn_scan" : getNavId(0)) 
+                             : "";
 
     listItems.push_back(DrawerToggle(
         g_Context.wifiToggled, FontAwesome::Wifi().codepoint, "WiFi",
         "drawer_settings_network_toggle_wifi",
         { "drawer_network_back", toggleDown, "", "", "", "" },
-        fonts, [](bool newState) { std::thread([newState]() { nmcli::enabled = newState; }).detach(); }
+        fonts,[](bool newState) { std::thread([newState]() { nmcli::enabled = newState; }).detach(); }
     ));
 
     if (g_Context.wifiToggled) {
-        std::lock_guard<std::mutex> lock(networkMutex);
         if (isScanning) {
             listItems.push_back(
                 Text("Scanning...", fonts.arial18, {161, 161, 170, 255}, {})
             );
         } else {
+            int globalItemIndex = 0; // Ensures navigation IDs flow seamlessly across sections
+
+            // --- 1. Connected / Active Networks Section ---
+            if (!activeNets.empty()) {
+                listItems.push_back(
+                    Text("Connected", fonts.arial18, {255, 255, 255, 255}, {})
+                );
+
+                for (int i = 0; i < (int)activeNets.size(); ++i) {
+                    const auto& net     = activeNets[i];
+                    std::string navId   = getNavId(globalItemIndex);
+                    std::string upNav   = (i == 0) ? "drawer_settings_network_toggle_wifi" : getNavId(globalItemIndex - 1);
+                    std::string downNav = (i == (int)activeNets.size() - 1) ? "drawer_network_btn_scan" : getNavId(globalItemIndex + 1);
+
+                    listItems.push_back(
+                        NetDrawerItem(FontAwesome::Wifi().codepoint, net.ssid, navId,
+                            {upNav, downNav, "", "", "", ""},
+                            [net]() {
+                                selectedNetwork = net;
+                                passwordBuffer  = "";
+                                SetDrawerTab("settings_drawer", "network_details");
+                                g_NextFocusedWidgetId = "drawer_network_details_back";
+                            }, fonts, true)
+                    );
+                    globalItemIndex++;
+                }
+            }
+
+            // --- 2. Available Networks Section ---
             WidgetStyle scanStyle;
             scanStyle.color  = {255, 255, 255, 50};
             scanStyle.radius = 12;
@@ -256,48 +319,50 @@ inline Widget SettingsTab_Network(AppFonts& fonts) {
                 {Icon({FontAwesome::Reload().codepoint}, fonts.fontAwesome24, 12, {161, 161, 170, 255})});
             scanButton.id = "drawer_network_btn_scan";
 
-            scanButton.OnClick("drawer_network_btn_scan", 0.0f, []() {
+            scanButton.OnClick("drawer_network_btn_scan", 0.0f,[]() {
                 hasScanned = false;
-            }, [](Widget&, float){});
-            scanButton.OnKeyPress(SDLK_RETURN, []() {
+            },[](Widget&, float){});
+            scanButton.OnKeyPress(SDLK_RETURN,[]() {
                 hasScanned = false;
             });
+            
+            std::string scanUpNav   = activeNets.empty() ? "drawer_settings_network_toggle_wifi" : getNavId(globalItemIndex - 1);
+            std::string scanDownNav = availableNets.empty() ? "" : getNavId(globalItemIndex);
+
             scanButton = scanButton
-                .OnHover("drawer_network_btn_scan", 0.2f, [](Widget& w, float t) {
+                .OnHover("drawer_network_btn_scan", 0.2f,[](Widget& w, float t) {
                     SetCursor(CursorType::Hand);
                     w.animateColor({255, 255, 255, 100}, t);
                 })
-                .OnFocus("drawer_network_btn_scan", 0.2f, [](Widget& w, float t) {
+                .OnFocus("drawer_network_btn_scan", 0.2f,[](Widget& w, float t) {
                     w.animateBorder({255, 255, 255, 255}, 1, t);
                 })
-                .WithNav("drawer_settings_network_toggle_wifi", networks.empty() ? "" : getNavId(0), "", "");
+                .WithNav(scanUpNav, scanDownNav, "", "");
 
-            // "Available Networks" label row — left-aligned, intrinsic height
             listItems.push_back(
-                Row(MainAxisAlignment::Start, CrossAxisAlignment::Center, 10, {
+                Row(MainAxisAlignment::SpaceBetween, CrossAxisAlignment::Center, 10, {
                     Text("Available Networks", fonts.arial18, {255, 255, 255, 255}),
                     scanButton
                 })
             );
 
-            for (int i = 0; i < (int)networks.size(); ++i) {
-                const auto& net     = networks[i];
-                std::string navId   = getNavId(i);
-                std::string upNav   = (i == 0)                     ? "drawer_network_btn_scan" : getNavId(i - 1);
-                std::string downNav = (i == (int)networks.size()-1) ? ""                        : getNavId(i + 1);
-                std::string itemLabel = net.ssid + (net.active ? " (Connected)" : "");
+            for (int i = 0; i < (int)availableNets.size(); ++i) {
+                const auto& net     = availableNets[i];
+                std::string navId   = getNavId(globalItemIndex);
+                std::string upNav   = (i == 0) ? "drawer_network_btn_scan" : getNavId(globalItemIndex - 1);
+                std::string downNav = (i == (int)availableNets.size() - 1) ? "" : getNavId(globalItemIndex + 1);
 
-                // DrawerItem has no Expanded — height intrinsic, width from outer Column Stretch
                 listItems.push_back(
-                    DrawerItem(FontAwesome::Wifi().codepoint, itemLabel, navId,
+                    NetDrawerItem(FontAwesome::Wifi().codepoint, net.ssid, navId,
                         {upNav, downNav, "", "", "", ""},
                         [net]() {
                             selectedNetwork = net;
                             passwordBuffer  = "";
                             SetDrawerTab("settings_drawer", "network_details");
                             g_NextFocusedWidgetId = "drawer_network_details_back";
-                        }, fonts)
+                        }, fonts, false)
                 );
+                globalItemIndex++;
             }
         }
     }
@@ -306,15 +371,13 @@ inline Widget SettingsTab_Network(AppFonts& fonts) {
     Widget backNav = Row(MainAxisAlignment::Start, CrossAxisAlignment::Center, 15, {
         NavItemRounded(FontAwesome::ArrowLeft().codepoint, "Back", "drawer_network_back",
             { "", "drawer_settings_network_toggle_wifi", "", "", "", "" }, fonts)
-            .OnClick("drawer_network_back", 0.25f, []() {
+            .OnClick("drawer_network_back", 0.25f,[]() {
                 SetDrawerTab("settings_drawer", "main");
                 g_NextFocusedWidgetId = "drawer_settings_main_network";
             }, [](Widget&, float){}),
         Text("Network & Internet", fonts.arial28, {255, 255, 255, 255}, {}),
     });
 
-    // Scrollable list column — Stretch gives each item full width,
-    // scroll handles overflow when there are many networks
     return Column(MainAxisAlignment::Start, CrossAxisAlignment::Stretch, 20, {
         backNav,
         Column(MainAxisAlignment::Start, CrossAxisAlignment::Stretch, 10, listItems,

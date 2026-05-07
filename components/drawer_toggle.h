@@ -15,15 +15,45 @@ inline Widget DrawerToggle(
     std::function<void(bool)> onToggle = nullptr
 ) {
     using namespace Widgets;
+        bool pywalEnabled = g_Context.pywalEnabled;
+    WalTheme wal = g_Context.currentTheme;
 
-    // Nova OS Base Style: Translucent surface
+        SDL_Color surface = GetThemeColor(
+        DefaultTheme::SurfaceLight,
+        wal.foreground,
+        pywalEnabled
+    );
+
+    surface.a = 8;
+
+    SDL_Color text = GetThemeColor(
+        DefaultTheme::TextSecondary,
+        wal.color7,
+        pywalEnabled
+    );
+
+    SDL_Color hover = GetThemeColor(
+        DefaultTheme::Hover,
+        wal.color4,
+        pywalEnabled
+    );
+
+    hover.a = 30;
+
+    SDL_Color activeText = GetThemeColor(
+        DefaultTheme::TextPrimary,
+        wal.foreground,
+        pywalEnabled
+    );
+
+    
     WidgetStyle style;
-    style.color = {255, 255, 255, 8}; // Matches rgba(255, 255, 255, 0.03)
+    style.color = surface;
     style.radius = 12;
 
     // --- The Toggle Switch Widget ---
     Widget toggleSwitch = {"", {46, 24}};
-    toggleSwitch.paint = [&toggled, id](SDL_Renderer* r, SDL_Rect rect, const WidgetStyle&, const InputState&, const std::vector<Widget>&, WidgetDebug) {
+    toggleSwitch.paint = [&toggled, id,pywalEnabled,wal](SDL_Renderer* r, SDL_Rect rect, const WidgetStyle&, const InputState&, const std::vector<Widget>&, WidgetDebug) {
         static std::unordered_map<std::string, float> animStates;
         float& anim = animStates[id];
 
@@ -34,12 +64,26 @@ inline Widget DrawerToggle(
 
         // Monochrome Logic: 
         // Track: Translucent White (Off) -> Solid White (On)
-        SDL_Color bgOff = {255, 255, 255, 25};  // rgba(255,255,255,0.1)
-        SDL_Color bgOn  = {255, 255, 255, 255}; // #ffffff
+        SDL_Color bgOff = GetThemeColor(
+            DefaultTheme::SurfaceLight,
+            wal.background,
+            pywalEnabled
+        );
+
+        // SDL_Color bgOff = {255, 255, 255, 25};  // rgba(255,255,255,0.1)
+        SDL_Color bgOn  = GetThemeColor(
+            DefaultTheme::AccentPrimary,
+            wal.color1,
+            pywalEnabled
+        ); // #ffffff
         
         // Knob: Gray (Off) -> Black (On)
-        SDL_Color thumbOff = {161, 161, 170, 255}; // #a1a1aa
-        SDL_Color thumbOn  = {0, 0, 0, 255};       // #000000
+        SDL_Color thumbOff = GetThemeColor(
+            DefaultTheme::SurfaceLight,
+            wal.foreground,
+            pywalEnabled
+        ); // #a1a1aa
+        SDL_Color thumbOn  = thumbOff;       // #000000
         
         SDL_Color currentBg = {
             (Uint8)(bgOff.r + (bgOn.r - bgOff.r) * anim),
@@ -73,7 +117,7 @@ inline Widget DrawerToggle(
         RoundedBox(
             {},
             style,
-            Expanded(1, 0, Padding({20, 18},
+            Padding({20, 18},
                 Row(
                     MainAxisAlignment::SpaceBetween,
                     CrossAxisAlignment::Center,
@@ -91,9 +135,9 @@ inline Widget DrawerToggle(
                         ),
                         SizedBox({}),
                         toggleSwitch 
-                    }
+                    },ScrollBehavior::None,ScrollAxis::Horizontal,"",1,1
                 )
-            )),
+            ),
             {-1, 0}
         );
 

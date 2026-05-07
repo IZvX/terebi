@@ -1,14 +1,12 @@
 # ninja log v7
-4	9964	1777897533558633134	CMakeFiles/sdl_app.dir/sdl_ui_kit/utils/cursors.cpp.o	db54bff19f544437
-15	10263	1777897533565299068	CMakeFiles/sdl_app.dir/imgui/imgui_tables.cpp.o	6ff13d54bc8103b8
-10	11873	1777897533564711909	CMakeFiles/sdl_app.dir/imgui/imgui_draw.cpp.o	d0725f8bb20469d5
-10	11387	1777897533565114210	CMakeFiles/sdl_app.dir/imgui/imgui_widgets.cpp.o	6e3f22eee7db35e0
-9	13384	1777897533563799373	CMakeFiles/sdl_app.dir/imgui/imgui.cpp.o	66c3492ec449f028
-6	11449	1778121273892487788	CMakeFiles/sdl_app.dir/main.cpp.o	e9095b7b446153ef
-2	103	1778121604592700886	build.ninja	578718adf5867321
-2	103	1778121604589460308	/home/yfz/Documents/Projects/terebi/build/cmake_install.cmake	578718adf5867321
-10263	13950	1777897543817538608	CMakeFiles/sdl_app.dir/imgui/backends/imgui_impl_sdlrenderer2.cpp.o	42e8ea0dac260b0d
-9965	14190	1777897543517569732	CMakeFiles/sdl_app.dir/imgui/backends/imgui_impl_sdl2.cpp.o	437b2a3be8843bec
-11449	11844	1778121285335442676	sdl_app	9909058161ba1757
-14	14898	1778121604624294166	CMakeFiles/sdl_app.dir/main.cpp.o	e9095b7b446153ef
-14898	15432	1778121619508491826	sdl_app	9909058161ba1757
+2	13193	1778141724610144978	CMakeFiles/sdl_app.dir/nimble/utils/cursors.cpp.o	31e00315007572ad
+9	15921	1778141724616811773	CMakeFiles/sdl_app.dir/imgui/imgui_draw.cpp.o	ab4ad8bcbd828160
+9	19495	1778141724619550743	CMakeFiles/sdl_app.dir/imgui/imgui_widgets.cpp.o	b424f0c3c3c956da
+11	20739	1778141724620533939	CMakeFiles/sdl_app.dir/imgui/imgui_tables.cpp.o	2707112a447e519b
+13222	21628	1778141737830782662	CMakeFiles/sdl_app.dir/imgui/backends/imgui_impl_sdl2.cpp.o	4485215d95431647
+15921	22646	1778141740530260917	CMakeFiles/sdl_app.dir/imgui/backends/imgui_impl_sdlrenderer2.cpp.o	746ab7e2ae967325
+8	24056	1778141724613478375	CMakeFiles/sdl_app.dir/imgui/imgui.cpp.o	3148f202ba19262e
+6	14900	1778142886281619889	CMakeFiles/sdl_app.dir/main.cpp.o	72304b8d4b99f599
+14900	15274	1778142901175223316	sdl_app	a0786e00de310c65
+3	15010	1778142981216673998	CMakeFiles/sdl_app.dir/main.cpp.o	72304b8d4b99f599
+15011	15412	1778142996223612502	sdl_app	a0786e00de310c65

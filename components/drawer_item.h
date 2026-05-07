@@ -2,28 +2,59 @@
 #include <string>
 #include "shared.h"
 
-inline Widget DrawerItem(uint32_t iconCode, const std::string &label, const std::string &id, const WidgetNav &nav, AppFonts& fonts)
+inline Widget DrawerItem(uint32_t iconCode, const std::string &label, const std::string &id, const WidgetNav &nav, AppFonts& fonts, TTF_Font* font = nullptr)
 {
     using namespace Widgets;
+    bool pywalEnabled = g_Context.pywalEnabled;
+    WalTheme wal = g_Context.currentTheme;
+
+        SDL_Color surface = GetThemeColor(
+        DefaultTheme::SurfaceLight,
+        wal.foreground,
+        pywalEnabled
+    );
+
+    surface.a = 8;
+
+    SDL_Color text = GetThemeColor(
+        DefaultTheme::TextSecondary,
+        wal.color7,
+        pywalEnabled
+    );
+
+    SDL_Color hover = GetThemeColor(
+        DefaultTheme::Hover,
+        wal.color4,
+        pywalEnabled
+    );
+
+    hover.a = 30;
+
+    SDL_Color activeText = GetThemeColor(
+        DefaultTheme::TextPrimary,
+        wal.foreground,
+        pywalEnabled
+    );
 
     WidgetStyle style;
-    style.color = {255, 255, 255, 8};
+    style.color = surface;
     style.radius = 12;
+
+    TTF_Font* usableFont = font ? font : fonts.fontAwesome24;
 
     Widget w =
         RoundedBox(
             {},
             style,
-            Expanded(1,0,Padding({20, 18},
-                    Row(
-                        MainAxisAlignment::Start,
-                        CrossAxisAlignment::Center,
-                        20,
-                        {
-                            Icon({iconCode}, fonts.fontAwesome24, 24, {161,161,170,255}),
-                            Text(label, fonts.arial18, {161,161,170,255})
-                        }
-                    )
+            Padding({20, 18},
+                Row(
+                    MainAxisAlignment::Start,
+                    CrossAxisAlignment::Center,
+                    20,
+                    {
+                        Icon({iconCode}, usableFont, 24, text),
+                        Text(label, fonts.arial18, text)
+                    }
                 )
             ),
             {-1,0}
@@ -32,19 +63,30 @@ inline Widget DrawerItem(uint32_t iconCode, const std::string &label, const std:
     w.id = id;
 
     return Expanded(0,1,w
-        .OnHover(id, 0.25f, [](Widget &w, float t) {
+        .OnHover(id, 0.25f, [hover, activeText](Widget &w, float t) {
+
             SetCursor(CursorType::Hand);
-            w.animateColor({255, 255, 255, 25}, t);
-            w.animateBorder({255,255,255,255},2,t);
-            w.children[0].children[0].children[0].animateColor({255, 255, 255, 255}, t);
-            w.children[0].children[0].children[1].animateColor({255, 255, 255, 255}, t);
+
+            w.animateBorder(activeText, 2, t);
+
+            w.children[0].children[0].children[0]
+                .animateColor(activeText, t);
+
+            w.children[0].children[0].children[1]
+                .animateColor(activeText, t);
         })
-        .OnFocus(id, 0.25f, [](Widget &w, float t) {
-            w.animateColor({255, 255, 255, 25}, t);
-            w.animateBorder({255,255,255,255},2,t);
-            w.children[0].children[0].children[0].animateColor({255, 255, 255, 255}, t);
-            w.children[0].children[0].children[1].animateColor({255, 255, 255, 255}, t);
+
+        .OnFocus(id, 0.25f, [hover, activeText](Widget &w, float t) {
+
+            w.animateBorder(activeText, 2, t);
+
+            w.children[0].children[0].children[0]
+                .animateColor(activeText, t);
+
+            w.children[0].children[0].children[1]
+                .animateColor(activeText, t);
         })
+
         .WithNav(nav.up, nav.down, nav.left, nav.right, nav.next, nav.prev)
     );
 }

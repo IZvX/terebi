@@ -47,23 +47,23 @@ build cmake_object_order_depends_target_sdl_app: phony || .
 build CMakeFiles/sdl_app.dir/main.cpp.o: CXX_COMPILER__sdl_app_unscanned_ /home/yfz/Documents/Projects/terebi/main.cpp || cmake_object_order_depends_target_sdl_app
   DEP_FILE = CMakeFiles/sdl_app.dir/main.cpp.o.d
   FLAGS = -std=gnu++17
-  INCLUDES = -I/home/yfz/Documents/Projects/terebi/./imgui -I/home/yfz/Documents/Projects/terebi/./sdl_ui_kit -isystem /usr/include/SDL2
+  INCLUDES = -I/home/yfz/Documents/Projects/terebi/./imgui -I/home/yfz/Documents/Projects/terebi/./nimble -isystem /usr/include/SDL2
   OBJECT_DIR = CMakeFiles/sdl_app.dir
   OBJECT_FILE_DIR = CMakeFiles/sdl_app.dir
   TARGET_SUPPORT_DIR = CMakeFiles/sdl_app.dir
 
-build CMakeFiles/sdl_app.dir/sdl_ui_kit/utils/cursors.cpp.o: CXX_COMPILER__sdl_app_unscanned_ /home/yfz/Documents/Projects/terebi/sdl_ui_kit/utils/cursors.cpp || cmake_object_order_depends_target_sdl_app
-  DEP_FILE = CMakeFiles/sdl_app.dir/sdl_ui_kit/utils/cursors.cpp.o.d
+build CMakeFiles/sdl_app.dir/nimble/utils/cursors.cpp.o: CXX_COMPILER__sdl_app_unscanned_ /home/yfz/Documents/Projects/terebi/nimble/utils/cursors.cpp || cmake_object_order_depends_target_sdl_app
+  DEP_FILE = CMakeFiles/sdl_app.dir/nimble/utils/cursors.cpp.o.d
   FLAGS = -std=gnu++17
-  INCLUDES = -I/home/yfz/Documents/Projects/terebi/./imgui -I/home/yfz/Documents/Projects/terebi/./sdl_ui_kit -isystem /usr/include/SDL2
+  INCLUDES = -I/home/yfz/Documents/Projects/terebi/./imgui -I/home/yfz/Documents/Projects/terebi/./nimble -isystem /usr/include/SDL2
   OBJECT_DIR = CMakeFiles/sdl_app.dir
-  OBJECT_FILE_DIR = CMakeFiles/sdl_app.dir/sdl_ui_kit/utils
+  OBJECT_FILE_DIR = CMakeFiles/sdl_app.dir/nimble/utils
   TARGET_SUPPORT_DIR = CMakeFiles/sdl_app.dir
 
 build CMakeFiles/sdl_app.dir/imgui/imgui.cpp.o: CXX_COMPILER__sdl_app_unscanned_ /home/yfz/Documents/Projects/terebi/imgui/imgui.cpp || cmake_object_order_depends_target_sdl_app
   DEP_FILE = CMakeFiles/sdl_app.dir/imgui/imgui.cpp.o.d
   FLAGS = -std=gnu++17
-  INCLUDES = -I/home/yfz/Documents/Projects/terebi/./imgui -I/home/yfz/Documents/Projects/terebi/./sdl_ui_kit -isystem /usr/include/SDL2
+  INCLUDES = -I/home/yfz/Documents/Projects/terebi/./imgui -I/home/yfz/Documents/Projects/terebi/./nimble -isystem /usr/include/SDL2
   OBJECT_DIR = CMakeFiles/sdl_app.dir
   OBJECT_FILE_DIR = CMakeFiles/sdl_app.dir/imgui
   TARGET_SUPPORT_DIR = CMakeFiles/sdl_app.dir
@@ -71,7 +71,7 @@ build CMakeFiles/sdl_app.dir/imgui/imgui.cpp.o: CXX_COMPILER__sdl_app_unscanned_
 build CMakeFiles/sdl_app.dir/imgui/imgui_draw.cpp.o: CXX_COMPILER__sdl_app_unscanned_ /home/yfz/Documents/Projects/terebi/imgui/imgui_draw.cpp || cmake_object_order_depends_target_sdl_app
   DEP_FILE = CMakeFiles/sdl_app.dir/imgui/imgui_draw.cpp.o.d
   FLAGS = -std=gnu++17
-  INCLUDES = -I/home/yfz/Documents/Projects/terebi/./imgui -I/home/yfz/Documents/Projects/terebi/./sdl_ui_kit -isystem /usr/include/SDL2
+  INCLUDES = -I/home/yfz/Documents/Projects/terebi/./imgui -I/home/yfz/Documents/Projects/terebi/./nimble -isystem /usr/include/SDL2
   OBJECT_DIR = CMakeFiles/sdl_app.dir
   OBJECT_FILE_DIR = CMakeFiles/sdl_app.dir/imgui
   TARGET_SUPPORT_DIR = CMakeFiles/sdl_app.dir
@@ -79,7 +79,7 @@ build CMakeFiles/sdl_app.dir/imgui/imgui_draw.cpp.o: CXX_COMPILER__sdl_app_unsca
 build CMakeFiles/sdl_app.dir/imgui/imgui_widgets.cpp.o: CXX_COMPILER__sdl_app_unscanned_ /home/yfz/Documents/Projects/terebi/imgui/imgui_widgets.cpp || cmake_object_order_depends_target_sdl_app
   DEP_FILE = CMakeFiles/sdl_app.dir/imgui/imgui_widgets.cpp.o.d
   FLAGS = -std=gnu++17
-  INCLUDES = -I/home/yfz/Documents/Projects/terebi/./imgui -I/home/yfz/Documents/Projects/terebi/./sdl_ui_kit -isystem /usr/include/SDL2
+  INCLUDES = -I/home/yfz/Documents/Projects/terebi/./imgui -I/home/yfz/Documents/Projects/terebi/./nimble -isystem /usr/include/SDL2
   OBJECT_DIR = CMakeFiles/sdl_app.dir
   OBJECT_FILE_DIR = CMakeFiles/sdl_app.dir/imgui
   TARGET_SUPPORT_DIR = CMakeFiles/sdl_app.dir
@@ -87,7 +87,7 @@ build CMakeFiles/sdl_app.dir/imgui/imgui_widgets.cpp.o: CXX_COMPILER__sdl_app_un
 build CMakeFiles/sdl_app.dir/imgui/imgui_tables.cpp.o: CXX_COMPILER__sdl_app_unscanned_ /home/yfz/Documents/Projects/terebi/imgui/imgui_tables.cpp || cmake_object_order_depends_target_sdl_app
   DEP_FILE = CMakeFiles/sdl_app.dir/imgui/imgui_tables.cpp.o.d
   FLAGS = -std=gnu++17
-  INCLUDES = -I/home/yfz/Documents/Projects/terebi/./imgui -I/home/yfz/Documents/Projects/terebi/./sdl_ui_kit -isystem /usr/include/SDL2
+  INCLUDES = -I/home/yfz/Documents/Projects/terebi/./imgui -I/home/yfz/Documents/Projects/terebi/./nimble -isystem /usr/include/SDL2
   OBJECT_DIR = CMakeFiles/sdl_app.dir
   OBJECT_FILE_DIR = CMakeFiles/sdl_app.dir/imgui
   TARGET_SUPPORT_DIR = CMakeFiles/sdl_app.dir
@@ -95,7 +95,7 @@ build CMakeFiles/sdl_app.dir/imgui/imgui_tables.cpp.o: CXX_COMPILER__sdl_app_uns
 build CMakeFiles/sdl_app.dir/imgui/backends/imgui_impl_sdl2.cpp.o: CXX_COMPILER__sdl_app_unscanned_ /home/yfz/Documents/Projects/terebi/imgui/backends/imgui_impl_sdl2.cpp || cmake_object_order_depends_target_sdl_app
   DEP_FILE = CMakeFiles/sdl_app.dir/imgui/backends/imgui_impl_sdl2.cpp.o.d
   FLAGS = -std=gnu++17
-  INCLUDES = -I/home/yfz/Documents/Projects/terebi/./imgui -I/home/yfz/Documents/Projects/terebi/./sdl_ui_kit -isystem /usr/include/SDL2
+  INCLUDES = -I/home/yfz/Documents/Projects/terebi/./imgui -I/home/yfz/Documents/Projects/terebi/./nimble -isystem /usr/include/SDL2
   OBJECT_DIR = CMakeFiles/sdl_app.dir
   OBJECT_FILE_DIR = CMakeFiles/sdl_app.dir/imgui/backends
   TARGET_SUPPORT_DIR = CMakeFiles/sdl_app.dir
@@ -103,7 +103,7 @@ build CMakeFiles/sdl_app.dir/imgui/backends/imgui_impl_sdl2.cpp.o: CXX_COMPILER_
 build CMakeFiles/sdl_app.dir/imgui/backends/imgui_impl_sdlrenderer2.cpp.o: CXX_COMPILER__sdl_app_unscanned_ /home/yfz/Documents/Projects/terebi/imgui/backends/imgui_impl_sdlrenderer2.cpp || cmake_object_order_depends_target_sdl_app
   DEP_FILE = CMakeFiles/sdl_app.dir/imgui/backends/imgui_impl_sdlrenderer2.cpp.o.d
   FLAGS = -std=gnu++17
-  INCLUDES = -I/home/yfz/Documents/Projects/terebi/./imgui -I/home/yfz/Documents/Projects/terebi/./sdl_ui_kit -isystem /usr/include/SDL2
+  INCLUDES = -I/home/yfz/Documents/Projects/terebi/./imgui -I/home/yfz/Documents/Projects/terebi/./nimble -isystem /usr/include/SDL2
   OBJECT_DIR = CMakeFiles/sdl_app.dir
   OBJECT_FILE_DIR = CMakeFiles/sdl_app.dir/imgui/backends
   TARGET_SUPPORT_DIR = CMakeFiles/sdl_app.dir
@@ -116,7 +116,7 @@ build CMakeFiles/sdl_app.dir/imgui/backends/imgui_impl_sdlrenderer2.cpp.o: CXX_C
 #############################################
 # Link the executable sdl_app
 
-build sdl_app: CXX_EXECUTABLE_LINKER__sdl_app_ CMakeFiles/sdl_app.dir/main.cpp.o CMakeFiles/sdl_app.dir/sdl_ui_kit/utils/cursors.cpp.o CMakeFiles/sdl_app.dir/imgui/imgui.cpp.o CMakeFiles/sdl_app.dir/imgui/imgui_draw.cpp.o CMakeFiles/sdl_app.dir/imgui/imgui_widgets.cpp.o CMakeFiles/sdl_app.dir/imgui/imgui_tables.cpp.o CMakeFiles/sdl_app.dir/imgui/backends/imgui_impl_sdl2.cpp.o CMakeFiles/sdl_app.dir/imgui/backends/imgui_impl_sdlrenderer2.cpp.o | /usr/lib/libSDL2main.a /usr/lib/libSDL2-2.0.so.0.3200.66
+build sdl_app: CXX_EXECUTABLE_LINKER__sdl_app_ CMakeFiles/sdl_app.dir/main.cpp.o CMakeFiles/sdl_app.dir/nimble/utils/cursors.cpp.o CMakeFiles/sdl_app.dir/imgui/imgui.cpp.o CMakeFiles/sdl_app.dir/imgui/imgui_draw.cpp.o CMakeFiles/sdl_app.dir/imgui/imgui_widgets.cpp.o CMakeFiles/sdl_app.dir/imgui/imgui_tables.cpp.o CMakeFiles/sdl_app.dir/imgui/backends/imgui_impl_sdl2.cpp.o CMakeFiles/sdl_app.dir/imgui/backends/imgui_impl_sdlrenderer2.cpp.o | /usr/lib/libSDL2main.a /usr/lib/libSDL2-2.0.so.0.3200.66
   DEP_FILE = CMakeFiles/sdl_app.dir/link.d
   LINK_FLAGS = -Wl,--dependency-file=CMakeFiles/sdl_app.dir/link.d
   LINK_LIBRARIES = /usr/lib/libSDL2main.a  /usr/lib/libSDL2-2.0.so.0.3200.66  -lSDL2_gfx  -lSDL2_ttf  -lSDL2_image

@@ -12,22 +12,22 @@ typedef struct {
     SDL_Color background;
     SDL_Color foreground;
     SDL_Color cursor;
-    SDL_Color color0;  // Black
-    SDL_Color color1;  // Red
-    SDL_Color color2;  // Green
-    SDL_Color color3;  // Yellow
-    SDL_Color color4;  // Blue
-    SDL_Color color5;  // Magenta
-    SDL_Color color6;  // Cyan
-    SDL_Color color7;  // White
-    SDL_Color color8;  // Bright Black
-    SDL_Color color9;  // Bright Red
-    SDL_Color color10; // Bright Green
-    SDL_Color color11; // Bright Yellow
-    SDL_Color color12; // Bright Blue
-    SDL_Color color13; // Bright Magenta
-    SDL_Color color14; // Bright Cyan
-    SDL_Color color15; // Bright White
+    SDL_Color color0;  
+    SDL_Color color1;  
+    SDL_Color color2;  
+    SDL_Color color3;  
+    SDL_Color color4;  
+    SDL_Color color5;  
+    SDL_Color color6;  
+    SDL_Color color7;  
+    SDL_Color color8;  
+    SDL_Color color9;  
+    SDL_Color color10; 
+    SDL_Color color11; 
+    SDL_Color color12; 
+    SDL_Color color13; 
+    SDL_Color color14; 
+    SDL_Color color15; 
 } WalTheme;
 
 // Helper to convert a raw hex string ("2E3440") to an SDL_Color

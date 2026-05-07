@@ -7,13 +7,13 @@ find_package(SDL2 REQUIRED)
 
 include_directories(
     ./imgui
-    ./sdl_ui_kit
+    ./nimble
     ${SDL2_INCLUDE_DIRS}
 )
 
 add_executable(sdl_app
     main.cpp
-    sdl_ui_kit/utils/cursors.cpp
+    nimble/utils/cursors.cpp
     imgui/imgui.cpp
     imgui/imgui_draw.cpp
     imgui/imgui_widgets.cpp

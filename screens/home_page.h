@@ -13,11 +13,18 @@ inline Widget HomePage(int ww, int wh, float dt, std::string& search, AppFonts& 
     using namespace Widgets;
     WidgetStyle logoStyle;
     logoStyle.color = {0, 0, 0, 0};
+    bool pywalEnabled = g_Context.pywalEnabled;
+    WalTheme wal = g_Context.currentTheme;
 
-    return Scaffold(
-        Column(MainAxisAlignment::Start, CrossAxisAlignment::Start, 0, {
-            
-            Expanded(0, 1, Padding({60, 40}, Expanded(0, 1, Row(MainAxisAlignment::SpaceBetween, CrossAxisAlignment::Center, 0, {
+    SDL_Color navbarBg = GetThemeColor(
+        DefaultTheme::BackgroundSecondary,
+        wal.background,
+        pywalEnabled
+    );
+
+    navbarBg.a = 125;
+
+    Widget nav = Row(MainAxisAlignment::SpaceBetween, CrossAxisAlignment::Center, 0, {
                 Row(MainAxisAlignment::Start, CrossAxisAlignment::Center, 30, {
                     RoundedBox({}, logoStyle, {Text("terebi", fonts.spaceGrotesk24, {255, 255, 255, 255}, {})}),
                     NavItem(FontAwesome::Home().codepoint, "Home", "navbar_home", {"", "", "navbar_settings", "navbar_movies", "navbar_movies", "navbar_settings"}, fonts),
@@ -38,13 +45,19 @@ inline Widget HomePage(int ww, int wh, float dt, std::string& search, AppFonts& 
                             
                         })
                 })
-            })))),
+            },ScrollBehavior::None,ScrollAxis::Horizontal,"",1.0f,0.0f);
+    Widget navWrapper = Expanded(0, 1, Box({0,0},{.color = navbarBg},Padding({60, 40},Expanded(0, 1, nav))));
+
+    return Scaffold(
+        Column(MainAxisAlignment::Start, CrossAxisAlignment::Start, 0, {
+            
+            navWrapper,
             RenderSettingsDrawer(ww, wh, dt, fonts)
             
         }),
         ForegroundBlur(0, Stack({
             Image("assets/images/frieren.jpg", {ww, wh}),
-            Box({ww, wh}, {{0, 0, 0, 205}})
+            Box({ww, wh}, {{0, 0, 0, 64}})
         }))
     );
 }
