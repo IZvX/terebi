@@ -52,6 +52,8 @@ int main(int argc, char *args[])
 
     AppFonts fonts;
     fonts.spaceGrotesk24 = loadFont("assets/fonts/spacegrotesk/SpaceGrotesk-700.ttf", 24);
+    fonts.arial14       = loadFont("assets/fonts/Arial.ttf", 14);
+    fonts.arial16       = loadFont("assets/fonts/Arial.ttf", 16);
     fonts.arial18       = loadFont("assets/fonts/Arial.ttf", 18);
     fonts.arial20       = loadFont("assets/fonts/Arial.ttf", 20);
     fonts.arial28       = loadFont("assets/fonts/Arial.ttf", 28);
