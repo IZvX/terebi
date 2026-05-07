@@ -2,11 +2,11 @@
 
 namespace Widgets
 {
-    inline Widget RoundedBox(Vector2 size, WidgetStyle style, Widget child = {}, Vector2 align = {0, 0})
+    inline Widget RoundedBox(Vector2 size, WidgetStyle style, Widget child = {}, Vector2 align = {0, 0},std::string id = "RoundedBox")
     {
         const bool shouldAutoSize = (size.x <= 0.0f || size.y <= 0.0f);
 
-        Widget w = {"RoundedBox", size, style, {}, {}, [style, shouldAutoSize, align](SDL_Renderer *renderer, SDL_Rect rect, const WidgetStyle &s, const InputState &input, const std::vector<Widget> &childrenList, WidgetDebug dbg)
+        Widget w = {id, size, style, {}, {}, [style, shouldAutoSize, align](SDL_Renderer *renderer, SDL_Rect rect, const WidgetStyle &s, const InputState &input, const std::vector<Widget> &childrenList, WidgetDebug dbg)
                     {
                         if (rect.w <= 0 || rect.h <= 0) return;
                         // 1. Shadow

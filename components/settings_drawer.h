@@ -10,5 +10,6 @@ inline Widget RenderSettingsDrawer(int ww, int wh, float dt, AppFonts& fonts) {
     return SideDrawer("settings_drawer", g_Context.settingsOpen, ww, wh, dt, {
         {"main",          [&]() -> Widget { return SettingsTab_Main(fonts); }},
         {"network",       [&]() -> Widget { return SettingsTab_Network(fonts); }},
+        {"network_details",       [&]() -> Widget { return SettingsTab_NetworkDetails(fonts); }},
     });
 }

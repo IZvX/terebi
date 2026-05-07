@@ -64,6 +64,7 @@ int main(int argc, char *args[])
     Cursors_Init();
     g_NextFocusedWidgetId = "navbar_home"; // Default focus
     std::string searchString = "";
+    g_Context.wifiToggled = (bool)nmcli::enabled;
 
     bool quit = false;
     SDL_Event e;

@@ -48,6 +48,7 @@ namespace FontAwesome {
     inline IconData ArrowRight()       { return { 0xf061 }; }
 
     // System
+    inline IconData Reload()           { return { 0xf021 }; } // Added: Sync / Update
     inline IconData Wifi()             { return { 0xf1eb }; }
     inline IconData BatteryFull()      { return { 0xf240 }; }
     inline IconData VolumeUp()         { return { 0xf028 }; }

@@ -5,6 +5,8 @@
 // Group our loaded fonts
 struct AppFonts {
     TTF_Font* spaceGrotesk24;
+    TTF_Font* arial14;
+    TTF_Font* arial16;
     TTF_Font* arial18;
     TTF_Font* arial20;
     TTF_Font* arial28;
@@ -14,6 +16,7 @@ struct AppFonts {
 // Application State
 struct GlobalContext {
     bool settingsOpen = false;
+    bool wifiToggled = false;
     std::string searchString = "";
 };
 
