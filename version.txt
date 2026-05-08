@@ -1,0 +1,7 @@
+v26.05.07.b02-p.alpha
+added developer settings tab
+added opacity widget
+added auto scroll in columns
+added auto navMesh in columns
+added dynamic FPS for power saving and battery life
+added disabled states for widgets

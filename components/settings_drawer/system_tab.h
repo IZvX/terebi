@@ -25,6 +25,8 @@ inline Widget SettingsTab_System(AppFonts& fonts) {
     cardStyle.color  = surface;
     cardStyle.radius = 12;
 
+    float disabledOpacity = 0.5f;
+
     // --- Main Layout ---
     return Column(MainAxisAlignment::Start, CrossAxisAlignment::Start, 20, std::vector<Widget>{
         // Header
@@ -44,10 +46,11 @@ inline Widget SettingsTab_System(AppFonts& fonts) {
         Expanded(1, 1,
             Column(MainAxisAlignment::Start, CrossAxisAlignment::Stretch, 20, std::vector<Widget>{
                 // Branding
-                Padding({48, 20}, Column(MainAxisAlignment::Center, CrossAxisAlignment::Center, 5, std::vector<Widget>{
+                Padding({48, 20}, Expanded(0,1,Column(MainAxisAlignment::Center, CrossAxisAlignment::Center, 5, std::vector<Widget>{
                     Text("terebi", fonts.spaceGrotesk48, {255, 255, 255, 255}),
-                    Text("Build v1.0.42-alpha | powered by nimble.", fonts.spaceGrotesk12, {255, 255, 255, 100})
-                }),1,0),
+                    Text("Powered by nimble.", fonts.spaceGrotesk12, {255, 255, 255, 100}),
+                    Text("Build v26.05.07.b02-p.alpha", fonts.spaceGrotesk12, {255, 255, 255, 100}),
+                })),1,0),
 
                 Text("Device Specifications", fonts.arial18, {255, 255, 255, 255}),
                 RoundedBox({0, 0}, cardStyle,
@@ -60,10 +63,21 @@ inline Widget SettingsTab_System(AppFonts& fonts) {
                 ),
 
                 Text("Advanced", fonts.arial18, {255, 255, 255, 255}),
+                
+                // Developer Settings (Enabled)
                 DrawerItem(FontAwesome::Cogs().codepoint, "Developer Settings", "drawer_system_dev", 
-                    {"drawer_system_back", "drawer_system_pi", "", "", "", ""}, fonts),
-                DrawerItem(FontAwesome::RaspberryPi().codepoint, "Pi Configuration", "drawer_system_pi",
-                    {"drawer_system_dev", "drawer_system_instagram", "", "", "", ""}, fonts,fonts.fontAwesomeB24),
+                    {"drawer_system_back", "drawer_system_pi", "", "", "", ""}, fonts)
+                .OnClick("drawer_system_dev",0.25,[](){
+                    SetDrawerTab("settings_drawer", "dev"); 
+                    g_NextFocusedWidgetId = "drawer_dev_back"; 
+                },[](Widget& w, float t){}),
+                
+                // Pi Configuration (DISABLED & 50% OPACITY)
+                Opacity(disabledOpacity,
+                    DrawerItem(FontAwesome::RaspberryPi().codepoint, "Pi Configuration", "drawer_system_pi",
+                        {"drawer_system_dev", "drawer_system_instagram", "", "", "", ""}, fonts, fonts.fontAwesomeB24)
+                    .WithDisabled(true)
+                ),
 
                 // Social Row
                 Expanded(1,1,Row(MainAxisAlignment::SpaceBetween, CrossAxisAlignment::End, 10, std::vector<Widget>{

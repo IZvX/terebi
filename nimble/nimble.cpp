@@ -42,3 +42,4 @@
 #include "widgets/text_field.cpp"
 #include "widgets/clip.cpp"
 #include "widgets/position.cpp"
+#include "widgets/opacity.cpp"

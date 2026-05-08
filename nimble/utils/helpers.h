@@ -133,11 +133,14 @@ struct AnimState
     float focusDuration = 0.2f;
 
     // --- Manual Animation State ---
-    bool isManuallyAnimated = false; // toggle state
+    bool isManuallyAnimated = false;
     float manualProgress = 0.0f;
     float manualDuration = 0.2f;
-
     std::function<float(float)> curve = Easing::Linear;
+
+    // --- Dirty Repaint ---
+    bool isDirty = true;          // starts true so first frame always paints
+    size_t lastTextHash = 0;      // detects external boundText mutations
 };
 
 // --- New Global TextField State Map ---

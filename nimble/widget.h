@@ -1,11 +1,39 @@
+
+
 #pragma once
 #include <cmath>
 #include <algorithm>
+#include <cstdlib>
+#include <unordered_set>
+
+// --- Global Developer Settings ---
+struct GlobalSettings
+{
+    // 1. Layout & Metrics
+    bool showWidgetIds = false;         // 1.1 Overlay Widget IDs
+    bool showClipRects = false;         // 1.2 Clip Rect Visualization
+    bool showFlexWeights = false;       // 1.3 Flex-Weight Labels
+
+    // 2. Interaction & State
+    bool showFocusLoop = false;         // 2.1 Focus Loop Visualizer
+    bool highlightInputCapture = false; // 2.2 Input "Capture" Highlight
+
+    // 3. Performance & Rendering
+    bool slowAnimations = false;        // 3.1 Global Animation Timescale
+    bool paintFlashMode = false;        // 3.2 Paint-Flash Mode
+    bool showFPSOverlay = false;        // 3.4 FPS & DeltaTime Overlay
+
+    // 4. Logic & Data
+    bool triggerStateReset = false;     // 4.1 State Reset
+};
+
+inline GlobalSettings g_Settings;
 
 inline std::string g_FocusedWidgetId = "";
 inline std::string g_NextFocusedWidgetId = "";
 inline std::unordered_map<std::string, SDL_Rect> g_WidgetRects;
 inline bool g_DebugNavigation = true;
+inline std::unordered_map<std::string, bool> g_DisabledStates;
 
 // --- Navigation Struct ---
 struct WidgetNav
@@ -161,7 +189,53 @@ inline WidgetStateProxy GetWidgetById(const std::string &id)
     return {id};
 }
 
-// --- Core Widget Struct ---
+// Stores the texture cache for a specific widget ID
+struct WidgetCache {
+    SDL_Texture* texture = nullptr;
+    int lastW = 0;
+    int lastH = 0;
+    bool lastHovered = false;
+    bool lastFocused = false;
+};
+inline std::unordered_map<std::string, WidgetCache> g_WidgetCache;
+inline std::unordered_map<std::string, WidgetNav> g_NavigationLinks;
+
+inline std::string ResolveNavTarget(const std::string& startId, const std::string& direction)
+{
+    auto it = g_NavigationLinks.find(startId);
+    if (it == g_NavigationLinks.end()) return "";
+
+    std::string currentTarget = "";
+    if (direction == "up")    currentTarget = it->second.up;
+    else if (direction == "down")  currentTarget = it->second.down;
+    else if (direction == "left")  currentTarget = it->second.left;
+    else if (direction == "right") currentTarget = it->second.right;
+    else if (direction == "next")  currentTarget = it->second.next;
+    else if (direction == "prev")  currentTarget = it->second.prev;
+
+    std::unordered_set<std::string> visited;
+
+    // While the target is disabled, "hop" to that target's own neighbor in the same direction
+    while (!currentTarget.empty() && g_DisabledStates[currentTarget])
+    {
+        if (visited.count(currentTarget)) return ""; // Prevent infinite loops
+        visited.insert(currentTarget);
+
+        auto nextIt = g_NavigationLinks.find(currentTarget);
+        if (nextIt == g_NavigationLinks.end()) break;
+
+        if (direction == "up")    currentTarget = nextIt->second.up;
+        else if (direction == "down")  currentTarget = nextIt->second.down;
+        else if (direction == "left")  currentTarget = nextIt->second.left;
+        else if (direction == "right") currentTarget = nextIt->second.right;
+        else if (direction == "next")  currentTarget = nextIt->second.next;
+        else if (direction == "prev")  currentTarget = nextIt->second.prev;
+    }
+
+    return currentTarget;
+}
+
+
 // --- Core Widget Struct ---
 struct Widget
 {
@@ -192,6 +266,21 @@ struct Widget
 
     // --- Parent Reference ---
     Widget* parent = nullptr;
+
+    bool useCache = false; // Add this
+
+    bool disabled = false; // New field
+
+    Widget WithCache() {
+        this->useCache = true;
+        return *this;
+    }
+
+    Widget WithDisabled(bool state) {
+        this->disabled = state;
+        return *this;
+    }
+
 
     Widget BindText(std::string *textPtr)
     {
@@ -331,9 +420,12 @@ struct Widget
         SDL_Rect hitbox = style.positionChangesBounds ? visualRect : rect;
 
         WidgetDebug activeDebug = getActiveDebug(parentDebug);
-        bool currentlyHovered = (input.mouseX >= hitbox.x && input.mouseX <= hitbox.x + hitbox.w &&
-                                 input.mouseY >= hitbox.y && input.mouseY <= hitbox.y + hitbox.h);
-
+        bool currentlyHovered = false;
+        if (!this->disabled) {
+            currentlyHovered = (input.mouseX >= hitbox.x && input.mouseX <= hitbox.x + hitbox.w &&
+                                input.mouseY >= hitbox.y && input.mouseY <= hitbox.y + hitbox.h);
+        }
+        
         bool isFocused = false;
 
         // 2. STATE UPDATES & INTERACTION
@@ -341,6 +433,8 @@ struct Widget
         {
             // Save visual position for debug arrow rendering
             g_WidgetRects[this->id] = visualRect;
+            g_DisabledStates[this->id] = this->disabled;       // Store disabled state
+            g_NavigationLinks[this->id] = this->nav;           // Store nav links
 
             bool justGainedFocus = (!g_UIState[this->id].isFocused && (g_FocusedWidgetId == this->id));
             isFocused = (g_FocusedWidgetId == this->id);
@@ -353,77 +447,52 @@ struct Widget
                 g_TextFieldState[this->id].selectionAnchor = g_TextFieldState[this->id].cursorPosition;
 
             // Handle Mouse Click & Focus Gain
-            if (currentlyHovered && input.mouseClicked)
-            {
-                g_UIState[this->id].isClicked = true;
-                g_NextFocusedWidgetId = this->id; // Clicking focuses the widget
-                if (onClickFn)
-                    onClickFn();
+            
+                if (!this->disabled && currentlyHovered && input.mouseClicked)
+                {
+                    g_UIState[this->id].isClicked = true;
+                    g_NextFocusedWidgetId = this->id;
+                    if (onClickFn) onClickFn();                // --- 2.2 Input Capture Highlight ---
+                if (g_Settings.highlightInputCapture)
+                {
+                    SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+                    SDL_SetRenderDrawColor(renderer, 0, 255, 0, 150); // Flash Green
+                    SDL_RenderFillRect(renderer, &hitbox);
+                }
             }
 
             // 3. KEYBOARD NAVIGATION HANDLING
-            if (isFocused && input.keyPressed != SDLK_UNKNOWN)
+            if (isFocused && !this->disabled && input.keyPressed != SDLK_UNKNOWN)
             {
-                if (input.keyPressed == SDLK_UP)
-                {
-                    NavLog(this->id, "UP", nav.up);
-                    if (!nav.up.empty())
-                        g_NextFocusedWidgetId = nav.up;
+                if (input.keyPressed == SDLK_UP) {
+                    g_NextFocusedWidgetId = ResolveNavTarget(this->id, "up");
+                    NavLog(this->id, "UP", g_NextFocusedWidgetId);
                 }
-                else if (input.keyPressed == SDLK_DOWN)
-                {
-                    NavLog(this->id, "DOWN", nav.down);
-                    if (!nav.down.empty())
-                        g_NextFocusedWidgetId = nav.down;
+                else if (input.keyPressed == SDLK_DOWN) {
+                    g_NextFocusedWidgetId = ResolveNavTarget(this->id, "down");
+                    NavLog(this->id, "DOWN", g_NextFocusedWidgetId);
                 }
-                else if (input.keyPressed == SDLK_LEFT)
-                {
-                    if (boundText == nullptr)
-                    {
-                        NavLog(this->id, "LEFT", nav.left);
-                        if (!nav.left.empty())
-                            g_NextFocusedWidgetId = nav.left;
-                    }
-                    else if (g_TextFieldState[this->id].cursorPosition == 0 && !(input.keyMod & KMOD_SHIFT))
-                    {
-                        // Allow focus escape with left arrow when cursor is already at the start.
-                        NavLog(this->id, "LEFT", nav.left);
-                        if (!nav.left.empty())
-                            g_NextFocusedWidgetId = nav.left;
+                else if (input.keyPressed == SDLK_LEFT) {
+                    if (boundText == nullptr || (g_TextFieldState[this->id].cursorPosition == 0 && !(input.keyMod & KMOD_SHIFT))) {
+                        g_NextFocusedWidgetId = ResolveNavTarget(this->id, "left");
+                        NavLog(this->id, "LEFT", g_NextFocusedWidgetId);
                     }
                 }
-                else if (input.keyPressed == SDLK_RIGHT)
-                {
-                    if (boundText == nullptr)
-                    {
-                        NavLog(this->id, "RIGHT", nav.right);
-                        if (!nav.right.empty())
-                            g_NextFocusedWidgetId = nav.right;
-                    }
-                    else if (g_TextFieldState[this->id].cursorPosition == (int)boundText->length() && !(input.keyMod & KMOD_SHIFT))
-                    {
-                        // Allow focus escape with right arrow when cursor is already at the end.
-                        NavLog(this->id, "RIGHT", nav.right);
-                        if (!nav.right.empty())
-                            g_NextFocusedWidgetId = nav.right;
+                else if (input.keyPressed == SDLK_RIGHT) {
+                    if (boundText == nullptr || (g_TextFieldState[this->id].cursorPosition == (int)boundText->length() && !(input.keyMod & KMOD_SHIFT))) {
+                        g_NextFocusedWidgetId = ResolveNavTarget(this->id, "right");
+                        NavLog(this->id, "RIGHT", g_NextFocusedWidgetId);
                     }
                 }
-                else if (input.keyPressed == SDLK_TAB)
-                {
-                    if (input.keyMod & KMOD_SHIFT)
-                    {
-                        NavLog(this->id, "SHIFT+TAB", nav.prev);
-                        if (!nav.prev.empty())
-                            g_NextFocusedWidgetId = nav.prev;
-                    }
-                    else
-                    {
-                        NavLog(this->id, "TAB", nav.next);
-                        if (!nav.next.empty())
-                            g_NextFocusedWidgetId = nav.next;
+                else if (input.keyPressed == SDLK_TAB) {
+                    if (input.keyMod & KMOD_SHIFT) {
+                        g_NextFocusedWidgetId = ResolveNavTarget(this->id, "prev");
+                        NavLog(this->id, "SHIFT+TAB", g_NextFocusedWidgetId);
+                    } else {
+                        g_NextFocusedWidgetId = ResolveNavTarget(this->id, "next");
+                        NavLog(this->id, "TAB", g_NextFocusedWidgetId);
                     }
                 }
-
                 // Trigger Action (Enter key)
                 if (input.keyPressed == this->triggerKey)
                 {
@@ -440,7 +509,7 @@ struct Widget
             }
 
             // 4. TEXT INPUT LOGIC (TextField handling)
-            if (isFocused && boundText != nullptr)
+            if (isFocused && !this->disabled && boundText != nullptr)            
             {
                 bool changed = false;
                 bool typed = false;
@@ -628,8 +697,82 @@ struct Widget
 
         // 5. PAINT
         // We pass the visualRect (the offset one) to the paint function
-        if (paint)
-            paint(renderer, visualRect, style, input, children, activeDebug);
+// Find "5. PAINT" in your Widget::render method and replace it with this:
+
+        // 5. PAINT & CACHE
+        if (this->useCache && !this->id.empty()) 
+        {
+            WidgetCache& cache = g_WidgetCache[this->id];
+            bool dirty = false;
+
+            // Determine if the widget's visuals need to be refreshed
+            if (cache.lastW != visualRect.w || cache.lastH != visualRect.h) dirty = true;
+            if (cache.lastHovered != currentlyHovered) dirty = true;
+            if (cache.lastFocused != isFocused) dirty = true;
+            // Any global keystroke or text typing usually means we should invalidate UI caches
+            if (input.mouseClicked || input.keyPressed != SDLK_UNKNOWN || !input.textInput.empty()) dirty = true;
+            if (g_UIState[this->id].isManuallyAnimated) dirty = true;
+
+            // If state changed OR texture doesn't exist, draw to texture
+            if (dirty || !cache.texture) 
+            {
+                if (cache.texture) SDL_DestroyTexture(cache.texture);
+                cache.texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, 
+                                                SDL_TEXTUREACCESS_TARGET, visualRect.w, visualRect.h);
+                SDL_SetTextureBlendMode(cache.texture, SDL_BLENDMODE_BLEND);
+
+                // Redirect rendering to our cache texture
+                SDL_SetRenderTarget(renderer, cache.texture);
+                SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0); // Transparent background
+                SDL_RenderClear(renderer);
+
+                // Call the widget's paint function starting at local coordinates {0, 0}
+                SDL_Rect localRect = {0, 0, visualRect.w, visualRect.h};
+                if (paint) paint(renderer, localRect, style, input, children, activeDebug);
+
+                // Restore rendering back to the screen
+                SDL_SetRenderTarget(renderer, nullptr);
+
+                // Update cached states
+                cache.lastW = visualRect.w;
+                cache.lastH = visualRect.h;
+                cache.lastHovered = currentlyHovered;
+                cache.lastFocused = isFocused;
+            }
+
+            // Draw the cached texture to the screen
+            SDL_RenderCopy(renderer, cache.texture, nullptr, &visualRect);
+        }
+        else 
+        {
+            // Normal immediate rendering (No Cache)
+            if (paint)
+                paint(renderer, visualRect, style, input, children, activeDebug);
+        }
+        // --- 3.2 Paint-Flash Mode ---
+        if (g_Settings.paintFlashMode)
+        {
+            SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+            SDL_SetRenderDrawColor(renderer, rand() % 255, rand() % 255, rand() % 255, 40); // Random tint flash per render call
+            SDL_RenderFillRect(renderer, &visualRect);
+        }
+
+        // --- 1.2 Clip Rect Visualization ---
+        if (g_Settings.showClipRects)
+        {
+            SDL_Rect clip;
+            if (SDL_RenderIsClipEnabled(renderer))
+            {
+                SDL_RenderGetClipRect(renderer, &clip);
+                SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+                SDL_SetRenderDrawColor(renderer, 255, 128, 0, 200); // Bright orange dashed clip bounds
+                SDL_RenderDrawRect(renderer, &clip);
+                
+                // Draw an inner rect to make it thicker and easier to see
+                SDL_Rect innerClip = {clip.x + 1, clip.y + 1, clip.w - 2, clip.h - 2};
+                SDL_RenderDrawRect(renderer, &innerClip);
+            }
+        }
 
         // 6. DEBUG OVERLAYS
         if (activeDebug.enabled)
@@ -655,3 +798,4 @@ struct Widget
         }
     }
 };
+

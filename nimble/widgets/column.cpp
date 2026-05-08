@@ -2,8 +2,25 @@
 #include <numeric>
 #include <algorithm>
 
+static bool WidgetContainsFocusedId(const Widget& w, const std::string& focusedId) {
+    if (w.id == focusedId) return true;
+    for (const auto& child : w.children)
+        if (WidgetContainsFocusedId(child, focusedId)) return true;
+    return false;
+}
+
+
+static Widget* FindNavWidget(Widget& w) {
+    // Skip wrapper widgets that have no real id or a placeholder id
+    if (!w.id.empty() && w.id != "Opacity" && w.id != "Expanded" && w.id != "Padding")
+        return &w;
+    for (auto& c : w.children)
+        if (auto* found = FindNavWidget(c)) return found;
+    return nullptr;
+}
+
 namespace Widgets {
-    inline Widget Column(MainAxisAlignment mainAlign, CrossAxisAlignment crossAlign, int spacing, const std::vector<Widget> &children, ScrollBehavior scroll = ScrollBehavior::None, ScrollAxis axis = ScrollAxis::Vertical, std::string id = "",float expandX = 0.0f, float expandY = 0.0f) {
+    inline Widget Column(MainAxisAlignment mainAlign, CrossAxisAlignment crossAlign, int spacing, const std::vector<Widget> &children, ScrollBehavior scroll = ScrollBehavior::None, ScrollAxis axis = ScrollAxis::Vertical, std::string id = "",float expandX = 0.0f, float expandY = 0.0f,bool autoSetupNav = false) {
         // Intrinsic size: only used when a parent shrink-wraps this Column.
         int intrinsicH = 0, intrinsicW = 0;
         for (const auto &c : children) {
@@ -17,9 +34,23 @@ namespace Widgets {
         w.children = children;
         w.expandX = std::max(0.0f, expandX);
         w.expandY = std::max(0.0f, expandY);
+
+        // ── Auto nav wiring ───────────────────────────────────────────────
+            if (autoSetupNav) {
+                std::vector<Widget*> navWidgets;
+                for (auto& child : w.children) {
+                    Widget* inner = FindNavWidget(child);
+                    if (inner) navWidgets.push_back(inner);
+                }
+                for (size_t i = 0; i < navWidgets.size(); ++i) {
+                    if (i > 0) {
+                        navWidgets[i]->nav.up       = navWidgets[i-1]->id;
+                        navWidgets[i-1]->nav.down   = navWidgets[i]->id;
+                    }
+                }
+            }
         
-        w.paint =[mainAlign, crossAlign, spacing, scroll, axis, id](SDL_Renderer *r, SDL_Rect rect, const WidgetStyle& st, const InputState& in, const std::vector<Widget>& childs, WidgetDebug dbg) {
-            if (rect.w <= 0 || rect.h <= 0) return;
+        w.paint =[mainAlign, crossAlign, spacing, scroll, axis, id, autoSetupNav, w](SDL_Renderer *r, SDL_Rect rect, const WidgetStyle& st, const InputState& in, const std::vector<Widget>& childs, WidgetDebug dbg) mutable {            if (rect.w <= 0 || rect.h <= 0) return;
 
             int actualFixedH = 0;
             float totalFlexY = 0.0f;
@@ -60,6 +91,34 @@ namespace Widgets {
             }
             if (maxScrollX == 0) scr.targetX = 0;
             if (maxScrollY == 0) scr.targetY = 0;
+
+            // ── Auto-scroll to focused widget ────────────────────────────────────
+            if (canScrollY && !g_FocusedWidgetId.empty()) {
+                int scanY = 0;
+                for (const auto& c : childs) {
+                    int ch = c.size.y;
+                    if (c.expandY > 0.0f)
+                        ch = (totalFlexY > 0.0f) ? (int)(flexSpaceY * (c.expandY / totalFlexY)) : 0;
+
+                    if (WidgetContainsFocusedId(c, g_FocusedWidgetId)) {
+                        int childTop      = scanY;
+                        int childBottom   = scanY + ch;
+                        int visibleTop    = (int)scr.targetY;
+                        int visibleBottom = (int)scr.targetY + rect.h;
+
+                        if (childTop < visibleTop)
+                            scr.targetY = (float)childTop - spacing;
+                        else if (childBottom > visibleBottom)
+                            scr.targetY = (float)(childBottom - rect.h) + spacing;
+
+                        scr.targetY = std::clamp(scr.targetY, 0.0f, (float)maxScrollY);
+                        break;
+                    }
+                    scanY += ch + spacing;
+                }
+            }
+
+            
 
             SDL_Rect prevClip;
             bool hasClip = SDL_RenderIsClipEnabled(r);
@@ -149,15 +208,88 @@ namespace Widgets {
             }
 
             // --- Column Debug Visualization ---
+            // --- Column Debug Visualization ---
             if (dbg.enabled && dbg.showColumn) {
-                SDL_SetRenderDrawBlendMode(r, SDL_BLENDMODE_BLEND);
-                SDL_SetRenderDrawColor(r, 255, 100, 100, 120); // Light Red / Pink for Column
-                SDL_RenderDrawRect(r, &rect);
-                
-                // Draw vertical main axis line
-                SDL_RenderDrawLine(r, rect.x + rect.w / 2, rect.y, rect.x + rect.w / 2, rect.y + rect.h);
-            }
-        };
+                    SDL_SetRenderDrawBlendMode(r, SDL_BLENDMODE_BLEND);
+
+                    // Draw column bounds
+                    SDL_SetRenderDrawColor(r, 255, 100, 100, 120);
+                    SDL_RenderDrawRect(r, &rect);
+
+                    // Draw vertical main axis line
+                    SDL_SetRenderDrawColor(r, 255, 100, 100, 80);
+                    SDL_RenderDrawLine(r, rect.x + rect.w / 2, rect.y,
+                                        rect.x + rect.w / 2, rect.y + rect.h);
+
+                    // ── Overflow detection ────────────────────────────────────────────
+                    // Recompute the real content height (same logic as above, no scroll offset)
+                    int contentH = 0;
+                    for (const auto& c : childs) {
+                        contentH += (c.expandY > 0.0f && totalFlexY > 0.0f)
+                                        ? (int)(flexSpaceY * (c.expandY / totalFlexY))
+                                        : (int)c.size.y;
+                    }
+                    if (!childs.empty()) contentH += spacing * (int)(childs.size() - 1);
+
+                    int overflowY = contentH - rect.h;
+
+                    if (overflowY > 0) {
+                        // Red hatched zone below the column rect
+                        SDL_Rect overflowRect = { rect.x, rect.y + rect.h, rect.w, overflowY };
+
+                        // Solid tinted background
+                        SDL_SetRenderDrawColor(r, 255, 50, 50, 55);
+                        SDL_RenderFillRect(r, &overflowRect);
+
+                        // Diagonal hatch lines (like DevTools)
+                        SDL_SetRenderDrawColor(r, 255, 80, 80, 130);
+                        const int HATCH_STEP = 8;
+                        for (int offset = 0; offset < overflowRect.w + overflowRect.h; offset += HATCH_STEP) {
+                            int x1 = overflowRect.x + offset;
+                            int y1 = overflowRect.y;
+                            int x2 = overflowRect.x;
+                            int y2 = overflowRect.y + offset;
+                            // Clamp to overflowRect bounds
+                            if (x1 > overflowRect.x + overflowRect.w) {
+                                y1 += x1 - (overflowRect.x + overflowRect.w);
+                                x1  = overflowRect.x + overflowRect.w;
+                            }
+                            if (y2 > overflowRect.y + overflowRect.h) {
+                                x2 += y2 - (overflowRect.y + overflowRect.h);
+                                y2  = overflowRect.y + overflowRect.h;
+                            }
+                            SDL_RenderDrawLine(r, x1, y1, x2, y2);
+                        }
+
+                        // Dashed border around the overflow zone
+                        SDL_SetRenderDrawColor(r, 255, 60, 60, 200);
+                        const int DASH = 6;
+                        for (int x = overflowRect.x; x < overflowRect.x + overflowRect.w; x += DASH * 2) {
+                            SDL_RenderDrawLine(r, x,              overflowRect.y,
+                                                x + DASH,       overflowRect.y);
+                            SDL_RenderDrawLine(r, x,              overflowRect.y + overflowRect.h,
+                                                x + DASH,       overflowRect.y + overflowRect.h);
+                        }
+                        SDL_RenderDrawLine(r, overflowRect.x,              overflowRect.y,
+                                            overflowRect.x,              overflowRect.y + overflowRect.h);
+                        SDL_RenderDrawLine(r, overflowRect.x + overflowRect.w, overflowRect.y,
+                                            overflowRect.x + overflowRect.w, overflowRect.y + overflowRect.h);
+
+                        // "overflow: Npx" label badge — rendered via SDL_ttf if you have a debug font,
+                        // or just a filled pill as a placeholder if not
+                        // Pill background
+                        char label[32];
+                        snprintf(label, sizeof(label), "overflow: %dpx", overflowY);
+                        int labelX = rect.x + 4;
+                        int labelY = rect.y + rect.h + 3;
+                        SDL_Rect pill = { labelX - 2, labelY - 1, (int)(strlen(label) * 6) + 6, 13 };
+                        SDL_SetRenderDrawColor(r, 220, 40, 40, 230);
+                        SDL_RenderFillRect(r, &pill);
+                        // If you have a small debug TTF font available, render `label` here.
+                        // e.g.: DrawTextSmall(r, label, labelX, labelY, {255,255,255,255});
+                    }
+                }
+            };
         
         return w;
     }

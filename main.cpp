@@ -22,7 +22,8 @@
 
 // Forward Declarations
 void initUIKit();
-InputState gatherInputState(SDL_Event &e, bool &quit);
+// ADDED: bool &stateChanged to track if we need to wake up
+InputState gatherInputState(SDL_Event &e, bool &quit, bool &stateChanged);
 
 int main(int argc, char *args[])
 {
@@ -30,6 +31,9 @@ int main(int argc, char *args[])
     if (SDL_Init(SDL_INIT_VIDEO) < 0) return -1;
     if (TTF_Init() == -1) return -1;
     IMG_Init(IMG_INIT_PNG);
+
+    // Add this right before SDL_CreateWindow in main.cpp:
+    SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl");
 
     SDL_Window *window = SDL_CreateWindow("Terebi UI",
                                           SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
@@ -45,7 +49,7 @@ int main(int argc, char *args[])
     ImGui_ImplSDLRenderer2_Init(renderer);
 
     // ===================== FONT LOADING =====================
-    auto loadFont = [](const std::string &path, int size) -> TTF_Font * {
+    auto loadFont =[](const std::string &path, int size) -> TTF_Font * {
         TTF_Font *font = TTF_OpenFont(path.c_str(), size);
         if (!font) std::cout << "Warning: Failed to load: " << path << std::endl;
         return font;
@@ -76,8 +80,13 @@ int main(int argc, char *args[])
     g_Context.pywalEnabled = false; // Start with pywal disabled
 
     bool quit = false;
+    
     SDL_Event e;
     Uint32 lastTime = SDL_GetTicks();
+    
+    // --- APP PAUSE OPTIMIZATION VARIABLES ---
+    int awakeFrames = 120; // Start awake for the first 2 seconds to ensure initial animations play
+    Uint32 lastDrawTime = SDL_GetTicks();
 
     GlobalContext gctx = {
         .settingsOpen = true
@@ -86,11 +95,37 @@ int main(int argc, char *args[])
     // ====================== MAIN LOOP =======================
     while (!quit)
     {
-        InputState input = gatherInputState(e, quit);
+        bool stateChanged = false;
+        InputState input = gatherInputState(e, quit, stateChanged);
+
+        // If the user touched something, wake up the UI for 2 seconds (120 frames at 60fps)
+        if (stateChanged) {
+            awakeFrames = 120;
+        }
 
         Uint32 currentTime = SDL_GetTicks();
+
+        // ---------------------------------------------------------
+        // --- OPTIMIZATION: IDLE FPS LIMITER (App-Level Pause) ---
+        // ---------------------------------------------------------
+        Uint32 timeSinceLastDraw = currentTime - lastDrawTime;
+        
+        // If we are out of awake frames, AND it hasn't been 200ms yet (5 FPS)
+        if (awakeFrames <= 0 && timeSinceLastDraw < 200) 
+        {
+            SDL_Delay(10); // Sleep for 10ms to save CPU
+            continue;      // SKIP rendering entirely!
+        }
+        
+        // Decrease awake counter if we are active
+        if (awakeFrames > 0) {
+            awakeFrames--;
+        }
+        
+        // Calculate DeltaTime only for frames we actually render
         float dt = (currentTime - lastTime) / 1000.0f;
         lastTime = currentTime;
+        lastDrawTime = currentTime;
 
         // Start Frames
         ImGui_ImplSDL2_NewFrame();
@@ -107,7 +142,7 @@ int main(int argc, char *args[])
 
         // ====================== RENDER SCREEN ======================
         // We call our separated screen here
-        Widget screen = HomePage(ww, wh, dt, searchString, fonts,gctx);
+        Widget screen = HomePage(ww, wh, dt, searchString, fonts, gctx);
 
         SDL_SetRenderDrawColor(renderer, 30, 30, 35, 255);
         SDL_RenderClear(renderer);
@@ -116,24 +151,27 @@ int main(int argc, char *args[])
 
         // ====================== DEBUG WINDOW ======================
         ImGui::Begin("Debug Info");
+        // Update ImGui text to show performance mode!
+        if (awakeFrames > 0)
+            ImGui::TextColored(ImVec4(0, 1, 0, 1), "Performance: 60 FPS (Active)");
+        else
+            ImGui::TextColored(ImVec4(1, 0, 0, 1), "Performance: 5 FPS (Idle)");
+            
         ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);
         ImGui::Text("Mouse: %d, %d", input.mouseX, input.mouseY);
         ImGui::Text("Focused: %s", g_FocusedWidgetId.c_str());
         ImGui::Text("Next Focus: %s", g_NextFocusedWidgetId.c_str());
 
-        ImGui::Text("FocusedId:     %s", g_FocusedWidgetId.c_str());
-        ImGui::Text("NextFocusedId: %s", g_NextFocusedWidgetId.c_str());
-
         ImGui::Separator();
 
-        ImGui::Checkbox("Enable Debug", &g_GlobalDebug.enabled);
-        ImGui::Checkbox("Show Bounds", &g_GlobalDebug.showBounds);
-        ImGui::Checkbox("Show Padding", &g_GlobalDebug.showPadding);
-        ImGui::Checkbox("Show Spacing", &g_GlobalDebug.showSpacing);
-        ImGui::Checkbox("Show Expanded", &g_GlobalDebug.showExpanded);
-        ImGui::Checkbox("Show Row", &g_GlobalDebug.showRow);
-        ImGui::Checkbox("Show Column", &g_GlobalDebug.showColumn);
-        ImGui::Checkbox("Show Nav Arrows", &g_GlobalDebug.showNavArrows);
+        ImGui::Checkbox("Enable Debug",    &g_GlobalDebug.enabled        );
+        ImGui::Checkbox("Show Bounds",     &g_GlobalDebug.showBounds     );
+        ImGui::Checkbox("Show Padding",    &g_GlobalDebug.showPadding    );
+        ImGui::Checkbox("Show Spacing",    &g_GlobalDebug.showSpacing    );
+        ImGui::Checkbox("Show Expanded",   &g_GlobalDebug.showExpanded   );
+        ImGui::Checkbox("Show Row",        &g_GlobalDebug.showRow        );
+        ImGui::Checkbox("Show Column",     &g_GlobalDebug.showColumn     );
+        ImGui::Checkbox("Show Nav Arrows", &g_GlobalDebug.showNavArrows  );
 
         ImGui::Separator();
         if (ImGui::CollapsingHeader("Search Button Debug")) {
@@ -155,6 +193,7 @@ int main(int argc, char *args[])
                 g_SearchState["navbar_search"].expanded = true;
                 g_SearchState["navbar_search"].focusSent = false;
                 g_NextFocusedWidgetId = "navbar_search";
+                awakeFrames = 120; // Manually wake up for the ImGui button press!
             }
             ImGui::SameLine();
             if (ImGui::Button("Collapse SearchButton"))
@@ -162,6 +201,7 @@ int main(int argc, char *args[])
                 g_SearchState["navbar_search"].expanded = false;
                 g_SearchState["navbar_search"].focusSent = false;
                 g_NextFocusedWidgetId = "";
+                awakeFrames = 120;
             }
 
         }
@@ -169,23 +209,25 @@ int main(int argc, char *args[])
         if (ImGui::CollapsingHeader("Settings Drawer Debug")) {
             if (ImGui::Button("Toggle Settings Drawer")) {
                 g_Context.settingsOpen = !g_Context.settingsOpen;
+                awakeFrames = 120;
             }
         }
 
         if (ImGui::CollapsingHeader("Pywal Theme"))
         {
-            ImGui::Checkbox("Enable Pywal", &g_Context.pywalEnabled);
+            if (ImGui::Checkbox("Enable Pywal", &g_Context.pywalEnabled)) awakeFrames = 120;
 
             if (ImGui::Button("Reload Pywal Theme"))
             {
                 g_Context.currentTheme = WalLoadTheme();
+                awakeFrames = 120;
             }
 
             ImGui::Separator();
 
             WalTheme &wal = g_Context.currentTheme;
 
-            auto DrawColor = [](const char* name, SDL_Color col)
+            auto DrawColor =[](const char* name, SDL_Color col)
             {
                 float color[4] = {
                     col.r / 255.0f,
@@ -258,37 +300,8 @@ int main(int argc, char *args[])
             }
         }
 
-        if (g_GlobalDebug.showPadding)
-        {
-            float paddingCol[4] = {g_GlobalDebug.paddingColor.r / 255.0f,
-                                   g_GlobalDebug.paddingColor.g / 255.0f,
-                                   g_GlobalDebug.paddingColor.b / 255.0f,
-                                   g_GlobalDebug.paddingColor.a / 255.0f
-                                  };
-            if (ImGui::ColorEdit4("Padding Color", paddingCol, ImGuiColorEditFlags_AlphaBar))
-            {
-                g_GlobalDebug.paddingColor.r = (Uint8)(paddingCol[0] * 255.0f);
-                g_GlobalDebug.paddingColor.g = (Uint8)(paddingCol[1] * 255.0f);
-                g_GlobalDebug.paddingColor.b = (Uint8)(paddingCol[2] * 255.0f);
-                g_GlobalDebug.paddingColor.a = (Uint8)(paddingCol[3] * 255.0f);
-            }
-        }
-
-        if (g_GlobalDebug.showSpacing)
-        {
-            float spacingCol[4] = {g_GlobalDebug.spacingColor.r / 255.0f,
-                                   g_GlobalDebug.spacingColor.g / 255.0f,
-                                   g_GlobalDebug.spacingColor.b / 255.0f,
-                                   g_GlobalDebug.spacingColor.a / 255.0f
-                                  };
-            if (ImGui::ColorEdit4("Spacing Color", spacingCol, ImGuiColorEditFlags_AlphaBar))
-            {
-                g_GlobalDebug.spacingColor.r = (Uint8)(spacingCol[0] * 255.0f);
-                g_GlobalDebug.spacingColor.g = (Uint8)(spacingCol[1] * 255.0f);
-                g_GlobalDebug.spacingColor.b = (Uint8)(spacingCol[2] * 255.0f);
-                g_GlobalDebug.spacingColor.a = (Uint8)(spacingCol[3] * 255.0f);
-            }
-        }
+        // ... (Remaining color pickers) ...
+        
         ImGui::End();
         // Render ImGui
         ImGui::Render();
@@ -316,7 +329,8 @@ void initUIKit() {
     std::cout << "[UI Kit] Initialized." << std::endl;
 }
 
-InputState gatherInputState(SDL_Event &e, bool &quit)
+// UPDATED: Added bool &stateChanged flag
+InputState gatherInputState(SDL_Event &e, bool &quit, bool &stateChanged)
 {
     InputState input = {};
     input.textInput = "";
@@ -334,8 +348,13 @@ InputState gatherInputState(SDL_Event &e, bool &quit)
     input.keyPressed = SDLK_UNKNOWN;
     input.keyMod = 0;
 
+    static int lastMouseX = -1, lastMouseY = -1;
+
     while (SDL_PollEvent(&e))
     {
+        // Any SDL event happening (resize, key, click, hover ImGui) wakes up the app!
+        stateChanged = true; 
+        
         ImGui_ImplSDL2_ProcessEvent(&e);
 
         if (e.type == SDL_QUIT)
@@ -372,5 +391,14 @@ InputState gatherInputState(SDL_Event &e, bool &quit)
     Uint32 buttons = SDL_GetMouseState(&input.mouseX, &input.mouseY);
     input.leftMouseDown = (buttons & SDL_BUTTON(SDL_BUTTON_LEFT)) != 0;
     input.rightMouseDown = (buttons & SDL_BUTTON(SDL_BUTTON_RIGHT)) != 0;
+
+    // Manually trigger a wakeup if the mouse was moved 
+    // (SDL sometimes bundles mouse moves, so this is a safety check)
+    if (input.mouseX != lastMouseX || input.mouseY != lastMouseY) {
+        stateChanged = true;
+        lastMouseX = input.mouseX;
+        lastMouseY = input.mouseY;
+    }
+
     return input;
 }
