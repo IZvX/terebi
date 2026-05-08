@@ -5,8 +5,8 @@
 #include <algorithm>
 #include <functional>
 #include <cctype>
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_ttf.h>
+#include <SDL3/SDL.h>
+#include <SDL3_ttf/SDL_ttf.h>
 
 struct Alignment
 {
@@ -306,7 +306,8 @@ inline bool ProcessTextFieldEvent(const std::string &id, std::string &text, cons
     // --- KEYBOARD ACTIONS ---
     else if (e.type == SDL_KEYDOWN)
     {
-        switch (e.key.keysym.sym)
+        // SDL2 -> SDL3 migration: keyboard keycode is now on e.key.key.
+        switch (e.key.key)
         {
         case SDLK_LEFT:
         {
@@ -394,6 +395,11 @@ struct ScrollState
 {
     float scrollX = 0, scrollY = 0;
     float targetX = 0, targetY = 0;
+    // Auto-scroll state for dynamic content containers (e.g. columns).
+    float lastMaxScrollX = 0.0f;
+    float lastMaxScrollY = 0.0f;
+    bool stickToBottomY = true;
+    std::string lastFocusedWidgetId = "";
 };
 
 struct IconData
@@ -405,6 +411,39 @@ inline std::unordered_map<std::string, AnimState> g_UIState;
 inline std::unordered_map<std::string, ScrollState> g_ScrollState;
 inline std::unordered_map<std::string, TextFieldState> g_TextFieldState;
 inline std::unordered_map<std::string, SDL_Texture *> g_ClipTextureCache;
+
+inline bool HasPendingVisualUpdates()
+{
+    // Any in-flight animation requires another frame.
+    for (const auto &pair : g_UIState)
+    {
+        const AnimState &anim = pair.second;
+        // Click pulse is transient and should request redraw while active.
+        if (anim.isClicked)
+            return true;
+        // NOTE: isManuallyAnimated being true does not necessarily mean "still changing".
+        // Only progress values that are between stable endpoints should keep repainting.
+        if (anim.hoverProgress > 0.001f && anim.hoverProgress < 0.999f)
+            return true;
+        if (anim.focusProgress > 0.001f && anim.focusProgress < 0.999f)
+            return true;
+        if (anim.clickProgress > 0.001f && anim.clickProgress < 0.999f)
+            return true;
+        if (anim.manualProgress > 0.001f && anim.manualProgress < 0.999f)
+            return true;
+    }
+
+    // Smooth scrolling lerp also needs redraw while converging.
+    for (const auto &pair : g_ScrollState)
+    {
+        const ScrollState &scroll = pair.second;
+        if (std::fabs(scroll.scrollX - scroll.targetX) > 0.05f ||
+            std::fabs(scroll.scrollY - scroll.targetY) > 0.05f)
+            return true;
+    }
+
+    return false;
+}
 
 inline SDL_Texture *GetClipTexture(SDL_Renderer *r, int w, int h, const std::string &id)
 {

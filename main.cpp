@@ -1,8 +1,12 @@
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-#include <SDL2/SDL_ttf.h>
+#include <SDL3/SDL.h>
+#include <SDL3_image/SDL_image.h>
+#include <SDL3_ttf/SDL_ttf.h>
 #include <iostream>
 #include <string>
+#include <vector>
+#include <algorithm>
+#include <unordered_set>
+#include "nimble/utils/sdl_compat.h"
 
 // Include your UI Kit
 #include "nimble/nimble.cpp"
@@ -10,8 +14,8 @@
 #include "fontawesome/fontawesome.h"
 
 // ImGui
-#include "imgui/backends/imgui_impl_sdl2.h"
-#include "imgui/backends/imgui_impl_sdlrenderer2.h"
+#include "imgui/backends/imgui_impl_sdl3.h"
+#include "imgui/backends/imgui_impl_sdlrenderer3.h"
 #include "imgui/imgui.h"
 
 // --- Include your new separated files ---
@@ -24,29 +28,118 @@
 void initUIKit();
 // ADDED: bool &stateChanged to track if we need to wake up
 InputState gatherInputState(SDL_Event &e, bool &quit, bool &stateChanged);
+InputState gatherInputState(SDL_Event &e, bool &quit, bool &stateChanged, int waitTimeoutMs);
+
+static bool HasRendererDriver(const char *name)
+{
+    const int numDrivers = SDL_GetNumRenderDrivers();
+    for (int i = 0; i < numDrivers; ++i)
+    {
+        const char *driver = SDL_GetRenderDriver(i);
+        if (driver && SDL_strcasecmp(driver, name) == 0)
+            return true;
+    }
+    return false;
+}
+
+static SDL_Renderer *CreateBestRenderer(SDL_Window *window, const std::string &preferredRenderer)
+{
+    // SDL2 -> SDL3 migration: renderer creation now accepts a driver name.
+    // Prefer Vulkan when supported; otherwise pick the next available GPU backend.
+    std::vector<const char *> preferredDrivers = {
+        "vulkan",
+        "metal",
+        "direct3d12",
+        "direct3d11",
+        "opengl",
+        "opengles2"
+    };
+
+    if (!preferredRenderer.empty())
+    {
+        preferredDrivers.erase(
+            std::remove_if(
+                preferredDrivers.begin(),
+                preferredDrivers.end(),
+                [&](const char *driver) { return SDL_strcasecmp(driver, preferredRenderer.c_str()) == 0; }),
+            preferredDrivers.end());
+        preferredDrivers.insert(preferredDrivers.begin(), preferredRenderer.c_str());
+    }
+
+    std::unordered_set<std::string> triedDrivers;
+    auto tryDriver = [&](const char *driverName) -> SDL_Renderer * {
+        if (!driverName) return nullptr;
+        std::string key = driverName;
+        if (triedDrivers.count(key)) return nullptr;
+        triedDrivers.insert(key);
+
+        SDL_Renderer *candidate = SDL_CreateRenderer(window, driverName);
+        if (!candidate) return nullptr;
+
+        const char *active = SDL_GetRendererName(candidate);
+        if (active && SDL_strcasecmp(active, "software") == 0)
+        {
+            SDL_DestroyRenderer(candidate);
+            return nullptr;
+        }
+        return candidate;
+    };
+
+    for (const char *driver : preferredDrivers)
+    {
+        if (!HasRendererDriver(driver))
+            continue;
+        if (SDL_Renderer *renderer = tryDriver(driver))
+            return renderer;
+    }
+
+    // Dynamic fallback: try every available non-software backend.
+    const int numDrivers = SDL_GetNumRenderDrivers();
+    for (int i = 0; i < numDrivers; ++i)
+    {
+        const char *driver = SDL_GetRenderDriver(i);
+        if (SDL_Renderer *renderer = tryDriver(driver))
+            return renderer;
+    }
+
+    // Last resort.
+    return SDL_CreateRenderer(window, "software");
+}
 
 int main(int argc, char *args[])
 {
+    std::string preferredRenderer;
+    for (int i = 1; i < argc; ++i)
+    {
+        const std::string arg = args[i];
+        if ((arg == "-r" || arg == "--renderer") && (i + 1) < argc)
+        {
+            preferredRenderer = args[++i];
+        }
+    }
+
     // ====================== INITIALIZATION ======================
-    if (SDL_Init(SDL_INIT_VIDEO) < 0) return -1;
+    if (!SDL_Init(SDL_INIT_VIDEO)) return -1;
     if (TTF_Init() == -1) return -1;
     IMG_Init(IMG_INIT_PNG);
 
-    // Add this right before SDL_CreateWindow in main.cpp:
-    SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl");
+    // SDL2 -> SDL3 migration: present-vsync is now controlled with SDL_HINT_RENDER_VSYNC.
+    SDL_SetHint(SDL_HINT_RENDER_VSYNC, "1");
 
+    // SDL2 -> SDL3 migration: SDL_CreateWindow() no longer accepts x/y position parameters.
     SDL_Window *window = SDL_CreateWindow("Terebi UI",
-                                          SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
                                           800, 600,
-                                          SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL);
+                                          SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL);
 
-    SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+    SDL_Renderer *renderer = CreateBestRenderer(window, preferredRenderer);
+    if (!renderer) return -1;
 
     // ====================== ImGui INIT ======================
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
-    ImGui_ImplSDL2_InitForSDLRenderer(window, renderer);
-    ImGui_ImplSDLRenderer2_Init(renderer);
+    // SDL2 -> SDL3 migration: backend names changed from SDL2/SDLRenderer2 to SDL3/SDLRenderer3.
+    ImGui_ImplSDL3_InitForSDLRenderer(window, renderer);
+    ImGui_ImplSDLRenderer3_Init(renderer);
 
     // ===================== FONT LOADING =====================
     auto loadFont =[](const std::string &path, int size) -> TTF_Font * {
@@ -80,13 +173,14 @@ int main(int argc, char *args[])
     g_Context.pywalEnabled = false; // Start with pywal disabled
 
     bool quit = false;
-    
+
     SDL_Event e;
-    Uint32 lastTime = SDL_GetTicks();
-    
-    // --- APP PAUSE OPTIMIZATION VARIABLES ---
-    int awakeFrames = 120; // Start awake for the first 2 seconds to ensure initial animations play
-    Uint32 lastDrawTime = SDL_GetTicks();
+    // SDL2 -> SDL3 migration: timer APIs in SDL3 use 64-bit millisecond values.
+    Uint64 lastTime = SDL_GetTicks();
+
+    // --- Render scheduling / performance variables ---
+    int awakeFrames = 120; // retained for debug/UI signaling
+    Uint64 lastDrawTime = SDL_GetTicks();
 
     GlobalContext gctx = {
         .settingsOpen = true
@@ -96,40 +190,35 @@ int main(int argc, char *args[])
     while (!quit)
     {
         bool stateChanged = false;
-        InputState input = gatherInputState(e, quit, stateChanged);
+        const bool likelyIdle = (awakeFrames <= 0) && !HasPendingVisualUpdates();
+        InputState input = gatherInputState(e, quit, stateChanged, likelyIdle ? 16 : 0);
 
-        // If the user touched something, wake up the UI for 2 seconds (120 frames at 60fps)
+        // Keep wake signal for debug/UI instrumentation.
         if (stateChanged) {
             awakeFrames = 120;
         }
 
-        Uint32 currentTime = SDL_GetTicks();
+        Uint64 currentTime = SDL_GetTicks();
+        const bool pendingVisualUpdates = HasPendingVisualUpdates();
+        const bool shouldRender = stateChanged || pendingVisualUpdates || (awakeFrames > 0);
 
-        // ---------------------------------------------------------
-        // --- OPTIMIZATION: IDLE FPS LIMITER (App-Level Pause) ---
-        // ---------------------------------------------------------
-        Uint32 timeSinceLastDraw = currentTime - lastDrawTime;
-        
-        // If we are out of awake frames, AND it hasn't been 200ms yet (5 FPS)
-        if (awakeFrames <= 0 && timeSinceLastDraw < 200) 
-        {
-            SDL_Delay(10); // Sleep for 10ms to save CPU
-            continue;      // SKIP rendering entirely!
+        if (!shouldRender) {
+            continue;
         }
-        
+
         // Decrease awake counter if we are active
         if (awakeFrames > 0) {
             awakeFrames--;
         }
-        
-        // Calculate DeltaTime only for frames we actually render
+
+        // Calculate DeltaTime only for frames we actually render.
         float dt = (currentTime - lastTime) / 1000.0f;
         lastTime = currentTime;
         lastDrawTime = currentTime;
 
         // Start Frames
-        ImGui_ImplSDL2_NewFrame();
-        ImGui_ImplSDLRenderer2_NewFrame();
+        ImGui_ImplSDL3_NewFrame();
+        ImGui_ImplSDLRenderer3_NewFrame();
         ImGui::NewFrame();
 
         // UI Kit Frame Management
@@ -151,27 +240,38 @@ int main(int argc, char *args[])
 
         // ====================== DEBUG WINDOW ======================
         ImGui::Begin("Debug Info");
-        // Update ImGui text to show performance mode!
-        if (awakeFrames > 0)
-            ImGui::TextColored(ImVec4(0, 1, 0, 1), "Performance: 60 FPS (Active)");
-        else
-            ImGui::TextColored(ImVec4(1, 0, 0, 1), "Performance: 5 FPS (Idle)");
-            
+        ImGui::TextColored(ImVec4(0, 1, 0, 1), "Performance: %s", pendingVisualUpdates ? "Animated" : "Idle/event-driven");
+
         ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);
         ImGui::Text("Mouse: %d, %d", input.mouseX, input.mouseY);
+        ImGui::Text("Renderer: %s", SDL_GetRendererName(renderer));
         ImGui::Text("Focused: %s", g_FocusedWidgetId.c_str());
         ImGui::Text("Next Focus: %s", g_NextFocusedWidgetId.c_str());
 
         ImGui::Separator();
 
-        ImGui::Checkbox("Enable Debug",    &g_GlobalDebug.enabled        );
-        ImGui::Checkbox("Show Bounds",     &g_GlobalDebug.showBounds     );
-        ImGui::Checkbox("Show Padding",    &g_GlobalDebug.showPadding    );
-        ImGui::Checkbox("Show Spacing",    &g_GlobalDebug.showSpacing    );
-        ImGui::Checkbox("Show Expanded",   &g_GlobalDebug.showExpanded   );
-        ImGui::Checkbox("Show Row",        &g_GlobalDebug.showRow        );
-        ImGui::Checkbox("Show Column",     &g_GlobalDebug.showColumn     );
-        ImGui::Checkbox("Show Nav Arrows", &g_GlobalDebug.showNavArrows  );
+        if (ImGui::CollapsingHeader("Global Settings")) {
+            ImGui::Checkbox("Show Widget IDs", &g_Settings.showWidgetIds);
+            ImGui::Checkbox("Show Clip Rects", &g_Settings.showClipRects);
+            ImGui::Checkbox("Show Flex Weights", &g_Settings.showFlexWeights);
+            ImGui::Checkbox("Show Focus Loop", &g_Settings.showFocusLoop);
+            ImGui::Checkbox("Highlight Input Capture", &g_Settings.highlightInputCapture);
+            ImGui::Checkbox("Slow Animations", &g_Settings.slowAnimations);
+            ImGui::Checkbox("Paint Flash Mode", &g_Settings.paintFlashMode);
+            ImGui::Checkbox("Show FPS Overlay", &g_Settings.showFPSOverlay);
+            ImGui::Checkbox("Trigger State Reset", &g_Settings.triggerStateReset);
+        }
+
+        if (ImGui::CollapsingHeader("Debug Draw")) {
+            ImGui::Checkbox("Enable Debug",    &g_GlobalDebug.enabled        );
+            ImGui::Checkbox("Show Bounds",     &g_GlobalDebug.showBounds     );
+            ImGui::Checkbox("Show Padding",    &g_GlobalDebug.showPadding    );
+            ImGui::Checkbox("Show Spacing",    &g_GlobalDebug.showSpacing    );
+            ImGui::Checkbox("Show Expanded",   &g_GlobalDebug.showExpanded   );
+            ImGui::Checkbox("Show Row",        &g_GlobalDebug.showRow        );
+            ImGui::Checkbox("Show Column",     &g_GlobalDebug.showColumn     );
+            ImGui::Checkbox("Show Nav Arrows", &g_GlobalDebug.showNavArrows  );
+        }
 
         ImGui::Separator();
         if (ImGui::CollapsingHeader("Search Button Debug")) {
@@ -301,18 +401,18 @@ int main(int argc, char *args[])
         }
 
         // ... (Remaining color pickers) ...
-        
+
         ImGui::End();
         // Render ImGui
         ImGui::Render();
-        ImGui_ImplSDLRenderer2_RenderDrawData(ImGui::GetDrawData(), renderer);
+        ImGui_ImplSDLRenderer3_RenderDrawData(ImGui::GetDrawData(), renderer);
 
         SDL_RenderPresent(renderer);
     }
 
     // ====================== CLEANUP ======================
-    ImGui_ImplSDLRenderer2_Shutdown();
-    ImGui_ImplSDL2_Shutdown();
+    ImGui_ImplSDLRenderer3_Shutdown();
+    ImGui_ImplSDL3_Shutdown();
     ImGui::DestroyContext();
 
     SDL_DestroyRenderer(renderer);
@@ -332,6 +432,11 @@ void initUIKit() {
 // UPDATED: Added bool &stateChanged flag
 InputState gatherInputState(SDL_Event &e, bool &quit, bool &stateChanged)
 {
+    return gatherInputState(e, quit, stateChanged, 0);
+}
+
+InputState gatherInputState(SDL_Event &e, bool &quit, bool &stateChanged, int waitTimeoutMs)
+{
     InputState input = {};
     input.textInput = "";
     input.backspacePressed = false;
@@ -348,57 +453,63 @@ InputState gatherInputState(SDL_Event &e, bool &quit, bool &stateChanged)
     input.keyPressed = SDLK_UNKNOWN;
     input.keyMod = 0;
 
-    static int lastMouseX = -1, lastMouseY = -1;
+    auto processEvent = [&](SDL_Event &ev)
+    {
+        // Any SDL event happening (resize, key, click, hover ImGui) wakes up the app!
+        stateChanged = true;
+
+        ImGui_ImplSDL3_ProcessEvent(&ev);
+
+        if (ev.type == SDL_EVENT_QUIT)
+            quit = true;
+        else if (ev.type == SDL_EVENT_MOUSE_BUTTON_DOWN)
+        {
+            if (ev.button.button == SDL_BUTTON_LEFT)
+                input.mouseClicked = true;
+            else if (ev.button.button == SDL_BUTTON_RIGHT)
+                input.rightMouseClicked = true;
+        }
+        else if (ev.type == SDL_EVENT_MOUSE_WHEEL)
+        {
+            input.mouseWheelX = (float)ev.wheel.x;
+            input.mouseWheelY = (float)ev.wheel.y;
+        }
+        else if (ev.type == SDL_EVENT_KEY_DOWN)
+        {
+            // SDL2 -> SDL3 migration: keyboard event key/mod moved from keysym to key/mod fields.
+            input.keyPressed = ev.key.key;
+            input.keyMod = ev.key.mod;
+            input.backspacePressed = (ev.key.key == SDLK_BACKSPACE);
+            input.deletePressed = (ev.key.key == SDLK_DELETE);
+            input.leftPressed = (ev.key.key == SDLK_LEFT);
+            input.rightPressed = (ev.key.key == SDLK_RIGHT);
+            input.enterPressed =
+                (ev.key.key == SDLK_RETURN || ev.key.key == SDLK_KP_ENTER);
+        }
+        else if (ev.type == SDL_EVENT_TEXT_INPUT)
+        {
+            input.textInput += ev.text.text;
+        }
+    };
+
+    if (waitTimeoutMs > 0)
+    {
+        if (SDL_WaitEventTimeout(&e, waitTimeoutMs))
+            processEvent(e);
+    }
 
     while (SDL_PollEvent(&e))
     {
-        // Any SDL event happening (resize, key, click, hover ImGui) wakes up the app!
-        stateChanged = true; 
-        
-        ImGui_ImplSDL2_ProcessEvent(&e);
-
-        if (e.type == SDL_QUIT)
-            quit = true;
-        else if (e.type == SDL_MOUSEBUTTONDOWN)
-        {
-            if (e.button.button == SDL_BUTTON_LEFT)
-                input.mouseClicked = true;
-            else if (e.button.button == SDL_BUTTON_RIGHT)
-                input.rightMouseClicked = true;
-        }
-        else if (e.type == SDL_MOUSEWHEEL)
-        {
-            input.mouseWheelX = (float)e.wheel.x;
-            input.mouseWheelY = (float)e.wheel.y;
-        }
-        else if (e.type == SDL_KEYDOWN)
-        {
-            input.keyPressed = e.key.keysym.sym;
-            input.keyMod = e.key.keysym.mod;
-            input.backspacePressed = (e.key.keysym.sym == SDLK_BACKSPACE);
-            input.deletePressed = (e.key.keysym.sym == SDLK_DELETE);
-            input.leftPressed = (e.key.keysym.sym == SDLK_LEFT);
-            input.rightPressed = (e.key.keysym.sym == SDLK_RIGHT);
-            input.enterPressed =
-                (e.key.keysym.sym == SDLK_RETURN || e.key.keysym.sym == SDLK_KP_ENTER);
-        }
-        else if (e.type == SDL_TEXTINPUT)
-        {
-            input.textInput += e.text.text;
-        }
+        processEvent(e);
     }
 
-    Uint32 buttons = SDL_GetMouseState(&input.mouseX, &input.mouseY);
-    input.leftMouseDown = (buttons & SDL_BUTTON(SDL_BUTTON_LEFT)) != 0;
-    input.rightMouseDown = (buttons & SDL_BUTTON(SDL_BUTTON_RIGHT)) != 0;
-
-    // Manually trigger a wakeup if the mouse was moved 
-    // (SDL sometimes bundles mouse moves, so this is a safety check)
-    if (input.mouseX != lastMouseX || input.mouseY != lastMouseY) {
-        stateChanged = true;
-        lastMouseX = input.mouseX;
-        lastMouseY = input.mouseY;
-    }
+    float mouseX = 0.0f;
+    float mouseY = 0.0f;
+    Uint32 buttons = SDL_GetMouseState(&mouseX, &mouseY);
+    input.mouseX = (int)mouseX;
+    input.mouseY = (int)mouseY;
+    input.leftMouseDown = (buttons & SDL_BUTTON_MASK(SDL_BUTTON_LEFT)) != 0;
+    input.rightMouseDown = (buttons & SDL_BUTTON_MASK(SDL_BUTTON_RIGHT)) != 0;
 
     return input;
 }

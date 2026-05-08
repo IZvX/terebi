@@ -79,21 +79,43 @@ namespace Widgets {
 
             std::string sId = id.empty() ? ("scr_col_" + std::to_string(rect.x) + "_" + std::to_string(rect.y)) : id;
             ScrollState& scr = g_ScrollState[sId];
+            const float prevMaxScrollY = scr.lastMaxScrollY;
+            const bool wasNearBottom = (prevMaxScrollY <= 1.0f) || (scr.targetY >= prevMaxScrollY - 2.0f);
 
             bool isHovered = (in.mouseX >= rect.x && in.mouseX <= rect.x + rect.w &&
                               in.mouseY >= rect.y && in.mouseY <= rect.y + rect.h);
+            const bool userScrolledThisFrame = isHovered && canScrollY && (in.mouseWheelY != 0.0f);
 
             if (isHovered) {
                 if (canScrollX && in.mouseWheelX != 0) scr.targetX -= in.mouseWheelX * 40.0f;
-                if (canScrollY && in.mouseWheelY != 0) scr.targetY -= in.mouseWheelY * 40.0f;
+                if (canScrollY && in.mouseWheelY != 0) {
+                    scr.targetY -= in.mouseWheelY * 40.0f;
+                    // User scrolled upward: stop sticky auto-follow.
+                    if (in.mouseWheelY > 0.0f) scr.stickToBottomY = false;
+                }
                 scr.targetX = std::clamp(scr.targetX, 0.0f, (float)maxScrollX);
                 scr.targetY = std::clamp(scr.targetY, 0.0f, (float)maxScrollY);
             }
             if (maxScrollX == 0) scr.targetX = 0;
             if (maxScrollY == 0) scr.targetY = 0;
 
+            // If content changes while user is at the end (or auto-follow is enabled),
+            // stay pinned to bottom. Otherwise preserve current reading position.
+            if (canScrollY && maxScrollY != (int)prevMaxScrollY) {
+                if (scr.stickToBottomY || wasNearBottom) {
+                    scr.targetY = (float)maxScrollY;
+                    scr.stickToBottomY = true;
+                } else {
+                    scr.targetY = std::clamp(scr.targetY, 0.0f, (float)maxScrollY);
+                }
+            }
+
             // ── Auto-scroll to focused widget ────────────────────────────────────
-            if (canScrollY && !g_FocusedWidgetId.empty()) {
+            // Focus auto-scroll should only occur on focus transitions, not every frame.
+            const bool focusChanged = (scr.lastFocusedWidgetId != g_FocusedWidgetId);
+            scr.lastFocusedWidgetId = g_FocusedWidgetId;
+
+            if (canScrollY && !g_FocusedWidgetId.empty() && focusChanged && !userScrolledThisFrame) {
                 int scanY = 0;
                 for (const auto& c : childs) {
                     int ch = c.size.y;
@@ -112,11 +134,22 @@ namespace Widgets {
                             scr.targetY = (float)(childBottom - rect.h) + spacing;
 
                         scr.targetY = std::clamp(scr.targetY, 0.0f, (float)maxScrollY);
+                        // Focus-follow is intentional programmatic scroll, not user disengagement.
+                        if (scr.targetY >= (float)maxScrollY - 2.0f) {
+                            scr.stickToBottomY = true;
+                        }
                         break;
                     }
                     scanY += ch + spacing;
                 }
             }
+
+            if (canScrollY && scr.targetY >= (float)maxScrollY - 2.0f) {
+                scr.stickToBottomY = true;
+            }
+
+            scr.lastMaxScrollX = (float)maxScrollX;
+            scr.lastMaxScrollY = (float)maxScrollY;
 
             
 

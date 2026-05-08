@@ -3,12 +3,13 @@ project(sdl_app)
 
 set(CMAKE_CXX_STANDARD 17)
 
-find_package(SDL2 REQUIRED)
+find_package(SDL3 REQUIRED CONFIG)
+find_package(SDL3_image REQUIRED CONFIG)
+find_package(SDL3_ttf REQUIRED CONFIG)
 
 include_directories(
     ./imgui
     ./nimble
-    ${SDL2_INCLUDE_DIRS}
 )
 
 add_executable(sdl_app
@@ -18,13 +19,14 @@ add_executable(sdl_app
     imgui/imgui_draw.cpp
     imgui/imgui_widgets.cpp
     imgui/imgui_tables.cpp
-    imgui/backends/imgui_impl_sdl2.cpp
-    imgui/backends/imgui_impl_sdlrenderer2.cpp
+    imgui/backends/imgui_impl_sdl3.cpp
+    imgui/backends/imgui_impl_sdlrenderer3.cpp
 )
 
+target_compile_definitions(sdl_app PRIVATE SDL_ENABLE_OLD_NAMES)
+
 target_link_libraries(sdl_app
-    ${SDL2_LIBRARIES}
-    SDL2_gfx
-    SDL2_ttf
-    SDL2_image
+    SDL3::SDL3
+    SDL3_image::SDL3_image
+    SDL3_ttf::SDL3_ttf
 )
