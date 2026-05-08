@@ -44,3 +44,6 @@
 #include "widgets/clip.cpp"
 #include "widgets/position.cpp"
 #include "widgets/opacity.cpp"
+
+// --- Shader-Inspired Widgets (RoundedBoxShader, BoxShadow, BlurShader, Glassmorphism) ---
+#include "utils/shader_widgets.h"

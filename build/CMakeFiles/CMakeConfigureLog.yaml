@@ -20,9 +20,6 @@ events:
     names:
       - "uname"
     candidate_directories:
-      - "/opt/flutter/bin/cache/dart-sdk/bin/"
-      - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/"
-      - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/"
       - "/usr/local/sbin/"
       - "/usr/local/bin/"
       - "/usr/bin/"
@@ -35,17 +32,11 @@ events:
       - "/opt/flutter/bin/"
       - "/bin/"
     searched_directories:
-      - "/opt/flutter/bin/cache/dart-sdk/bin/uname"
-      - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/uname"
-      - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/uname"
       - "/usr/local/sbin/uname"
       - "/usr/local/bin/uname"
     found: "/usr/bin/uname"
     search_context:
       ENV{PATH}:
-        - "/opt/flutter/bin/cache/dart-sdk/bin/"
-        - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/debugCommand"
-        - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/copilotCli"
         - "/usr/local/sbin"
         - "/usr/local/bin"
         - "/usr/bin"
@@ -54,8 +45,6 @@ events:
         - "/usr/bin/site_perl"
         - "/usr/bin/vendor_perl"
         - "/usr/bin/core_perl"
-        - "/home/yfz/.local/bin"
-        - "/opt/flutter/bin"
         - "/home/yfz/.local/bin"
         - "/opt/flutter/bin"
         - "/home/yfz/.local/bin"
@@ -87,9 +76,6 @@ events:
       - "ninja"
       - "samu"
     candidate_directories:
-      - "/opt/flutter/bin/cache/dart-sdk/bin/"
-      - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/"
-      - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/"
       - "/usr/local/sbin/"
       - "/usr/local/bin/"
       - "/usr/bin/"
@@ -101,15 +87,6 @@ events:
       - "/home/yfz/.local/bin/"
       - "/opt/flutter/bin/"
     searched_directories:
-      - "/opt/flutter/bin/cache/dart-sdk/bin/ninja-build"
-      - "/opt/flutter/bin/cache/dart-sdk/bin/ninja"
-      - "/opt/flutter/bin/cache/dart-sdk/bin/samu"
-      - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/ninja-build"
-      - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/ninja"
-      - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/samu"
-      - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/ninja-build"
-      - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/ninja"
-      - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/samu"
       - "/usr/local/sbin/ninja-build"
       - "/usr/local/sbin/ninja"
       - "/usr/local/sbin/samu"
@@ -120,9 +97,6 @@ events:
     found: "/usr/bin/ninja"
     search_context:
       ENV{PATH}:
-        - "/opt/flutter/bin/cache/dart-sdk/bin/"
-        - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/debugCommand"
-        - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/copilotCli"
         - "/usr/local/sbin"
         - "/usr/local/bin"
         - "/usr/bin"
@@ -131,8 +105,6 @@ events:
         - "/usr/bin/site_perl"
         - "/usr/bin/vendor_perl"
         - "/usr/bin/core_perl"
-        - "/home/yfz/.local/bin"
-        - "/opt/flutter/bin"
         - "/home/yfz/.local/bin"
         - "/opt/flutter/bin"
         - "/home/yfz/.local/bin"
@@ -162,9 +134,6 @@ events:
       - "icx"
       - "clang"
     candidate_directories:
-      - "/opt/flutter/bin/cache/dart-sdk/bin/"
-      - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/"
-      - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/"
       - "/usr/local/sbin/"
       - "/usr/local/bin/"
       - "/usr/bin/"
@@ -176,17 +145,11 @@ events:
       - "/home/yfz/.local/bin/"
       - "/opt/flutter/bin/"
     searched_directories:
-      - "/opt/flutter/bin/cache/dart-sdk/bin/cc"
-      - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/cc"
-      - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/cc"
       - "/usr/local/sbin/cc"
       - "/usr/local/bin/cc"
     found: "/usr/bin/cc"
     search_context:
       ENV{PATH}:
-        - "/opt/flutter/bin/cache/dart-sdk/bin/"
-        - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/debugCommand"
-        - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/copilotCli"
         - "/usr/local/sbin"
         - "/usr/local/bin"
         - "/usr/bin"
@@ -195,8 +158,6 @@ events:
         - "/usr/bin/site_perl"
         - "/usr/bin/vendor_perl"
         - "/usr/bin/core_perl"
-        - "/home/yfz/.local/bin"
-        - "/opt/flutter/bin"
         - "/home/yfz/.local/bin"
         - "/opt/flutter/bin"
         - "/home/yfz/.local/bin"
@@ -227,9 +188,6 @@ events:
     found: "/usr/share/cmake/Modules/CMakeCCompilerId.c.in"
     search_context:
       ENV{PATH}:
-        - "/opt/flutter/bin/cache/dart-sdk/bin/"
-        - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/debugCommand"
-        - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/copilotCli"
         - "/usr/local/sbin"
         - "/usr/local/bin"
         - "/usr/bin"
@@ -238,8 +196,6 @@ events:
         - "/usr/bin/site_perl"
         - "/usr/bin/vendor_perl"
         - "/usr/bin/core_perl"
-        - "/home/yfz/.local/bin"
-        - "/opt/flutter/bin"
         - "/home/yfz/.local/bin"
         - "/opt/flutter/bin"
         - "/home/yfz/.local/bin"
@@ -286,9 +242,6 @@ events:
       - "ar"
     candidate_directories:
       - "/usr/bin/"
-      - "/opt/flutter/bin/cache/dart-sdk/bin/"
-      - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/"
-      - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/"
       - "/usr/local/sbin/"
       - "/usr/local/bin/"
       - "/var/lib/flatpak/exports/bin/"
@@ -301,9 +254,6 @@ events:
     found: "/usr/bin/ar"
     search_context:
       ENV{PATH}:
-        - "/opt/flutter/bin/cache/dart-sdk/bin/"
-        - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/debugCommand"
-        - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/copilotCli"
         - "/usr/local/sbin"
         - "/usr/local/bin"
         - "/usr/bin"
@@ -312,8 +262,6 @@ events:
         - "/usr/bin/site_perl"
         - "/usr/bin/vendor_perl"
         - "/usr/bin/core_perl"
-        - "/home/yfz/.local/bin"
-        - "/opt/flutter/bin"
         - "/home/yfz/.local/bin"
         - "/opt/flutter/bin"
         - "/home/yfz/.local/bin"
@@ -338,9 +286,6 @@ events:
       - "ranlib"
     candidate_directories:
       - "/usr/bin/"
-      - "/opt/flutter/bin/cache/dart-sdk/bin/"
-      - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/"
-      - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/"
       - "/usr/local/sbin/"
       - "/usr/local/bin/"
       - "/var/lib/flatpak/exports/bin/"
@@ -353,9 +298,6 @@ events:
     found: "/usr/bin/ranlib"
     search_context:
       ENV{PATH}:
-        - "/opt/flutter/bin/cache/dart-sdk/bin/"
-        - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/debugCommand"
-        - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/copilotCli"
         - "/usr/local/sbin"
         - "/usr/local/bin"
         - "/usr/bin"
@@ -364,8 +306,6 @@ events:
         - "/usr/bin/site_perl"
         - "/usr/bin/vendor_perl"
         - "/usr/bin/core_perl"
-        - "/home/yfz/.local/bin"
-        - "/opt/flutter/bin"
         - "/home/yfz/.local/bin"
         - "/opt/flutter/bin"
         - "/home/yfz/.local/bin"
@@ -390,9 +330,6 @@ events:
       - "strip"
     candidate_directories:
       - "/usr/bin/"
-      - "/opt/flutter/bin/cache/dart-sdk/bin/"
-      - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/"
-      - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/"
       - "/usr/local/sbin/"
       - "/usr/local/bin/"
       - "/var/lib/flatpak/exports/bin/"
@@ -405,9 +342,6 @@ events:
     found: "/usr/bin/strip"
     search_context:
       ENV{PATH}:
-        - "/opt/flutter/bin/cache/dart-sdk/bin/"
-        - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/debugCommand"
-        - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/copilotCli"
         - "/usr/local/sbin"
         - "/usr/local/bin"
         - "/usr/bin"
@@ -416,8 +350,6 @@ events:
         - "/usr/bin/site_perl"
         - "/usr/bin/vendor_perl"
         - "/usr/bin/core_perl"
-        - "/home/yfz/.local/bin"
-        - "/opt/flutter/bin"
         - "/home/yfz/.local/bin"
         - "/opt/flutter/bin"
         - "/home/yfz/.local/bin"
@@ -442,9 +374,6 @@ events:
       - "ld"
     candidate_directories:
       - "/usr/bin/"
-      - "/opt/flutter/bin/cache/dart-sdk/bin/"
-      - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/"
-      - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/"
       - "/usr/local/sbin/"
       - "/usr/local/bin/"
       - "/var/lib/flatpak/exports/bin/"
@@ -457,9 +386,6 @@ events:
     found: "/usr/bin/ld"
     search_context:
       ENV{PATH}:
-        - "/opt/flutter/bin/cache/dart-sdk/bin/"
-        - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/debugCommand"
-        - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/copilotCli"
         - "/usr/local/sbin"
         - "/usr/local/bin"
         - "/usr/bin"
@@ -468,8 +394,6 @@ events:
         - "/usr/bin/site_perl"
         - "/usr/bin/vendor_perl"
         - "/usr/bin/core_perl"
-        - "/home/yfz/.local/bin"
-        - "/opt/flutter/bin"
         - "/home/yfz/.local/bin"
         - "/opt/flutter/bin"
         - "/home/yfz/.local/bin"
@@ -494,9 +418,6 @@ events:
       - "nm"
     candidate_directories:
       - "/usr/bin/"
-      - "/opt/flutter/bin/cache/dart-sdk/bin/"
-      - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/"
-      - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/"
       - "/usr/local/sbin/"
       - "/usr/local/bin/"
       - "/var/lib/flatpak/exports/bin/"
@@ -509,9 +430,6 @@ events:
     found: "/usr/bin/nm"
     search_context:
       ENV{PATH}:
-        - "/opt/flutter/bin/cache/dart-sdk/bin/"
-        - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/debugCommand"
-        - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/copilotCli"
         - "/usr/local/sbin"
         - "/usr/local/bin"
         - "/usr/bin"
@@ -520,8 +438,6 @@ events:
         - "/usr/bin/site_perl"
         - "/usr/bin/vendor_perl"
         - "/usr/bin/core_perl"
-        - "/home/yfz/.local/bin"
-        - "/opt/flutter/bin"
         - "/home/yfz/.local/bin"
         - "/opt/flutter/bin"
         - "/home/yfz/.local/bin"
@@ -546,9 +462,6 @@ events:
       - "objdump"
     candidate_directories:
       - "/usr/bin/"
-      - "/opt/flutter/bin/cache/dart-sdk/bin/"
-      - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/"
-      - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/"
       - "/usr/local/sbin/"
       - "/usr/local/bin/"
       - "/var/lib/flatpak/exports/bin/"
@@ -561,9 +474,6 @@ events:
     found: "/usr/bin/objdump"
     search_context:
       ENV{PATH}:
-        - "/opt/flutter/bin/cache/dart-sdk/bin/"
-        - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/debugCommand"
-        - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/copilotCli"
         - "/usr/local/sbin"
         - "/usr/local/bin"
         - "/usr/bin"
@@ -572,8 +482,6 @@ events:
         - "/usr/bin/site_perl"
         - "/usr/bin/vendor_perl"
         - "/usr/bin/core_perl"
-        - "/home/yfz/.local/bin"
-        - "/opt/flutter/bin"
         - "/home/yfz/.local/bin"
         - "/opt/flutter/bin"
         - "/home/yfz/.local/bin"
@@ -598,9 +506,6 @@ events:
       - "objcopy"
     candidate_directories:
       - "/usr/bin/"
-      - "/opt/flutter/bin/cache/dart-sdk/bin/"
-      - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/"
-      - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/"
       - "/usr/local/sbin/"
       - "/usr/local/bin/"
       - "/var/lib/flatpak/exports/bin/"
@@ -613,9 +518,6 @@ events:
     found: "/usr/bin/objcopy"
     search_context:
       ENV{PATH}:
-        - "/opt/flutter/bin/cache/dart-sdk/bin/"
-        - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/debugCommand"
-        - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/copilotCli"
         - "/usr/local/sbin"
         - "/usr/local/bin"
         - "/usr/bin"
@@ -624,8 +526,6 @@ events:
         - "/usr/bin/site_perl"
         - "/usr/bin/vendor_perl"
         - "/usr/bin/core_perl"
-        - "/home/yfz/.local/bin"
-        - "/opt/flutter/bin"
         - "/home/yfz/.local/bin"
         - "/opt/flutter/bin"
         - "/home/yfz/.local/bin"
@@ -650,9 +550,6 @@ events:
       - "readelf"
     candidate_directories:
       - "/usr/bin/"
-      - "/opt/flutter/bin/cache/dart-sdk/bin/"
-      - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/"
-      - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/"
       - "/usr/local/sbin/"
       - "/usr/local/bin/"
       - "/var/lib/flatpak/exports/bin/"
@@ -665,9 +562,6 @@ events:
     found: "/usr/bin/readelf"
     search_context:
       ENV{PATH}:
-        - "/opt/flutter/bin/cache/dart-sdk/bin/"
-        - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/debugCommand"
-        - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/copilotCli"
         - "/usr/local/sbin"
         - "/usr/local/bin"
         - "/usr/bin"
@@ -676,8 +570,6 @@ events:
         - "/usr/bin/site_perl"
         - "/usr/bin/vendor_perl"
         - "/usr/bin/core_perl"
-        - "/home/yfz/.local/bin"
-        - "/opt/flutter/bin"
         - "/home/yfz/.local/bin"
         - "/opt/flutter/bin"
         - "/home/yfz/.local/bin"
@@ -702,9 +594,6 @@ events:
       - "dlltool"
     candidate_directories:
       - "/usr/bin/"
-      - "/opt/flutter/bin/cache/dart-sdk/bin/"
-      - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/"
-      - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/"
       - "/usr/local/sbin/"
       - "/usr/local/bin/"
       - "/var/lib/flatpak/exports/bin/"
@@ -716,9 +605,6 @@ events:
       - "/opt/flutter/bin/"
     searched_directories:
       - "/usr/bin/dlltool"
-      - "/opt/flutter/bin/cache/dart-sdk/bin/dlltool"
-      - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/dlltool"
-      - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/dlltool"
       - "/usr/local/sbin/dlltool"
       - "/usr/local/bin/dlltool"
       - "/var/lib/flatpak/exports/bin/dlltool"
@@ -731,9 +617,6 @@ events:
     found: false
     search_context:
       ENV{PATH}:
-        - "/opt/flutter/bin/cache/dart-sdk/bin/"
-        - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/debugCommand"
-        - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/copilotCli"
         - "/usr/local/sbin"
         - "/usr/local/bin"
         - "/usr/bin"
@@ -742,8 +625,6 @@ events:
         - "/usr/bin/site_perl"
         - "/usr/bin/vendor_perl"
         - "/usr/bin/core_perl"
-        - "/home/yfz/.local/bin"
-        - "/opt/flutter/bin"
         - "/home/yfz/.local/bin"
         - "/opt/flutter/bin"
         - "/home/yfz/.local/bin"
@@ -768,9 +649,6 @@ events:
       - "addr2line"
     candidate_directories:
       - "/usr/bin/"
-      - "/opt/flutter/bin/cache/dart-sdk/bin/"
-      - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/"
-      - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/"
       - "/usr/local/sbin/"
       - "/usr/local/bin/"
       - "/var/lib/flatpak/exports/bin/"
@@ -783,9 +661,6 @@ events:
     found: "/usr/bin/addr2line"
     search_context:
       ENV{PATH}:
-        - "/opt/flutter/bin/cache/dart-sdk/bin/"
-        - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/debugCommand"
-        - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/copilotCli"
         - "/usr/local/sbin"
         - "/usr/local/bin"
         - "/usr/bin"
@@ -794,8 +669,6 @@ events:
         - "/usr/bin/site_perl"
         - "/usr/bin/vendor_perl"
         - "/usr/bin/core_perl"
-        - "/home/yfz/.local/bin"
-        - "/opt/flutter/bin"
         - "/home/yfz/.local/bin"
         - "/opt/flutter/bin"
         - "/home/yfz/.local/bin"
@@ -820,9 +693,6 @@ events:
       - "tapi"
     candidate_directories:
       - "/usr/bin/"
-      - "/opt/flutter/bin/cache/dart-sdk/bin/"
-      - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/"
-      - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/"
       - "/usr/local/sbin/"
       - "/usr/local/bin/"
       - "/var/lib/flatpak/exports/bin/"
@@ -834,9 +704,6 @@ events:
       - "/opt/flutter/bin/"
     searched_directories:
       - "/usr/bin/tapi"
-      - "/opt/flutter/bin/cache/dart-sdk/bin/tapi"
-      - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/tapi"
-      - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/tapi"
       - "/usr/local/sbin/tapi"
       - "/usr/local/bin/tapi"
       - "/var/lib/flatpak/exports/bin/tapi"
@@ -849,9 +716,6 @@ events:
     found: false
     search_context:
       ENV{PATH}:
-        - "/opt/flutter/bin/cache/dart-sdk/bin/"
-        - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/debugCommand"
-        - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/copilotCli"
         - "/usr/local/sbin"
         - "/usr/local/bin"
         - "/usr/bin"
@@ -860,8 +724,6 @@ events:
         - "/usr/bin/site_perl"
         - "/usr/bin/vendor_perl"
         - "/usr/bin/core_perl"
-        - "/home/yfz/.local/bin"
-        - "/opt/flutter/bin"
         - "/home/yfz/.local/bin"
         - "/opt/flutter/bin"
         - "/home/yfz/.local/bin"
@@ -889,9 +751,6 @@ events:
       - "gcc-ar"
     candidate_directories:
       - "/usr/bin/"
-      - "/opt/flutter/bin/cache/dart-sdk/bin/"
-      - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/"
-      - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/"
       - "/usr/local/sbin/"
       - "/usr/local/bin/"
       - "/var/lib/flatpak/exports/bin/"
@@ -903,9 +762,6 @@ events:
       - "/opt/flutter/bin/"
     searched_directories:
       - "/usr/bin/gcc-ar-15.2"
-      - "/opt/flutter/bin/cache/dart-sdk/bin/gcc-ar-15.2"
-      - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/gcc-ar-15.2"
-      - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/gcc-ar-15.2"
       - "/usr/local/sbin/gcc-ar-15.2"
       - "/usr/local/bin/gcc-ar-15.2"
       - "/var/lib/flatpak/exports/bin/gcc-ar-15.2"
@@ -916,9 +772,6 @@ events:
       - "/home/yfz/.local/bin/gcc-ar-15.2"
       - "/opt/flutter/bin/gcc-ar-15.2"
       - "/usr/bin/gcc-ar-15"
-      - "/opt/flutter/bin/cache/dart-sdk/bin/gcc-ar-15"
-      - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/gcc-ar-15"
-      - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/gcc-ar-15"
       - "/usr/local/sbin/gcc-ar-15"
       - "/usr/local/bin/gcc-ar-15"
       - "/var/lib/flatpak/exports/bin/gcc-ar-15"
@@ -929,9 +782,6 @@ events:
       - "/home/yfz/.local/bin/gcc-ar-15"
       - "/opt/flutter/bin/gcc-ar-15"
       - "/usr/bin/gcc-ar15"
-      - "/opt/flutter/bin/cache/dart-sdk/bin/gcc-ar15"
-      - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/gcc-ar15"
-      - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/gcc-ar15"
       - "/usr/local/sbin/gcc-ar15"
       - "/usr/local/bin/gcc-ar15"
       - "/var/lib/flatpak/exports/bin/gcc-ar15"
@@ -944,9 +794,6 @@ events:
     found: "/usr/bin/gcc-ar"
     search_context:
       ENV{PATH}:
-        - "/opt/flutter/bin/cache/dart-sdk/bin/"
-        - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/debugCommand"
-        - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/copilotCli"
         - "/usr/local/sbin"
         - "/usr/local/bin"
         - "/usr/bin"
@@ -955,8 +802,6 @@ events:
         - "/usr/bin/site_perl"
         - "/usr/bin/vendor_perl"
         - "/usr/bin/core_perl"
-        - "/home/yfz/.local/bin"
-        - "/opt/flutter/bin"
         - "/home/yfz/.local/bin"
         - "/opt/flutter/bin"
         - "/home/yfz/.local/bin"
@@ -984,9 +829,6 @@ events:
       - "gcc-ranlib"
     candidate_directories:
       - "/usr/bin/"
-      - "/opt/flutter/bin/cache/dart-sdk/bin/"
-      - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/"
-      - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/"
       - "/usr/local/sbin/"
       - "/usr/local/bin/"
       - "/var/lib/flatpak/exports/bin/"
@@ -998,9 +840,6 @@ events:
       - "/opt/flutter/bin/"
     searched_directories:
       - "/usr/bin/gcc-ranlib-15.2"
-      - "/opt/flutter/bin/cache/dart-sdk/bin/gcc-ranlib-15.2"
-      - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/gcc-ranlib-15.2"
-      - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/gcc-ranlib-15.2"
       - "/usr/local/sbin/gcc-ranlib-15.2"
       - "/usr/local/bin/gcc-ranlib-15.2"
       - "/var/lib/flatpak/exports/bin/gcc-ranlib-15.2"
@@ -1011,9 +850,6 @@ events:
       - "/home/yfz/.local/bin/gcc-ranlib-15.2"
       - "/opt/flutter/bin/gcc-ranlib-15.2"
       - "/usr/bin/gcc-ranlib-15"
-      - "/opt/flutter/bin/cache/dart-sdk/bin/gcc-ranlib-15"
-      - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/gcc-ranlib-15"
-      - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/gcc-ranlib-15"
       - "/usr/local/sbin/gcc-ranlib-15"
       - "/usr/local/bin/gcc-ranlib-15"
       - "/var/lib/flatpak/exports/bin/gcc-ranlib-15"
@@ -1024,9 +860,6 @@ events:
       - "/home/yfz/.local/bin/gcc-ranlib-15"
       - "/opt/flutter/bin/gcc-ranlib-15"
       - "/usr/bin/gcc-ranlib15"
-      - "/opt/flutter/bin/cache/dart-sdk/bin/gcc-ranlib15"
-      - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/gcc-ranlib15"
-      - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/gcc-ranlib15"
       - "/usr/local/sbin/gcc-ranlib15"
       - "/usr/local/bin/gcc-ranlib15"
       - "/var/lib/flatpak/exports/bin/gcc-ranlib15"
@@ -1039,9 +872,6 @@ events:
     found: "/usr/bin/gcc-ranlib"
     search_context:
       ENV{PATH}:
-        - "/opt/flutter/bin/cache/dart-sdk/bin/"
-        - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/debugCommand"
-        - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/copilotCli"
         - "/usr/local/sbin"
         - "/usr/local/bin"
         - "/usr/bin"
@@ -1050,8 +880,6 @@ events:
         - "/usr/bin/site_perl"
         - "/usr/bin/vendor_perl"
         - "/usr/bin/core_perl"
-        - "/home/yfz/.local/bin"
-        - "/opt/flutter/bin"
         - "/home/yfz/.local/bin"
         - "/opt/flutter/bin"
         - "/home/yfz/.local/bin"
@@ -1088,9 +916,6 @@ events:
     found: "/usr/bin/c++"
     search_context:
       ENV{PATH}:
-        - "/opt/flutter/bin/cache/dart-sdk/bin/"
-        - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/debugCommand"
-        - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/copilotCli"
         - "/usr/local/sbin"
         - "/usr/local/bin"
         - "/usr/bin"
@@ -1099,8 +924,6 @@ events:
         - "/usr/bin/site_perl"
         - "/usr/bin/vendor_perl"
         - "/usr/bin/core_perl"
-        - "/home/yfz/.local/bin"
-        - "/opt/flutter/bin"
         - "/home/yfz/.local/bin"
         - "/opt/flutter/bin"
         - "/home/yfz/.local/bin"
@@ -1131,9 +954,6 @@ events:
     found: "/usr/share/cmake/Modules/CMakeCXXCompilerId.cpp.in"
     search_context:
       ENV{PATH}:
-        - "/opt/flutter/bin/cache/dart-sdk/bin/"
-        - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/debugCommand"
-        - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/copilotCli"
         - "/usr/local/sbin"
         - "/usr/local/bin"
         - "/usr/bin"
@@ -1142,8 +962,6 @@ events:
         - "/usr/bin/site_perl"
         - "/usr/bin/vendor_perl"
         - "/usr/bin/core_perl"
-        - "/home/yfz/.local/bin"
-        - "/opt/flutter/bin"
         - "/home/yfz/.local/bin"
         - "/opt/flutter/bin"
         - "/home/yfz/.local/bin"
@@ -1193,9 +1011,6 @@ events:
       - "gcc-ar"
     candidate_directories:
       - "/usr/bin/"
-      - "/opt/flutter/bin/cache/dart-sdk/bin/"
-      - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/"
-      - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/"
       - "/usr/local/sbin/"
       - "/usr/local/bin/"
       - "/var/lib/flatpak/exports/bin/"
@@ -1207,9 +1022,6 @@ events:
       - "/opt/flutter/bin/"
     searched_directories:
       - "/usr/bin/gcc-ar-15.2"
-      - "/opt/flutter/bin/cache/dart-sdk/bin/gcc-ar-15.2"
-      - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/gcc-ar-15.2"
-      - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/gcc-ar-15.2"
       - "/usr/local/sbin/gcc-ar-15.2"
       - "/usr/local/bin/gcc-ar-15.2"
       - "/var/lib/flatpak/exports/bin/gcc-ar-15.2"
@@ -1220,9 +1032,6 @@ events:
       - "/home/yfz/.local/bin/gcc-ar-15.2"
       - "/opt/flutter/bin/gcc-ar-15.2"
       - "/usr/bin/gcc-ar-15"
-      - "/opt/flutter/bin/cache/dart-sdk/bin/gcc-ar-15"
-      - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/gcc-ar-15"
-      - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/gcc-ar-15"
       - "/usr/local/sbin/gcc-ar-15"
       - "/usr/local/bin/gcc-ar-15"
       - "/var/lib/flatpak/exports/bin/gcc-ar-15"
@@ -1233,9 +1042,6 @@ events:
       - "/home/yfz/.local/bin/gcc-ar-15"
       - "/opt/flutter/bin/gcc-ar-15"
       - "/usr/bin/gcc-ar15"
-      - "/opt/flutter/bin/cache/dart-sdk/bin/gcc-ar15"
-      - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/gcc-ar15"
-      - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/gcc-ar15"
       - "/usr/local/sbin/gcc-ar15"
       - "/usr/local/bin/gcc-ar15"
       - "/var/lib/flatpak/exports/bin/gcc-ar15"
@@ -1248,9 +1054,6 @@ events:
     found: "/usr/bin/gcc-ar"
     search_context:
       ENV{PATH}:
-        - "/opt/flutter/bin/cache/dart-sdk/bin/"
-        - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/debugCommand"
-        - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/copilotCli"
         - "/usr/local/sbin"
         - "/usr/local/bin"
         - "/usr/bin"
@@ -1259,8 +1062,6 @@ events:
         - "/usr/bin/site_perl"
         - "/usr/bin/vendor_perl"
         - "/usr/bin/core_perl"
-        - "/home/yfz/.local/bin"
-        - "/opt/flutter/bin"
         - "/home/yfz/.local/bin"
         - "/opt/flutter/bin"
         - "/home/yfz/.local/bin"
@@ -1288,9 +1089,6 @@ events:
       - "gcc-ranlib"
     candidate_directories:
       - "/usr/bin/"
-      - "/opt/flutter/bin/cache/dart-sdk/bin/"
-      - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/"
-      - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/"
       - "/usr/local/sbin/"
       - "/usr/local/bin/"
       - "/var/lib/flatpak/exports/bin/"
@@ -1302,9 +1100,6 @@ events:
       - "/opt/flutter/bin/"
     searched_directories:
       - "/usr/bin/gcc-ranlib-15.2"
-      - "/opt/flutter/bin/cache/dart-sdk/bin/gcc-ranlib-15.2"
-      - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/gcc-ranlib-15.2"
-      - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/gcc-ranlib-15.2"
       - "/usr/local/sbin/gcc-ranlib-15.2"
       - "/usr/local/bin/gcc-ranlib-15.2"
       - "/var/lib/flatpak/exports/bin/gcc-ranlib-15.2"
@@ -1315,9 +1110,6 @@ events:
       - "/home/yfz/.local/bin/gcc-ranlib-15.2"
       - "/opt/flutter/bin/gcc-ranlib-15.2"
       - "/usr/bin/gcc-ranlib-15"
-      - "/opt/flutter/bin/cache/dart-sdk/bin/gcc-ranlib-15"
-      - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/gcc-ranlib-15"
-      - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/gcc-ranlib-15"
       - "/usr/local/sbin/gcc-ranlib-15"
       - "/usr/local/bin/gcc-ranlib-15"
       - "/var/lib/flatpak/exports/bin/gcc-ranlib-15"
@@ -1328,9 +1120,6 @@ events:
       - "/home/yfz/.local/bin/gcc-ranlib-15"
       - "/opt/flutter/bin/gcc-ranlib-15"
       - "/usr/bin/gcc-ranlib15"
-      - "/opt/flutter/bin/cache/dart-sdk/bin/gcc-ranlib15"
-      - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/gcc-ranlib15"
-      - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/gcc-ranlib15"
       - "/usr/local/sbin/gcc-ranlib15"
       - "/usr/local/bin/gcc-ranlib15"
       - "/var/lib/flatpak/exports/bin/gcc-ranlib15"
@@ -1343,9 +1132,6 @@ events:
     found: "/usr/bin/gcc-ranlib"
     search_context:
       ENV{PATH}:
-        - "/opt/flutter/bin/cache/dart-sdk/bin/"
-        - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/debugCommand"
-        - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/copilotCli"
         - "/usr/local/sbin"
         - "/usr/local/bin"
         - "/usr/bin"
@@ -1354,8 +1140,6 @@ events:
         - "/usr/bin/site_perl"
         - "/usr/bin/vendor_perl"
         - "/usr/bin/core_perl"
-        - "/home/yfz/.local/bin"
-        - "/opt/flutter/bin"
         - "/home/yfz/.local/bin"
         - "/opt/flutter/bin"
         - "/home/yfz/.local/bin"
@@ -1368,8 +1152,8 @@ events:
     checks:
       - "Detecting C compiler ABI info"
     directories:
-      source: "/home/yfz/Documents/Projects/terebi/build/CMakeFiles/CMakeScratch/TryCompile-4OVt6F"
-      binary: "/home/yfz/Documents/Projects/terebi/build/CMakeFiles/CMakeScratch/TryCompile-4OVt6F"
+      source: "/home/yfz/Documents/Projects/terebi/build/CMakeFiles/CMakeScratch/TryCompile-ksU8au"
+      binary: "/home/yfz/Documents/Projects/terebi/build/CMakeFiles/CMakeScratch/TryCompile-ksU8au"
     cmakeVariables:
       CMAKE_CXX_STDLIB_MODULES_JSON: ""
       CMAKE_C_FLAGS: ""
@@ -1379,10 +1163,10 @@ events:
       variable: "CMAKE_C_ABI_COMPILED"
       cached: true
       stdout: |
-        Change Dir: '/home/yfz/Documents/Projects/terebi/build/CMakeFiles/CMakeScratch/TryCompile-4OVt6F'
+        Change Dir: '/home/yfz/Documents/Projects/terebi/build/CMakeFiles/CMakeScratch/TryCompile-ksU8au'
         
-        Run Build Command(s): /usr/bin/ninja -v cmTC_79472
-        [1/2] /usr/bin/cc   -v -o CMakeFiles/cmTC_79472.dir/CMakeCCompilerABI.c.o -c /usr/share/cmake/Modules/CMakeCCompilerABI.c
+        Run Build Command(s): /usr/bin/ninja -v cmTC_91bd7
+        [1/2] /usr/bin/cc   -v -o CMakeFiles/cmTC_91bd7.dir/CMakeCCompilerABI.c.o -c /usr/share/cmake/Modules/CMakeCCompilerABI.c
         Using built-in specs.
         COLLECT_GCC=/usr/bin/cc
         Target: x86_64-pc-linux-gnu
@@ -1390,8 +1174,8 @@ events:
         Thread model: posix
         Supported LTO compression algorithms: zlib zstd
         gcc version 15.2.1 20260209 (GCC) 
-        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_79472.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_79472.dir/'
-         /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/cc1 -quiet -v /usr/share/cmake/Modules/CMakeCCompilerABI.c -quiet -dumpdir CMakeFiles/cmTC_79472.dir/ -dumpbase CMakeCCompilerABI.c.c -dumpbase-ext .c -mtune=generic -march=x86-64 -version -o /tmp/ccNquJIA.s
+        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_91bd7.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_91bd7.dir/'
+         /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/cc1 -quiet -v /usr/share/cmake/Modules/CMakeCCompilerABI.c -quiet -dumpdir CMakeFiles/cmTC_91bd7.dir/ -dumpbase CMakeCCompilerABI.c.c -dumpbase-ext .c -mtune=generic -march=x86-64 -version -o /tmp/cc6Lun0n.s
         GNU C23 (GCC) version 15.2.1 20260209 (x86_64-pc-linux-gnu)
         	compiled by GNU C version 15.2.1 20260209, GMP version 6.3.0, MPFR version 4.2.2, MPC version 1.3.1, isl version isl-0.27-GMP
         
@@ -1406,13 +1190,13 @@ events:
          /usr/include
         End of search list.
         Compiler executable checksum: 4a3176b8a5098bb872007d0a1d5e5fb3
-        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_79472.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_79472.dir/'
-         as -v --64 -o CMakeFiles/cmTC_79472.dir/CMakeCCompilerABI.c.o /tmp/ccNquJIA.s
+        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_91bd7.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_91bd7.dir/'
+         as -v --64 -o CMakeFiles/cmTC_91bd7.dir/CMakeCCompilerABI.c.o /tmp/cc6Lun0n.s
         GNU assembler version 2.46 (x86_64-pc-linux-gnu) using BFD version (GNU Binutils) 2.46
         COMPILER_PATH=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/
         LIBRARY_PATH=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/:/lib/../lib/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../:/lib/:/usr/lib/
-        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_79472.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_79472.dir/CMakeCCompilerABI.c.'
-        [2/2] : && /usr/bin/cc  -v -Wl,-v CMakeFiles/cmTC_79472.dir/CMakeCCompilerABI.c.o -o cmTC_79472   && :
+        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_91bd7.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_91bd7.dir/CMakeCCompilerABI.c.'
+        [2/2] : && /usr/bin/cc  -v -Wl,-v CMakeFiles/cmTC_91bd7.dir/CMakeCCompilerABI.c.o -o cmTC_91bd7   && :
         Using built-in specs.
         COLLECT_GCC=/usr/bin/cc
         COLLECT_LTO_WRAPPER=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/lto-wrapper
@@ -1423,12 +1207,12 @@ events:
         gcc version 15.2.1 20260209 (GCC) 
         COMPILER_PATH=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/
         LIBRARY_PATH=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/:/lib/../lib/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../:/lib/:/usr/lib/
-        COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_79472' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_79472.'
-         /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/collect2 -plugin /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/lto-wrapper -plugin-opt=-fresolution=/tmp/ccDIzVaZ.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --build-id --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -o cmTC_79472 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/Scrt1.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crti.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtbeginS.o -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1 -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib -L/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_79472.dir/CMakeCCompilerABI.c.o -lgcc --push-state --as-needed -lgcc_s --pop-state -lc -lgcc --push-state --as-needed -lgcc_s --pop-state /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtendS.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crtn.o
+        COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_91bd7' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_91bd7.'
+         /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/collect2 -plugin /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/lto-wrapper -plugin-opt=-fresolution=/tmp/ccVmAsef.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --build-id --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -o cmTC_91bd7 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/Scrt1.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crti.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtbeginS.o -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1 -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib -L/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_91bd7.dir/CMakeCCompilerABI.c.o -lgcc --push-state --as-needed -lgcc_s --pop-state -lc -lgcc --push-state --as-needed -lgcc_s --pop-state /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtendS.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crtn.o
         collect2 version 15.2.1 20260209
-        /usr/bin/ld -plugin /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/lto-wrapper -plugin-opt=-fresolution=/tmp/ccDIzVaZ.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --build-id --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -o cmTC_79472 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/Scrt1.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crti.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtbeginS.o -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1 -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib -L/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_79472.dir/CMakeCCompilerABI.c.o -lgcc --push-state --as-needed -lgcc_s --pop-state -lc -lgcc --push-state --as-needed -lgcc_s --pop-state /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtendS.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crtn.o
+        /usr/bin/ld -plugin /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/lto-wrapper -plugin-opt=-fresolution=/tmp/ccVmAsef.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --build-id --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -o cmTC_91bd7 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/Scrt1.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crti.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtbeginS.o -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1 -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib -L/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_91bd7.dir/CMakeCCompilerABI.c.o -lgcc --push-state --as-needed -lgcc_s --pop-state -lc -lgcc --push-state --as-needed -lgcc_s --pop-state /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtendS.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crtn.o
         GNU ld (GNU Binutils) 2.46
-        COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_79472' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_79472.'
+        COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_91bd7' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_91bd7.'
         
       exitCode: 0
   -
@@ -1463,10 +1247,10 @@ events:
       Parsed C implicit link information:
         link line regex: [^( *|.*[/\\])(ld[0-9]*(|\\.[a-rt-z][a-z]*|\\.s[a-np-z][a-z]*|\\.so[a-z]+)|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\\]+-)?ld|collect2)[^/\\]*( |$)]
         linker tool regex: [^[ 	]*(->|"|[0-9]+>[ 	-]*Build:[ 	0-9]+ ms[ 	]*)?[ 	]*(([^"]*[/\\])?(ld[0-9]*(|\\.[a-rt-z][a-z]*|\\.s[a-np-z][a-z]*|\\.so[a-z]+)))("|,| |$)]
-        ignore line: [Change Dir: '/home/yfz/Documents/Projects/terebi/build/CMakeFiles/CMakeScratch/TryCompile-4OVt6F']
+        ignore line: [Change Dir: '/home/yfz/Documents/Projects/terebi/build/CMakeFiles/CMakeScratch/TryCompile-ksU8au']
         ignore line: []
-        ignore line: [Run Build Command(s): /usr/bin/ninja -v cmTC_79472]
-        ignore line: [[1/2] /usr/bin/cc   -v -o CMakeFiles/cmTC_79472.dir/CMakeCCompilerABI.c.o -c /usr/share/cmake/Modules/CMakeCCompilerABI.c]
+        ignore line: [Run Build Command(s): /usr/bin/ninja -v cmTC_91bd7]
+        ignore line: [[1/2] /usr/bin/cc   -v -o CMakeFiles/cmTC_91bd7.dir/CMakeCCompilerABI.c.o -c /usr/share/cmake/Modules/CMakeCCompilerABI.c]
         ignore line: [Using built-in specs.]
         ignore line: [COLLECT_GCC=/usr/bin/cc]
         ignore line: [Target: x86_64-pc-linux-gnu]
@@ -1474,8 +1258,8 @@ events:
         ignore line: [Thread model: posix]
         ignore line: [Supported LTO compression algorithms: zlib zstd]
         ignore line: [gcc version 15.2.1 20260209 (GCC) ]
-        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_79472.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_79472.dir/']
-        ignore line: [ /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/cc1 -quiet -v /usr/share/cmake/Modules/CMakeCCompilerABI.c -quiet -dumpdir CMakeFiles/cmTC_79472.dir/ -dumpbase CMakeCCompilerABI.c.c -dumpbase-ext .c -mtune=generic -march=x86-64 -version -o /tmp/ccNquJIA.s]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_91bd7.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_91bd7.dir/']
+        ignore line: [ /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/cc1 -quiet -v /usr/share/cmake/Modules/CMakeCCompilerABI.c -quiet -dumpdir CMakeFiles/cmTC_91bd7.dir/ -dumpbase CMakeCCompilerABI.c.c -dumpbase-ext .c -mtune=generic -march=x86-64 -version -o /tmp/cc6Lun0n.s]
         ignore line: [GNU C23 (GCC) version 15.2.1 20260209 (x86_64-pc-linux-gnu)]
         ignore line: [	compiled by GNU C version 15.2.1 20260209  GMP version 6.3.0  MPFR version 4.2.2  MPC version 1.3.1  isl version isl-0.27-GMP]
         ignore line: []
@@ -1490,13 +1274,13 @@ events:
         ignore line: [ /usr/include]
         ignore line: [End of search list.]
         ignore line: [Compiler executable checksum: 4a3176b8a5098bb872007d0a1d5e5fb3]
-        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_79472.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_79472.dir/']
-        ignore line: [ as -v --64 -o CMakeFiles/cmTC_79472.dir/CMakeCCompilerABI.c.o /tmp/ccNquJIA.s]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_91bd7.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_91bd7.dir/']
+        ignore line: [ as -v --64 -o CMakeFiles/cmTC_91bd7.dir/CMakeCCompilerABI.c.o /tmp/cc6Lun0n.s]
         ignore line: [GNU assembler version 2.46 (x86_64-pc-linux-gnu) using BFD version (GNU Binutils) 2.46]
         ignore line: [COMPILER_PATH=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/]
         ignore line: [LIBRARY_PATH=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/:/lib/../lib/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../:/lib/:/usr/lib/]
-        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_79472.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_79472.dir/CMakeCCompilerABI.c.']
-        ignore line: [[2/2] : && /usr/bin/cc  -v -Wl -v CMakeFiles/cmTC_79472.dir/CMakeCCompilerABI.c.o -o cmTC_79472   && :]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_91bd7.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_91bd7.dir/CMakeCCompilerABI.c.']
+        ignore line: [[2/2] : && /usr/bin/cc  -v -Wl -v CMakeFiles/cmTC_91bd7.dir/CMakeCCompilerABI.c.o -o cmTC_91bd7   && :]
         ignore line: [Using built-in specs.]
         ignore line: [COLLECT_GCC=/usr/bin/cc]
         ignore line: [COLLECT_LTO_WRAPPER=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/lto-wrapper]
@@ -1507,13 +1291,13 @@ events:
         ignore line: [gcc version 15.2.1 20260209 (GCC) ]
         ignore line: [COMPILER_PATH=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/]
         ignore line: [LIBRARY_PATH=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/:/lib/../lib/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../:/lib/:/usr/lib/]
-        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_79472' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_79472.']
-        link line: [ /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/collect2 -plugin /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/lto-wrapper -plugin-opt=-fresolution=/tmp/ccDIzVaZ.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --build-id --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -o cmTC_79472 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/Scrt1.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crti.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtbeginS.o -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1 -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib -L/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_79472.dir/CMakeCCompilerABI.c.o -lgcc --push-state --as-needed -lgcc_s --pop-state -lc -lgcc --push-state --as-needed -lgcc_s --pop-state /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtendS.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crtn.o]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_91bd7' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_91bd7.']
+        link line: [ /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/collect2 -plugin /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/lto-wrapper -plugin-opt=-fresolution=/tmp/ccVmAsef.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --build-id --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -o cmTC_91bd7 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/Scrt1.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crti.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtbeginS.o -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1 -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib -L/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_91bd7.dir/CMakeCCompilerABI.c.o -lgcc --push-state --as-needed -lgcc_s --pop-state -lc -lgcc --push-state --as-needed -lgcc_s --pop-state /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtendS.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crtn.o]
           arg [/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/collect2] ==> ignore
           arg [-plugin] ==> ignore
           arg [/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/liblto_plugin.so] ==> ignore
           arg [-plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/lto-wrapper] ==> ignore
-          arg [-plugin-opt=-fresolution=/tmp/ccDIzVaZ.res] ==> ignore
+          arg [-plugin-opt=-fresolution=/tmp/ccVmAsef.res] ==> ignore
           arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
           arg [-plugin-opt=-pass-through=-lgcc_s] ==> ignore
           arg [-plugin-opt=-pass-through=-lc] ==> ignore
@@ -1528,7 +1312,7 @@ events:
           arg [/lib64/ld-linux-x86-64.so.2] ==> ignore
           arg [-pie] ==> ignore
           arg [-o] ==> ignore
-          arg [cmTC_79472] ==> ignore
+          arg [cmTC_91bd7] ==> ignore
           arg [/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/Scrt1.o] ==> obj [/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/Scrt1.o]
           arg [/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crti.o] ==> obj [/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crti.o]
           arg [/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtbeginS.o] ==> obj [/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtbeginS.o]
@@ -1540,7 +1324,7 @@ events:
           arg [-L/lib] ==> dir [/lib]
           arg [-L/usr/lib] ==> dir [/usr/lib]
           arg [-v] ==> ignore
-          arg [CMakeFiles/cmTC_79472.dir/CMakeCCompilerABI.c.o] ==> ignore
+          arg [CMakeFiles/cmTC_91bd7.dir/CMakeCCompilerABI.c.o] ==> ignore
           arg [-lgcc] ==> lib [gcc]
           arg [--push-state] ==> ignore
           arg [--as-needed] ==> ignore
@@ -1555,7 +1339,7 @@ events:
           arg [/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtendS.o] ==> obj [/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtendS.o]
           arg [/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crtn.o] ==> obj [/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crtn.o]
         ignore line: [collect2 version 15.2.1 20260209]
-        ignore line: [/usr/bin/ld -plugin /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/lto-wrapper -plugin-opt=-fresolution=/tmp/ccDIzVaZ.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --build-id --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -o cmTC_79472 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/Scrt1.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crti.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtbeginS.o -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1 -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib -L/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_79472.dir/CMakeCCompilerABI.c.o -lgcc --push-state --as-needed -lgcc_s --pop-state -lc -lgcc --push-state --as-needed -lgcc_s --pop-state /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtendS.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crtn.o]
+        ignore line: [/usr/bin/ld -plugin /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/lto-wrapper -plugin-opt=-fresolution=/tmp/ccVmAsef.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --build-id --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -o cmTC_91bd7 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/Scrt1.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crti.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtbeginS.o -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1 -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib -L/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_91bd7.dir/CMakeCCompilerABI.c.o -lgcc --push-state --as-needed -lgcc_s --pop-state -lc -lgcc --push-state --as-needed -lgcc_s --pop-state /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtendS.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crtn.o]
         linker tool for 'C': /usr/bin/ld
         collapse obj [/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/Scrt1.o] ==> [/usr/lib/Scrt1.o]
         collapse obj [/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crti.o] ==> [/usr/lib/crti.o]
@@ -1592,8 +1376,8 @@ events:
     checks:
       - "Detecting CXX compiler ABI info"
     directories:
-      source: "/home/yfz/Documents/Projects/terebi/build/CMakeFiles/CMakeScratch/TryCompile-W0zJbb"
-      binary: "/home/yfz/Documents/Projects/terebi/build/CMakeFiles/CMakeScratch/TryCompile-W0zJbb"
+      source: "/home/yfz/Documents/Projects/terebi/build/CMakeFiles/CMakeScratch/TryCompile-6eivvU"
+      binary: "/home/yfz/Documents/Projects/terebi/build/CMakeFiles/CMakeScratch/TryCompile-6eivvU"
     cmakeVariables:
       CMAKE_CXX_FLAGS: ""
       CMAKE_CXX_FLAGS_DEBUG: "-g"
@@ -1604,10 +1388,10 @@ events:
       variable: "CMAKE_CXX_ABI_COMPILED"
       cached: true
       stdout: |
-        Change Dir: '/home/yfz/Documents/Projects/terebi/build/CMakeFiles/CMakeScratch/TryCompile-W0zJbb'
+        Change Dir: '/home/yfz/Documents/Projects/terebi/build/CMakeFiles/CMakeScratch/TryCompile-6eivvU'
         
-        Run Build Command(s): /usr/bin/ninja -v cmTC_0f164
-        [1/2] /usr/bin/c++   -v -o CMakeFiles/cmTC_0f164.dir/CMakeCXXCompilerABI.cpp.o -c /usr/share/cmake/Modules/CMakeCXXCompilerABI.cpp
+        Run Build Command(s): /usr/bin/ninja -v cmTC_e04c4
+        [1/2] /usr/bin/c++   -v -o CMakeFiles/cmTC_e04c4.dir/CMakeCXXCompilerABI.cpp.o -c /usr/share/cmake/Modules/CMakeCXXCompilerABI.cpp
         Using built-in specs.
         COLLECT_GCC=/usr/bin/c++
         Target: x86_64-pc-linux-gnu
@@ -1615,8 +1399,8 @@ events:
         Thread model: posix
         Supported LTO compression algorithms: zlib zstd
         gcc version 15.2.1 20260209 (GCC) 
-        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_0f164.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_0f164.dir/'
-         /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/cc1plus -quiet -v -D_GNU_SOURCE /usr/share/cmake/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpdir CMakeFiles/cmTC_0f164.dir/ -dumpbase CMakeCXXCompilerABI.cpp.cpp -dumpbase-ext .cpp -mtune=generic -march=x86-64 -version -o /tmp/ccc6VPm2.s
+        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_e04c4.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_e04c4.dir/'
+         /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/cc1plus -quiet -v -D_GNU_SOURCE /usr/share/cmake/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpdir CMakeFiles/cmTC_e04c4.dir/ -dumpbase CMakeCXXCompilerABI.cpp.cpp -dumpbase-ext .cpp -mtune=generic -march=x86-64 -version -o /tmp/ccSXdMYF.s
         GNU C++17 (GCC) version 15.2.1 20260209 (x86_64-pc-linux-gnu)
         	compiled by GNU C version 15.2.1 20260209, GMP version 6.3.0, MPFR version 4.2.2, MPC version 1.3.1, isl version isl-0.27-GMP
         
@@ -1634,13 +1418,13 @@ events:
          /usr/include
         End of search list.
         Compiler executable checksum: 5e3969de92aa3c12a625237f01b15b2f
-        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_0f164.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_0f164.dir/'
-         as -v --64 -o CMakeFiles/cmTC_0f164.dir/CMakeCXXCompilerABI.cpp.o /tmp/ccc6VPm2.s
+        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_e04c4.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_e04c4.dir/'
+         as -v --64 -o CMakeFiles/cmTC_e04c4.dir/CMakeCXXCompilerABI.cpp.o /tmp/ccSXdMYF.s
         GNU assembler version 2.46 (x86_64-pc-linux-gnu) using BFD version (GNU Binutils) 2.46
         COMPILER_PATH=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/
         LIBRARY_PATH=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/:/lib/../lib/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../:/lib/:/usr/lib/
-        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_0f164.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_0f164.dir/CMakeCXXCompilerABI.cpp.'
-        [2/2] : && /usr/bin/c++  -v -Wl,-v CMakeFiles/cmTC_0f164.dir/CMakeCXXCompilerABI.cpp.o -o cmTC_0f164   && :
+        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_e04c4.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_e04c4.dir/CMakeCXXCompilerABI.cpp.'
+        [2/2] : && /usr/bin/c++  -v -Wl,-v CMakeFiles/cmTC_e04c4.dir/CMakeCXXCompilerABI.cpp.o -o cmTC_e04c4   && :
         Using built-in specs.
         COLLECT_GCC=/usr/bin/c++
         COLLECT_LTO_WRAPPER=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/lto-wrapper
@@ -1651,12 +1435,12 @@ events:
         gcc version 15.2.1 20260209 (GCC) 
         COMPILER_PATH=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/
         LIBRARY_PATH=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/:/lib/../lib/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../:/lib/:/usr/lib/
-        COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_0f164' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_0f164.'
-         /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/collect2 -plugin /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/lto-wrapper -plugin-opt=-fresolution=/tmp/ccGmfz6g.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --build-id --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -o cmTC_0f164 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/Scrt1.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crti.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtbeginS.o -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1 -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib -L/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_0f164.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtendS.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crtn.o
+        COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_e04c4' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_e04c4.'
+         /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/collect2 -plugin /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/lto-wrapper -plugin-opt=-fresolution=/tmp/ccCAUau1.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --build-id --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -o cmTC_e04c4 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/Scrt1.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crti.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtbeginS.o -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1 -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib -L/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_e04c4.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtendS.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crtn.o
         collect2 version 15.2.1 20260209
-        /usr/bin/ld -plugin /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/lto-wrapper -plugin-opt=-fresolution=/tmp/ccGmfz6g.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --build-id --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -o cmTC_0f164 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/Scrt1.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crti.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtbeginS.o -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1 -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib -L/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_0f164.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtendS.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crtn.o
+        /usr/bin/ld -plugin /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/lto-wrapper -plugin-opt=-fresolution=/tmp/ccCAUau1.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --build-id --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -o cmTC_e04c4 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/Scrt1.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crti.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtbeginS.o -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1 -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib -L/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_e04c4.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtendS.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crtn.o
         GNU ld (GNU Binutils) 2.46
-        COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_0f164' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_0f164.'
+        COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_e04c4' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_e04c4.'
         
       exitCode: 0
   -
@@ -1697,10 +1481,10 @@ events:
       Parsed CXX implicit link information:
         link line regex: [^( *|.*[/\\])(ld[0-9]*(|\\.[a-rt-z][a-z]*|\\.s[a-np-z][a-z]*|\\.so[a-z]+)|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\\]+-)?ld|collect2)[^/\\]*( |$)]
         linker tool regex: [^[ 	]*(->|"|[0-9]+>[ 	-]*Build:[ 	0-9]+ ms[ 	]*)?[ 	]*(([^"]*[/\\])?(ld[0-9]*(|\\.[a-rt-z][a-z]*|\\.s[a-np-z][a-z]*|\\.so[a-z]+)))("|,| |$)]
-        ignore line: [Change Dir: '/home/yfz/Documents/Projects/terebi/build/CMakeFiles/CMakeScratch/TryCompile-W0zJbb']
+        ignore line: [Change Dir: '/home/yfz/Documents/Projects/terebi/build/CMakeFiles/CMakeScratch/TryCompile-6eivvU']
         ignore line: []
-        ignore line: [Run Build Command(s): /usr/bin/ninja -v cmTC_0f164]
-        ignore line: [[1/2] /usr/bin/c++   -v -o CMakeFiles/cmTC_0f164.dir/CMakeCXXCompilerABI.cpp.o -c /usr/share/cmake/Modules/CMakeCXXCompilerABI.cpp]
+        ignore line: [Run Build Command(s): /usr/bin/ninja -v cmTC_e04c4]
+        ignore line: [[1/2] /usr/bin/c++   -v -o CMakeFiles/cmTC_e04c4.dir/CMakeCXXCompilerABI.cpp.o -c /usr/share/cmake/Modules/CMakeCXXCompilerABI.cpp]
         ignore line: [Using built-in specs.]
         ignore line: [COLLECT_GCC=/usr/bin/c++]
         ignore line: [Target: x86_64-pc-linux-gnu]
@@ -1708,8 +1492,8 @@ events:
         ignore line: [Thread model: posix]
         ignore line: [Supported LTO compression algorithms: zlib zstd]
         ignore line: [gcc version 15.2.1 20260209 (GCC) ]
-        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_0f164.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_0f164.dir/']
-        ignore line: [ /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/cc1plus -quiet -v -D_GNU_SOURCE /usr/share/cmake/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpdir CMakeFiles/cmTC_0f164.dir/ -dumpbase CMakeCXXCompilerABI.cpp.cpp -dumpbase-ext .cpp -mtune=generic -march=x86-64 -version -o /tmp/ccc6VPm2.s]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_e04c4.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_e04c4.dir/']
+        ignore line: [ /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/cc1plus -quiet -v -D_GNU_SOURCE /usr/share/cmake/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpdir CMakeFiles/cmTC_e04c4.dir/ -dumpbase CMakeCXXCompilerABI.cpp.cpp -dumpbase-ext .cpp -mtune=generic -march=x86-64 -version -o /tmp/ccSXdMYF.s]
         ignore line: [GNU C++17 (GCC) version 15.2.1 20260209 (x86_64-pc-linux-gnu)]
         ignore line: [	compiled by GNU C version 15.2.1 20260209  GMP version 6.3.0  MPFR version 4.2.2  MPC version 1.3.1  isl version isl-0.27-GMP]
         ignore line: []
@@ -1727,13 +1511,13 @@ events:
         ignore line: [ /usr/include]
         ignore line: [End of search list.]
         ignore line: [Compiler executable checksum: 5e3969de92aa3c12a625237f01b15b2f]
-        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_0f164.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_0f164.dir/']
-        ignore line: [ as -v --64 -o CMakeFiles/cmTC_0f164.dir/CMakeCXXCompilerABI.cpp.o /tmp/ccc6VPm2.s]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_e04c4.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_e04c4.dir/']
+        ignore line: [ as -v --64 -o CMakeFiles/cmTC_e04c4.dir/CMakeCXXCompilerABI.cpp.o /tmp/ccSXdMYF.s]
         ignore line: [GNU assembler version 2.46 (x86_64-pc-linux-gnu) using BFD version (GNU Binutils) 2.46]
         ignore line: [COMPILER_PATH=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/]
         ignore line: [LIBRARY_PATH=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/:/lib/../lib/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../:/lib/:/usr/lib/]
-        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_0f164.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_0f164.dir/CMakeCXXCompilerABI.cpp.']
-        ignore line: [[2/2] : && /usr/bin/c++  -v -Wl -v CMakeFiles/cmTC_0f164.dir/CMakeCXXCompilerABI.cpp.o -o cmTC_0f164   && :]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_e04c4.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_e04c4.dir/CMakeCXXCompilerABI.cpp.']
+        ignore line: [[2/2] : && /usr/bin/c++  -v -Wl -v CMakeFiles/cmTC_e04c4.dir/CMakeCXXCompilerABI.cpp.o -o cmTC_e04c4   && :]
         ignore line: [Using built-in specs.]
         ignore line: [COLLECT_GCC=/usr/bin/c++]
         ignore line: [COLLECT_LTO_WRAPPER=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/lto-wrapper]
@@ -1744,13 +1528,13 @@ events:
         ignore line: [gcc version 15.2.1 20260209 (GCC) ]
         ignore line: [COMPILER_PATH=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/]
         ignore line: [LIBRARY_PATH=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/:/lib/../lib/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../:/lib/:/usr/lib/]
-        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_0f164' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_0f164.']
-        link line: [ /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/collect2 -plugin /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/lto-wrapper -plugin-opt=-fresolution=/tmp/ccGmfz6g.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --build-id --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -o cmTC_0f164 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/Scrt1.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crti.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtbeginS.o -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1 -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib -L/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_0f164.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtendS.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crtn.o]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_e04c4' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_e04c4.']
+        link line: [ /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/collect2 -plugin /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/lto-wrapper -plugin-opt=-fresolution=/tmp/ccCAUau1.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --build-id --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -o cmTC_e04c4 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/Scrt1.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crti.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtbeginS.o -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1 -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib -L/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_e04c4.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtendS.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crtn.o]
           arg [/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/collect2] ==> ignore
           arg [-plugin] ==> ignore
           arg [/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/liblto_plugin.so] ==> ignore
           arg [-plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/lto-wrapper] ==> ignore
-          arg [-plugin-opt=-fresolution=/tmp/ccGmfz6g.res] ==> ignore
+          arg [-plugin-opt=-fresolution=/tmp/ccCAUau1.res] ==> ignore
           arg [-plugin-opt=-pass-through=-lgcc_s] ==> ignore
           arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
           arg [-plugin-opt=-pass-through=-lc] ==> ignore
@@ -1765,7 +1549,7 @@ events:
           arg [/lib64/ld-linux-x86-64.so.2] ==> ignore
           arg [-pie] ==> ignore
           arg [-o] ==> ignore
-          arg [cmTC_0f164] ==> ignore
+          arg [cmTC_e04c4] ==> ignore
           arg [/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/Scrt1.o] ==> obj [/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/Scrt1.o]
           arg [/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crti.o] ==> obj [/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crti.o]
           arg [/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtbeginS.o] ==> obj [/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtbeginS.o]
@@ -1777,7 +1561,7 @@ events:
           arg [-L/lib] ==> dir [/lib]
           arg [-L/usr/lib] ==> dir [/usr/lib]
           arg [-v] ==> ignore
-          arg [CMakeFiles/cmTC_0f164.dir/CMakeCXXCompilerABI.cpp.o] ==> ignore
+          arg [CMakeFiles/cmTC_e04c4.dir/CMakeCXXCompilerABI.cpp.o] ==> ignore
           arg [-lstdc++] ==> lib [stdc++]
           arg [-lm] ==> lib [m]
           arg [-lgcc_s] ==> lib [gcc_s]
@@ -1788,7 +1572,7 @@ events:
           arg [/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtendS.o] ==> obj [/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtendS.o]
           arg [/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crtn.o] ==> obj [/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crtn.o]
         ignore line: [collect2 version 15.2.1 20260209]
-        ignore line: [/usr/bin/ld -plugin /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/lto-wrapper -plugin-opt=-fresolution=/tmp/ccGmfz6g.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --build-id --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -o cmTC_0f164 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/Scrt1.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crti.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtbeginS.o -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1 -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib -L/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_0f164.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtendS.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crtn.o]
+        ignore line: [/usr/bin/ld -plugin /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/lto-wrapper -plugin-opt=-fresolution=/tmp/ccCAUau1.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --build-id --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -o cmTC_e04c4 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/Scrt1.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crti.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtbeginS.o -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1 -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib -L/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_e04c4.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtendS.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crtn.o]
         linker tool for 'CXX': /usr/bin/ld
         collapse obj [/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/Scrt1.o] ==> [/usr/lib/Scrt1.o]
         collapse obj [/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crti.o] ==> [/usr/lib/crti.o]
@@ -1821,7 +1605,7 @@ events:
     backtrace:
       - "/usr/share/cmake/Modules/FindPkgConfig.cmake:517 (find_program)"
       - "/usr/lib/cmake/SDL3/SDL3Config.cmake:100 (find_package)"
-      - "CMakeLists.txt:7 (find_package)"
+      - "CMakeLists.txt:6 (find_package)"
     mode: "program"
     variable: "PKG_CONFIG_EXECUTABLE"
     description: "pkg-config executable"
@@ -1837,9 +1621,6 @@ events:
       - "pkg-config"
       - "pkgconf"
     candidate_directories:
-      - "/opt/flutter/bin/cache/dart-sdk/bin/"
-      - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/"
-      - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/"
       - "/usr/local/sbin/"
       - "/usr/local/bin/"
       - "/usr/bin/"
@@ -1868,12 +1649,6 @@ events:
       - "/opt/sbin/"
       - "/opt/"
     searched_directories:
-      - "/opt/flutter/bin/cache/dart-sdk/bin/pkg-config"
-      - "/opt/flutter/bin/cache/dart-sdk/bin/pkgconf"
-      - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/pkg-config"
-      - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/pkgconf"
-      - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/pkg-config"
-      - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/pkgconf"
       - "/usr/local/sbin/pkg-config"
       - "/usr/local/sbin/pkgconf"
       - "/usr/local/bin/pkg-config"
@@ -1881,9 +1656,6 @@ events:
     found: "/usr/bin/pkg-config"
     search_context:
       ENV{PATH}:
-        - "/opt/flutter/bin/cache/dart-sdk/bin/"
-        - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/debugCommand"
-        - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/copilotCli"
         - "/usr/local/sbin"
         - "/usr/local/bin"
         - "/usr/bin"
@@ -1892,8 +1664,6 @@ events:
         - "/usr/bin/site_perl"
         - "/usr/bin/vendor_perl"
         - "/usr/bin/core_perl"
-        - "/home/yfz/.local/bin"
-        - "/opt/flutter/bin"
         - "/home/yfz/.local/bin"
         - "/opt/flutter/bin"
         - "/home/yfz/.local/bin"
@@ -1915,7 +1685,7 @@ events:
       - "/usr/share/cmake/Modules/FindPkgConfig.cmake:1149 (_pkg_recalculate)"
       - "/usr/share/cmake/Modules/FindPkgConfig.cmake:1166 (_pkg_check_modules_internal)"
       - "/usr/lib/cmake/SDL3/SDL3Config.cmake:102 (pkg_check_modules)"
-      - "CMakeLists.txt:7 (find_package)"
+      - "CMakeLists.txt:6 (find_package)"
     mode: "library"
     variable: "pkgcfg_lib_PC_LIBUNWIND_unwind-generic"
     description: "Path to a library."
@@ -1934,9 +1704,6 @@ events:
     found: "/usr/lib/libunwind-generic.so"
     search_context:
       ENV{PATH}:
-        - "/opt/flutter/bin/cache/dart-sdk/bin/"
-        - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/debugCommand"
-        - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/copilotCli"
         - "/usr/local/sbin"
         - "/usr/local/bin"
         - "/usr/bin"
@@ -1945,8 +1712,6 @@ events:
         - "/usr/bin/site_perl"
         - "/usr/bin/vendor_perl"
         - "/usr/bin/core_perl"
-        - "/home/yfz/.local/bin"
-        - "/opt/flutter/bin"
         - "/home/yfz/.local/bin"
         - "/opt/flutter/bin"
         - "/home/yfz/.local/bin"
@@ -1970,7 +1735,7 @@ events:
       - "/usr/share/cmake/Modules/FindPkgConfig.cmake:1149 (_pkg_recalculate)"
       - "/usr/share/cmake/Modules/FindPkgConfig.cmake:1166 (_pkg_check_modules_internal)"
       - "/usr/lib/cmake/SDL3/SDL3Config.cmake:102 (pkg_check_modules)"
-      - "CMakeLists.txt:7 (find_package)"
+      - "CMakeLists.txt:6 (find_package)"
     mode: "library"
     variable: "pkgcfg_lib_PC_LIBUNWIND_unwind"
     description: "Path to a library."
@@ -1989,9 +1754,6 @@ events:
     found: "/usr/lib/libunwind.so"
     search_context:
       ENV{PATH}:
-        - "/opt/flutter/bin/cache/dart-sdk/bin/"
-        - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/debugCommand"
-        - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/copilotCli"
         - "/usr/local/sbin"
         - "/usr/local/bin"
         - "/usr/bin"
@@ -2000,8 +1762,6 @@ events:
         - "/usr/bin/site_perl"
         - "/usr/bin/vendor_perl"
         - "/usr/bin/core_perl"
-        - "/home/yfz/.local/bin"
-        - "/opt/flutter/bin"
         - "/home/yfz/.local/bin"
         - "/opt/flutter/bin"
         - "/home/yfz/.local/bin"
@@ -2020,7 +1780,7 @@ events:
   -
     kind: "find_package-v1"
     backtrace:
-      - "CMakeLists.txt:7 (find_package)"
+      - "CMakeLists.txt:6 (find_package)"
     name: "SDL3"
     configs:
       -
@@ -2080,78 +1840,6 @@ events:
         reason: "no_exist"
       -
         path: "/home/yfz/Documents/Projects/terebi/build/CMakeFiles/pkgRedirects/share/cps/sdl3.cps"
-        mode: "cps"
-        reason: "no_exist"
-      -
-        path: "/opt/flutter/bin/cache/dart-sdk/SDL3Config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "/opt/flutter/bin/cache/dart-sdk/sdl3-config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "/opt/flutter/bin/cache/dart-sdk/lib/cps/SDL3.cps"
-        mode: "cps"
-        reason: "no_exist"
-      -
-        path: "/opt/flutter/bin/cache/dart-sdk/lib/cps/sdl3.cps"
-        mode: "cps"
-        reason: "no_exist"
-      -
-        path: "/opt/flutter/bin/cache/dart-sdk/share/cps/SDL3.cps"
-        mode: "cps"
-        reason: "no_exist"
-      -
-        path: "/opt/flutter/bin/cache/dart-sdk/share/cps/sdl3.cps"
-        mode: "cps"
-        reason: "no_exist"
-      -
-        path: "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/SDL3Config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/sdl3-config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/lib/cps/SDL3.cps"
-        mode: "cps"
-        reason: "no_exist"
-      -
-        path: "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/lib/cps/sdl3.cps"
-        mode: "cps"
-        reason: "no_exist"
-      -
-        path: "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/share/cps/SDL3.cps"
-        mode: "cps"
-        reason: "no_exist"
-      -
-        path: "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/share/cps/sdl3.cps"
-        mode: "cps"
-        reason: "no_exist"
-      -
-        path: "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/SDL3Config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/sdl3-config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/lib/cps/SDL3.cps"
-        mode: "cps"
-        reason: "no_exist"
-      -
-        path: "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/lib/cps/sdl3.cps"
-        mode: "cps"
-        reason: "no_exist"
-      -
-        path: "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/share/cps/SDL3.cps"
-        mode: "cps"
-        reason: "no_exist"
-      -
-        path: "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/share/cps/sdl3.cps"
         mode: "cps"
         reason: "no_exist"
       -
@@ -2224,171 +1912,6 @@ events:
       version: "3.4.4"
     search_context:
       ENV{PATH}:
-        - "/opt/flutter/bin/cache/dart-sdk/bin/"
-        - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/debugCommand"
-        - "/home/yfz/.config/Code/User/globalStorage/github.copilot-chat/copilotCli"
-        - "/usr/local/sbin"
-        - "/usr/local/bin"
-        - "/usr/bin"
-        - "/var/lib/flatpak/exports/bin"
-        - "/usr/lib/jvm/default/bin"
-        - "/usr/bin/site_perl"
-        - "/usr/bin/vendor_perl"
-        - "/usr/bin/core_perl"
-        - "/home/yfz/.local/bin"
-        - "/opt/flutter/bin"
-        - "/home/yfz/.local/bin"
-        - "/opt/flutter/bin"
-        - "/home/yfz/.local/bin"
-      CMAKE_INSTALL_PREFIX: "/usr/local"
-      CMAKE_SYSTEM_PREFIX_PATH:
-        - "/usr/local"
-        - "/usr"
-        - "/"
-        - "/usr"
-        - "/usr/local"
-        - "/usr/X11R6"
-        - "/usr/pkg"
-        - "/opt"
-...
-
----
-events:
-  -
-    kind: "find_package-v1"
-    backtrace:
-      - "CMakeLists.txt:6 (find_package)"
-    name: "SDL2"
-    configs:
-      -
-        filename: "SDL2.cps"
-        kind: "cps"
-      -
-        filename: "sdl2.cps"
-        kind: "cps"
-      -
-        filename: "SDL2Config.cmake"
-        kind: "cmake"
-      -
-        filename: "sdl2-config.cmake"
-        kind: "cmake"
-    version_request:
-      exact: false
-    settings:
-      required: "required_explicit"
-      quiet: false
-      global: false
-      policy_scope: true
-      bypass_provider: false
-      names:
-        - "SDL2"
-      path_suffixes:
-        - ""
-      paths:
-        CMAKE_FIND_USE_CMAKE_PATH: true
-        CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
-        CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
-        CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
-        CMAKE_FIND_USE_INSTALL_PREFIX: true
-        CMAKE_FIND_USE_PACKAGE_ROOT_PATH: true
-        CMAKE_FIND_USE_CMAKE_PACKAGE_REGISTRY: true
-        CMAKE_FIND_USE_SYSTEM_PACKAGE_REGISTRY: true
-        CMAKE_FIND_ROOT_PATH_MODE: "BOTH"
-    candidates:
-      -
-        path: "/home/yfz/Documents/Projects/terebi/build/CMakeFiles/pkgRedirects/SDL2Config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "/home/yfz/Documents/Projects/terebi/build/CMakeFiles/pkgRedirects/sdl2-config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "/home/yfz/Documents/Projects/terebi/build/CMakeFiles/pkgRedirects/lib/cps/SDL2.cps"
-        mode: "cps"
-        reason: "no_exist"
-      -
-        path: "/home/yfz/Documents/Projects/terebi/build/CMakeFiles/pkgRedirects/lib/cps/sdl2.cps"
-        mode: "cps"
-        reason: "no_exist"
-      -
-        path: "/home/yfz/Documents/Projects/terebi/build/CMakeFiles/pkgRedirects/share/cps/SDL2.cps"
-        mode: "cps"
-        reason: "no_exist"
-      -
-        path: "/home/yfz/Documents/Projects/terebi/build/CMakeFiles/pkgRedirects/share/cps/sdl2.cps"
-        mode: "cps"
-        reason: "no_exist"
-      -
-        path: "/usr/local/SDL2Config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "/usr/local/sdl2-config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "/usr/local/lib/cps/SDL2.cps"
-        mode: "cps"
-        reason: "no_exist"
-      -
-        path: "/usr/local/lib/cps/sdl2.cps"
-        mode: "cps"
-        reason: "no_exist"
-      -
-        path: "/usr/local/share/cps/SDL2.cps"
-        mode: "cps"
-        reason: "no_exist"
-      -
-        path: "/usr/local/share/cps/sdl2.cps"
-        mode: "cps"
-        reason: "no_exist"
-      -
-        path: "/usr/SDL2Config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "/usr/sdl2-config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "/usr/lib/cps/SDL2.cps"
-        mode: "cps"
-        reason: "no_exist"
-      -
-        path: "/usr/lib/cps/sdl2.cps"
-        mode: "cps"
-        reason: "no_exist"
-      -
-        path: "/usr/share/cps/SDL2.cps"
-        mode: "cps"
-        reason: "no_exist"
-      -
-        path: "/usr/share/cps/sdl2.cps"
-        mode: "cps"
-        reason: "no_exist"
-      -
-        path: "/usr/lib/cmake/SDL2_ttf/SDL2Config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "/usr/lib/cmake/SDL2_ttf/sdl2-config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "/usr/lib/cmake/SDL2_image/SDL2Config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "/usr/lib/cmake/SDL2_image/sdl2-config.cmake"
-        mode: "config"
-        reason: "no_exist"
-    found:
-      path: "/usr/lib/cmake/SDL2/SDL2Config.cmake"
-      mode: "config"
-      version: "2.32.66"
-    search_context:
-      ENV{PATH}:
         - "/usr/local/sbin"
         - "/usr/local/bin"
         - "/usr/bin"
@@ -2410,10 +1933,6 @@ events:
         - "/usr/X11R6"
         - "/usr/pkg"
         - "/opt"
-...
-
----
-events:
   -
     kind: "find_package-v1"
     backtrace:

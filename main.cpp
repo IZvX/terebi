@@ -13,9 +13,13 @@
 #include "nimble/utils/cursors.h"
 #include "fontawesome/fontawesome.h"
 
+// GPU Renderer
+#include "nimble/gpu/renderer_gpu.h"
+
 // ImGui
 #include "imgui/backends/imgui_impl_sdl3.h"
-#include "imgui/backends/imgui_impl_sdlrenderer3.h"
+// Switch to the SDL_GPU3 backend
+#include "imgui/backends/imgui_impl_sdlgpu3.h"
 #include "imgui/imgui.h"
 
 // --- Include your new separated files ---
@@ -26,120 +30,50 @@
 
 // Forward Declarations
 void initUIKit();
-// ADDED: bool &stateChanged to track if we need to wake up
 InputState gatherInputState(SDL_Event &e, bool &quit, bool &stateChanged);
 InputState gatherInputState(SDL_Event &e, bool &quit, bool &stateChanged, int waitTimeoutMs);
 
-static bool HasRendererDriver(const char *name)
-{
-    const int numDrivers = SDL_GetNumRenderDrivers();
-    for (int i = 0; i < numDrivers; ++i)
-    {
-        const char *driver = SDL_GetRenderDriver(i);
-        if (driver && SDL_strcasecmp(driver, name) == 0)
-            return true;
-    }
-    return false;
-}
-
-static SDL_Renderer *CreateBestRenderer(SDL_Window *window, const std::string &preferredRenderer)
-{
-    // SDL2 -> SDL3 migration: renderer creation now accepts a driver name.
-    // Prefer Vulkan when supported; otherwise pick the next available GPU backend.
-    std::vector<const char *> preferredDrivers = {
-        "vulkan",
-        "metal",
-        "direct3d12",
-        "direct3d11",
-        "opengl",
-        "opengles2"
-    };
-
-    if (!preferredRenderer.empty())
-    {
-        preferredDrivers.erase(
-            std::remove_if(
-                preferredDrivers.begin(),
-                preferredDrivers.end(),
-                [&](const char *driver) { return SDL_strcasecmp(driver, preferredRenderer.c_str()) == 0; }),
-            preferredDrivers.end());
-        preferredDrivers.insert(preferredDrivers.begin(), preferredRenderer.c_str());
-    }
-
-    std::unordered_set<std::string> triedDrivers;
-    auto tryDriver = [&](const char *driverName) -> SDL_Renderer * {
-        if (!driverName) return nullptr;
-        std::string key = driverName;
-        if (triedDrivers.count(key)) return nullptr;
-        triedDrivers.insert(key);
-
-        SDL_Renderer *candidate = SDL_CreateRenderer(window, driverName);
-        if (!candidate) return nullptr;
-
-        const char *active = SDL_GetRendererName(candidate);
-        if (active && SDL_strcasecmp(active, "software") == 0)
-        {
-            SDL_DestroyRenderer(candidate);
-            return nullptr;
-        }
-        return candidate;
-    };
-
-    for (const char *driver : preferredDrivers)
-    {
-        if (!HasRendererDriver(driver))
-            continue;
-        if (SDL_Renderer *renderer = tryDriver(driver))
-            return renderer;
-    }
-
-    // Dynamic fallback: try every available non-software backend.
-    const int numDrivers = SDL_GetNumRenderDrivers();
-    for (int i = 0; i < numDrivers; ++i)
-    {
-        const char *driver = SDL_GetRenderDriver(i);
-        if (SDL_Renderer *renderer = tryDriver(driver))
-            return renderer;
-    }
-
-    // Last resort.
-    return SDL_CreateRenderer(window, "software");
-}
-
 int main(int argc, char *args[])
 {
-    std::string preferredRenderer;
-    for (int i = 1; i < argc; ++i)
-    {
-        const std::string arg = args[i];
-        if ((arg == "-r" || arg == "--renderer") && (i + 1) < argc)
-        {
-            preferredRenderer = args[++i];
-        }
-    }
-
     // ====================== INITIALIZATION ======================
     if (!SDL_Init(SDL_INIT_VIDEO)) return -1;
     if (TTF_Init() == -1) return -1;
     IMG_Init(IMG_INIT_PNG);
 
-    // SDL2 -> SDL3 migration: present-vsync is now controlled with SDL_HINT_RENDER_VSYNC.
     SDL_SetHint(SDL_HINT_RENDER_VSYNC, "1");
+    SDL_Window *window = SDL_CreateWindow("Terebi UI", 800, 600, SDL_WINDOW_RESIZABLE);
 
-    // SDL2 -> SDL3 migration: SDL_CreateWindow() no longer accepts x/y position parameters.
-    SDL_Window *window = SDL_CreateWindow("Terebi UI",
-                                          800, 600,
-                                          SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL);
+    // Initialize GPU Renderer exclusively
+    GPURenderer* gpuRenderer = GetGPURenderer();
+    if (!gpuRenderer->Initialize(window)) {
+        std::cerr << "Failed to initialize GPU renderer! Exiting..." << std::endl;
+        return -1;
+    }
+    
+    // Load GPU shaders
+    std::cout << "[GPU] Loading shaders..." << std::endl;
+    
+    // IMPORTANT: Make sure this file is named default.vert and compiled to .spv!
+    std::string vertShader = "nimble/shaders/spirv/default.vert.spv";
 
-    SDL_Renderer *renderer = CreateBestRenderer(window, preferredRenderer);
-    if (!renderer) return -1;
-
+    gpuRenderer->LoadShader(ShaderType::RoundedBox, vertShader, "nimble/shaders/spirv/rounded_box.frag.spv");
+    gpuRenderer->LoadShader(ShaderType::BoxShadow,  vertShader, "nimble/shaders/spirv/box_shadow.frag.spv");
+    gpuRenderer->LoadShader(ShaderType::Blur,       vertShader, "nimble/shaders/spirv/blur.frag.spv");
+    
+    std::cout << "[GPU] Shaders loaded successfully" << std::endl;
+    
     // ====================== ImGui INIT ======================
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
-    // SDL2 -> SDL3 migration: backend names changed from SDL2/SDLRenderer2 to SDL3/SDLRenderer3.
-    ImGui_ImplSDL3_InitForSDLRenderer(window, renderer);
-    ImGui_ImplSDLRenderer3_Init(renderer);
+    
+    ImGui_ImplSDL3_InitForSDLGPU(window);
+
+    // Initialize ImGui for SDL_GPU
+    ImGui_ImplSDLGPU3_InitInfo init_info = {};
+    init_info.Device = gpuRenderer->GetDevice();
+    init_info.ColorTargetFormat = SDL_GetGPUSwapchainTextureFormat(gpuRenderer->GetDevice(), window);
+    init_info.MSAASamples = SDL_GPU_SAMPLECOUNT_1;
+    ImGui_ImplSDLGPU3_Init(&init_info);
 
     // ===================== FONT LOADING =====================
     auto loadFont =[](const std::string &path, int size) -> TTF_Font * {
@@ -168,18 +102,13 @@ int main(int argc, char *args[])
     std::string searchString = "";
     g_Context.wifiToggled = (bool)nmcli::enabled;
 
-    // Pre-load pywal theme (but don't enable it - user controls that with the toggle)
     g_Context.currentTheme = WalLoadTheme();
-    g_Context.pywalEnabled = false; // Start with pywal disabled
+    g_Context.pywalEnabled = false;
 
     bool quit = false;
-
     SDL_Event e;
-    // SDL2 -> SDL3 migration: timer APIs in SDL3 use 64-bit millisecond values.
     Uint64 lastTime = SDL_GetTicks();
-
-    // --- Render scheduling / performance variables ---
-    int awakeFrames = 120; // retained for debug/UI signaling
+    int awakeFrames = 120; 
     Uint64 lastDrawTime = SDL_GetTicks();
 
     GlobalContext gctx = {
@@ -193,7 +122,6 @@ int main(int argc, char *args[])
         const bool likelyIdle = (awakeFrames <= 0) && !HasPendingVisualUpdates();
         InputState input = gatherInputState(e, quit, stateChanged, likelyIdle ? 16 : 0);
 
-        // Keep wake signal for debug/UI instrumentation.
         if (stateChanged) {
             awakeFrames = 120;
         }
@@ -202,26 +130,19 @@ int main(int argc, char *args[])
         const bool pendingVisualUpdates = HasPendingVisualUpdates();
         const bool shouldRender = stateChanged || pendingVisualUpdates || (awakeFrames > 0);
 
-        if (!shouldRender) {
-            continue;
-        }
+        if (!shouldRender) continue;
 
-        // Decrease awake counter if we are active
-        if (awakeFrames > 0) {
-            awakeFrames--;
-        }
+        if (awakeFrames > 0) awakeFrames--;
 
-        // Calculate DeltaTime only for frames we actually render.
         float dt = (currentTime - lastTime) / 1000.0f;
         lastTime = currentTime;
         lastDrawTime = currentTime;
 
         // Start Frames
+        ImGui_ImplSDLGPU3_NewFrame();
         ImGui_ImplSDL3_NewFrame();
-        ImGui_ImplSDLRenderer3_NewFrame();
         ImGui::NewFrame();
 
-        // UI Kit Frame Management
         StartUIFrame();
         UpdateUIAnimations(dt);
         ResetCursor();
@@ -230,192 +151,68 @@ int main(int argc, char *args[])
         SDL_GetWindowSize(window, &ww, &wh);
 
         // ====================== RENDER SCREEN ======================
-        // We call our separated screen here
         Widget screen = HomePage(ww, wh, dt, searchString, fonts, gctx);
 
-        SDL_SetRenderDrawColor(renderer, 30, 30, 35, 255);
-        SDL_RenderClear(renderer);
-
-        screen.render(renderer, {0, 0, ww, wh}, input);
-
-        // ====================== DEBUG WINDOW ======================
-        ImGui::Begin("Debug Info");
-        ImGui::TextColored(ImVec4(0, 1, 0, 1), "Performance: %s", pendingVisualUpdates ? "Animated" : "Idle/event-driven");
-
-        ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);
-        ImGui::Text("Mouse: %d, %d", input.mouseX, input.mouseY);
-        ImGui::Text("Renderer: %s", SDL_GetRendererName(renderer));
-        ImGui::Text("Focused: %s", g_FocusedWidgetId.c_str());
-        ImGui::Text("Next Focus: %s", g_NextFocusedWidgetId.c_str());
-
-        ImGui::Separator();
-
-        if (ImGui::CollapsingHeader("Global Settings")) {
-            ImGui::Checkbox("Show Widget IDs", &g_Settings.showWidgetIds);
-            ImGui::Checkbox("Show Clip Rects", &g_Settings.showClipRects);
-            ImGui::Checkbox("Show Flex Weights", &g_Settings.showFlexWeights);
-            ImGui::Checkbox("Show Focus Loop", &g_Settings.showFocusLoop);
-            ImGui::Checkbox("Highlight Input Capture", &g_Settings.highlightInputCapture);
-            ImGui::Checkbox("Slow Animations", &g_Settings.slowAnimations);
-            ImGui::Checkbox("Paint Flash Mode", &g_Settings.paintFlashMode);
-            ImGui::Checkbox("Show FPS Overlay", &g_Settings.showFPSOverlay);
-            ImGui::Checkbox("Trigger State Reset", &g_Settings.triggerStateReset);
-        }
-
-        if (ImGui::CollapsingHeader("Debug Draw")) {
-            ImGui::Checkbox("Enable Debug",    &g_GlobalDebug.enabled        );
-            ImGui::Checkbox("Show Bounds",     &g_GlobalDebug.showBounds     );
-            ImGui::Checkbox("Show Padding",    &g_GlobalDebug.showPadding    );
-            ImGui::Checkbox("Show Spacing",    &g_GlobalDebug.showSpacing    );
-            ImGui::Checkbox("Show Expanded",   &g_GlobalDebug.showExpanded   );
-            ImGui::Checkbox("Show Row",        &g_GlobalDebug.showRow        );
-            ImGui::Checkbox("Show Column",     &g_GlobalDebug.showColumn     );
-            ImGui::Checkbox("Show Nav Arrows", &g_GlobalDebug.showNavArrows  );
-        }
-
-        ImGui::Separator();
-        if (ImGui::CollapsingHeader("Search Button Debug")) {
-
-            ImGui::Text("SearchButton State");
-            SearchButtonState &dbgSS = g_SearchState["navbar_search"];
-            ImGui::Text("expanded:  %s", dbgSS.expanded ? "true" : "false");
-            ImGui::Text("t:         %.3f", dbgSS.t);
-            ImGui::Text("focusSent: %s", dbgSS.focusSent ? "true" : "false");
-            ImGui::Text("isActive:  %s",
-                        (g_FocusedWidgetId == "navbar_search" ||
-                         g_FocusedWidgetId == "nav_searchbar_text" ||
-                         g_NextFocusedWidgetId == "navbar_search" ||
-                         g_NextFocusedWidgetId == "nav_searchbar_text")
-                        ? "true"
-                        : "false");
-            if (ImGui::Button("Expand SearchButton"))
-            {
-                g_SearchState["navbar_search"].expanded = true;
-                g_SearchState["navbar_search"].focusSent = false;
-                g_NextFocusedWidgetId = "navbar_search";
-                awakeFrames = 120; // Manually wake up for the ImGui button press!
-            }
-            ImGui::SameLine();
-            if (ImGui::Button("Collapse SearchButton"))
-            {
-                g_SearchState["navbar_search"].expanded = false;
-                g_SearchState["navbar_search"].focusSent = false;
-                g_NextFocusedWidgetId = "";
-                awakeFrames = 120;
-            }
-
-        }
-
-        if (ImGui::CollapsingHeader("Settings Drawer Debug")) {
-            if (ImGui::Button("Toggle Settings Drawer")) {
-                g_Context.settingsOpen = !g_Context.settingsOpen;
-                awakeFrames = 120;
-            }
-        }
-
-        if (ImGui::CollapsingHeader("Pywal Theme"))
+        // Set clear color and begin the GPU frame
+        gpuRenderer->Clear(30.0f / 255.0f, 30.0f / 255.0f, 35.0f / 255.0f, 1.0f);
+        if (gpuRenderer->AcquireCommandBuffer()) 
         {
-            if (ImGui::Checkbox("Enable Pywal", &g_Context.pywalEnabled)) awakeFrames = 120;
+            gpuRenderer->BeginFrame();
 
-            if (ImGui::Button("Reload Pywal Theme"))
-            {
-                g_Context.currentTheme = WalLoadTheme();
-                awakeFrames = 120;
+            // Note: We are passing nullptr here because we removed SDL_Renderer.
+            // If Widget::render() internally requires an SDL_Renderer*, you will need 
+            // to update your UI kit to not use it anymore!
+            // screen.render(nullptr, {0, 0, ww, wh}, input);
+
+            // ====================== DEBUG WINDOW ======================
+            ImGui::Begin("Debug Info");
+            ImGui::TextColored(ImVec4(0, 1, 0, 1), "Performance: %s", pendingVisualUpdates ? "Animated" : "Idle/event-driven");
+            ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);
+            ImGui::Text("Mouse: %d, %d", input.mouseX, input.mouseY);
+            ImGui::Text("Focused: %s", g_FocusedWidgetId.c_str());
+            ImGui::Text("Next Focus: %s", g_NextFocusedWidgetId.c_str());
+
+            ImGui::Separator();
+
+            if (ImGui::CollapsingHeader("Global Settings")) {
+                ImGui::Checkbox("Show Widget IDs", &g_Settings.showWidgetIds);
+                ImGui::Checkbox("Show Clip Rects", &g_Settings.showClipRects);
+                ImGui::Checkbox("Show Flex Weights", &g_Settings.showFlexWeights);
+                ImGui::Checkbox("Show Focus Loop", &g_Settings.showFocusLoop);
+                ImGui::Checkbox("Highlight Input Capture", &g_Settings.highlightInputCapture);
+                ImGui::Checkbox("Slow Animations", &g_Settings.slowAnimations);
+                ImGui::Checkbox("Paint Flash Mode", &g_Settings.paintFlashMode);
+                ImGui::Checkbox("Show FPS Overlay", &g_Settings.showFPSOverlay);
+                ImGui::Checkbox("Trigger State Reset", &g_Settings.triggerStateReset);
             }
 
-            ImGui::Separator();
-
-            WalTheme &wal = g_Context.currentTheme;
-
-            auto DrawColor =[](const char* name, SDL_Color col)
-            {
-                float color[4] = {
-                    col.r / 255.0f,
-                    col.g / 255.0f,
-                    col.b / 255.0f,
-                    col.a / 255.0f
-                };
-
-                ImGui::ColorEdit4(
-                    name,
-                    color,
-                    ImGuiColorEditFlags_NoInputs |
-                    ImGuiColorEditFlags_AlphaPreview |
-                    ImGuiColorEditFlags_AlphaBar
-                );
-
-                ImGui::SameLine();
-
-                ImGui::Text(
-                    "#%02X%02X%02X",
-                    col.r,
-                    col.g,
-                    col.b
-                );
-            };
-
-            DrawColor("background", wal.background);
-            DrawColor("foreground", wal.foreground);
-            DrawColor("cursor", wal.cursor);
-
-            ImGui::Separator();
-
-            DrawColor("color0", wal.color0);
-            DrawColor("color1", wal.color1);
-            DrawColor("color2", wal.color2);
-            DrawColor("color3", wal.color3);
-            DrawColor("color4", wal.color4);
-            DrawColor("color5", wal.color5);
-            DrawColor("color6", wal.color6);
-            DrawColor("color7", wal.color7);
-
-            ImGui::Separator();
-
-            DrawColor("color8", wal.color8);
-            DrawColor("color9", wal.color9);
-            DrawColor("color10", wal.color10);
-            DrawColor("color11", wal.color11);
-            DrawColor("color12", wal.color12);
-            DrawColor("color13", wal.color13);
-            DrawColor("color14", wal.color14);
-            DrawColor("color15", wal.color15);
-        }
-        ImGui::Separator();
-        ImGui::Text("Colors:");
-
-        // Color controls
-        if (g_GlobalDebug.showBounds)
-        {
-            float boundsCol[4] = {g_GlobalDebug.boundsColor.r / 255.0f,
-                                  g_GlobalDebug.boundsColor.g / 255.0f,
-                                  g_GlobalDebug.boundsColor.b / 255.0f,
-                                  g_GlobalDebug.boundsColor.a / 255.0f
-                                 };
-            if (ImGui::ColorEdit4("Bounds Color", boundsCol, ImGuiColorEditFlags_AlphaBar))
-            {
-                g_GlobalDebug.boundsColor.r = (Uint8)(boundsCol[0] * 255.0f);
-                g_GlobalDebug.boundsColor.g = (Uint8)(boundsCol[1] * 255.0f);
-                g_GlobalDebug.boundsColor.b = (Uint8)(boundsCol[2] * 255.0f);
-                g_GlobalDebug.boundsColor.a = (Uint8)(boundsCol[3] * 255.0f);
+            if (ImGui::CollapsingHeader("Debug Draw")) {
+                ImGui::Checkbox("Enable Debug",    &g_GlobalDebug.enabled        );
+                ImGui::Checkbox("Show Bounds",     &g_GlobalDebug.showBounds     );
+                ImGui::Checkbox("Show Padding",    &g_GlobalDebug.showPadding    );
+                ImGui::Checkbox("Show Spacing",    &g_GlobalDebug.showSpacing    );
+                ImGui::Checkbox("Show Expanded",   &g_GlobalDebug.showExpanded   );
+                ImGui::Checkbox("Show Row",        &g_GlobalDebug.showRow        );
+                ImGui::Checkbox("Show Column",     &g_GlobalDebug.showColumn     );
+                ImGui::Checkbox("Show Nav Arrows", &g_GlobalDebug.showNavArrows  );
             }
+
+            ImGui::End();
+
+            // Render ImGui onto the GPU Command Buffer
+            ImGui::Render();
+            ImGui_ImplSDLGPU3_RenderDrawData(ImGui::GetDrawData(), gpuRenderer->GetCommandBuffer(), gpuRenderer->GetRenderPass());
+
+            gpuRenderer->EndFrame();
         }
-
-        // ... (Remaining color pickers) ...
-
-        ImGui::End();
-        // Render ImGui
-        ImGui::Render();
-        ImGui_ImplSDLRenderer3_RenderDrawData(ImGui::GetDrawData(), renderer);
-
-        SDL_RenderPresent(renderer);
     }
 
     // ====================== CLEANUP ======================
-    ImGui_ImplSDLRenderer3_Shutdown();
+    ImGui_ImplSDLGPU3_Shutdown();
     ImGui_ImplSDL3_Shutdown();
     ImGui::DestroyContext();
 
-    SDL_DestroyRenderer(renderer);
+    gpuRenderer->Shutdown();
     SDL_DestroyWindow(window);
     TTF_Quit();
     IMG_Quit();
@@ -429,7 +226,6 @@ void initUIKit() {
     std::cout << "[UI Kit] Initialized." << std::endl;
 }
 
-// UPDATED: Added bool &stateChanged flag
 InputState gatherInputState(SDL_Event &e, bool &quit, bool &stateChanged)
 {
     return gatherInputState(e, quit, stateChanged, 0);
@@ -455,9 +251,7 @@ InputState gatherInputState(SDL_Event &e, bool &quit, bool &stateChanged, int wa
 
     auto processEvent = [&](SDL_Event &ev)
     {
-        // Any SDL event happening (resize, key, click, hover ImGui) wakes up the app!
         stateChanged = true;
-
         ImGui_ImplSDL3_ProcessEvent(&ev);
 
         if (ev.type == SDL_EVENT_QUIT)
@@ -476,7 +270,6 @@ InputState gatherInputState(SDL_Event &e, bool &quit, bool &stateChanged, int wa
         }
         else if (ev.type == SDL_EVENT_KEY_DOWN)
         {
-            // SDL2 -> SDL3 migration: keyboard event key/mod moved from keysym to key/mod fields.
             input.keyPressed = ev.key.key;
             input.keyMod = ev.key.mod;
             input.backspacePressed = (ev.key.key == SDLK_BACKSPACE);

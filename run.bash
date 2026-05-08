@@ -5,6 +5,7 @@ EXECUTABLE="sdl_app"
 RENDERER=""
 DONT_RUN=0
 RECOMPILE=0
+COMPILE_SHADERS=0
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -24,9 +25,13 @@ while [[ $# -gt 0 ]]; do
             RECOMPILE=1
             shift
             ;;
+        -cs|--compile-shaders)
+            COMPILE_SHADERS=1
+            shift
+            ;;
         *)
             echo "Unknown option: $1"
-            echo "Usage: bash run.bash [-r|--renderer <name>] [--dont-run] [--recompile]"
+            echo "Usage: bash run.bash [-r|--renderer <name>] [--dont-run] [--recompile] [-cs|--compile-shaders]"
             exit 1
             ;;
     esac
@@ -37,6 +42,11 @@ configure_if_needed() {
         echo "--- Configuring (first time) ---"
         cmake -S . -B "$BUILD_DIR" -G Ninja
     fi
+}
+
+compile_shaders() {
+    echo "--- Compiling Shaders ---"
+    bash ./nimble/shaders/compile_shaders.sh
 }
 
 full_rebuild() {
@@ -53,6 +63,11 @@ incremental_build() {
 }
 
 run_app() {
+
+    if [[ "$COMPILE_SHADERS" -eq 1 ]]; then
+        compile_shaders
+    fi
+
     if [[ "$RECOMPILE" -eq 1 ]]; then
         full_rebuild
     else
