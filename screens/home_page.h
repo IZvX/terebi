@@ -6,6 +6,7 @@
 #include "../components/search_button.h"
 #include "../components/drawer.h"
 #include "../components/drawer_item.h"
+#include "../terebi/virtual_keyboard.h"
 
 #include "../components/settings_drawer.h" 
 inline Widget HomePage(int ww, int wh, float dt, std::string& search, AppFonts& fonts, GlobalContext& gctx)
@@ -40,7 +41,7 @@ inline Widget HomePage(int ww, int wh, float dt, std::string& search, AppFonts& 
                             g_SearchState["navbar_search"].focusSent = false;
                             g_NextFocusedWidgetId = "navbar_search";
                         }),
-                    NavItemRounded(FontAwesome::Cog().codepoint, "Search", "navbar_settings", {"", "", "navbar_search", "navbar_home", "navbar_search", "navbar_home"}, fonts)
+                    NavItemRounded(FontAwesome::Cog().codepoint, "Search", "navbar_settings", {"", "", "navbar_search", "navbar_home", "navbar_home", "navbar_search"}, fonts)
                         .OnClick("navbar_settings", 0.25f, []() {g_Context.settingsOpen = !g_Context.settingsOpen; g_NextFocusedWidgetId = "drawer_settings_closesettings";}, [](Widget &w, float t) {
                             
                         })
@@ -48,12 +49,17 @@ inline Widget HomePage(int ww, int wh, float dt, std::string& search, AppFonts& 
             },ScrollBehavior::None,ScrollAxis::Horizontal,"",1.0f,0.0f);
     Widget navWrapper = Expanded(0, 1, Box({0,0},{.color = navbarBg},Padding({60, 40},Expanded(0, 1, nav))));
 
+    bool searchKeyboardActive = g_SearchState["navbar_search"].expanded || g_FocusedWidgetId == "nav_searchbar_text";
+    Widget keyboard = onScreenKeyboard(ww, fonts, search, "nav_searchbar_text", searchKeyboardActive, [&]() {
+        g_SearchState["navbar_search"].expanded = false;
+        g_NextFocusedWidgetId = "nav_searchbar_text";
+    });
+
     return Scaffold(
-        Column(MainAxisAlignment::Start, CrossAxisAlignment::Start, 0, {
-            
-            navWrapper,
-            RenderSettingsDrawer(ww, wh, dt, fonts)
-            
+            Column(MainAxisAlignment::Start, CrossAxisAlignment::Start, 0, {
+                navWrapper,
+                RenderSettingsDrawer(ww, wh, dt, fonts),
+                Position(PositionType::Fixed, {0, wh - 300}, keyboard)
         }),
         ForegroundBlur(0, Stack({
             Image("assets/images/frieren.jpg", {ww, wh}),

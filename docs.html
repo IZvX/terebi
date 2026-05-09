@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>terebi / nimble Documentation</title>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-main: #0f172a;
+            --bg-card: #1e293b;
+            --bg-sidebar: #0b1120;
+            --accent: #6366f1;
+            --accent-hover: #818cf8;
+            --text-main: #f1f5f9;
+            --text-dim: #94a3b8;
+            --border: #334155;
+            --code-bg: #000000;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            line-height: 1.6;
+            display: flex;
+        }
+
+        /* --- Sidebar Navigation --- */
+        nav {
+            width: 280px;
+            height: 100vh;
+            background: var(--bg-sidebar);
+            border-right: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            padding: 2rem 1.5rem;
+            overflow-y: auto;
+        }
+
+        nav h1 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        nav ul { list-style: none; }
+        nav ul li { margin-bottom: 0.5rem; }
+        nav ul li a {
+            color: var(--text-dim);
+            text-decoration: none;
+            font-size: 0.9rem;
+            display: block;
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+        nav ul li a:hover {
+            background: var(--bg-card);
+            color: var(--text-main);
+        }
+
+        /* --- Main Content --- */
+        main {
+            flex: 1;
+            max-width: 1000px;
+            padding: 3rem 4rem;
+            margin: 0 auto;
+        }
+
+        header {
+            margin-bottom: 4rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 2rem;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            letter-spacing: -0.025em;
+            margin-bottom: 1rem;
+            background: linear-gradient(to right, #fff, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        section {
+            margin-bottom: 5rem;
+            scroll-margin-top: 2rem;
+        }
+
+        h2 {
+            font-size: 1.75rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--text-main);
+        }
+
+        h2 i { color: var(--accent); font-size: 1.4rem; }
+
+        h3 {
+            font-size: 1.1rem;
+            margin: 2rem 0 1rem 0;
+            color: var(--accent-hover);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        p { color: var(--text-dim); margin-bottom: 1.25rem; font-size: 1.05rem; }
+
+        /* --- Cards --- */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        /* --- UI Elements --- */
+        ul { margin-left: 1.5rem; margin-bottom: 1.5rem; }
+        li { margin-bottom: 0.5rem; color: var(--text-dim); }
+        li strong { color: var(--text-main); }
+
+        code {
+            font-family: 'Fira Code', monospace;
+            background: rgba(0,0,0,0.3);
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-size: 0.9em;
+            color: #e2e8f0;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        pre {
+            background: var(--code-bg);
+            padding: 1.25rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            border: 1px solid var(--border);
+            margin: 1rem 0;
+        }
+
+        pre code {
+            background: transparent;
+            border: none;
+            padding: 0;
+            color: #9cdcfe; /* Soft blue code highlight */
+            line-height: 1.5;
+        }
+
+        .badge {
+            display: inline-block;
+            background: var(--accent);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 900px) {
+            body { flex-direction: column; }
+            nav { width: 100%; height: auto; position: relative; border-right: none; border-bottom: 1px solid var(--border); }
+            main { padding: 2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <h1><i class="fas fa-layer-group"></i> nimble</h1>
+        <ul>
+            <li><a href="#overview"><i class="fas fa-info-circle"></i> Overview</a></li>
+            <li><a href="#widgets"><i class="fas fa-cubes"></i> Core Widgets</a></li>
+            <li><a href="#signatures"><i class="fas fa-code"></i> Signatures</a></li>
+            <li><a href="#events"><i class="fas fa-bolt"></i> Event API</a></li>
+            <li><a href="#structs"><i class="fas fa-database"></i> Core Structs</a></li>
+            <li><a href="#patterns"><i class="fas fa-project-diagram"></i> Layout Patterns</a></li>
+            <li><a href="#input"><i class="fas fa-keyboard"></i> Input Patterns</a></li>
+            <li><a href="#focus"><i class="fas fa-mouse-pointer"></i> Focus & Nav</a></li>
+            <li><a href="#custom"><i class="fas fa-tools"></i> Custom Widgets</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <header>
+            <h1>terebi / nimble <span style="font-weight: 300; opacity: 0.5;">Documentation</span></h1>
+            <p>A high-performance immediate-mode UI framework for SDL2. Build layouts, manage focus, and handle text input with a modern widget-tree API.</p>
+        </header>
+
+        <section id="overview">
+            <h2><i class="fas fa-compass"></i> Overview</h2>
+            <div class="card">
+                <p>nimble is a lightweight immediate-mode UI builder using SDL2 rendering primitives. It provides a widget tree API and event helpers for hover, click, focus, keyboard navigation, and text input.</p>
+                <h3 style="margin-top:0">Key Concepts</h3>
+                <ul>
+                    <li><strong>Widgets:</strong> Immutable layout nodes built each frame with event callbacks.</li>
+                    <li><strong>Widget styles:</strong> Define background, border, shadows, padding and more.</li>
+                    <li><strong>Navigation:</strong> Explicit and supports keyboard direction and tab order.</li>
+                    <li><strong>Text fields:</strong> Bind to strings and support cursor movement, selection, and clipboard.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="widgets">
+            <h2><i class="fas fa-cubes"></i> Core Widget List</h2>
+            <div class="card">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                    <div>
+                        <h3>Layout Widgets</h3>
+                        <ul>
+                            <li><code>Column</code> – Vertical layout</li>
+                            <li><code>Row</code> – Horizontal layout</li>
+                            <li><code>Padding</code> – Inner spacing</li>
+                            <li><code>Expanded</code> – Flex child</li>
+                            <li><code>Stack</code> – Layered children</li>
+                            <li><code>Scaffold</code> – Root container</li>
+                            <li><code>Position</code> – Absolute wrapper</li>
+                            <li><code>SizedBox</code> – Fixed spacing</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3>Visual Widgets</h3>
+                        <ul>
+                            <li><code>RoundedBox</code> – Styled container</li>
+                            <li><code>Box</code> – Simple rectangle</li>
+                            <li><code>Center</code> – Alignment wrapper</li>
+                            <li><code>Opacity</code> – Composite flattening</li>
+                            <li><code>Clip</code> – Rounded mask</li>
+                            <li><code>Image / Svg</code> – Asset rendering</li>
+                            <li><code>Text / Icon</code> – Typography</li>
+                            <li><code>TextField / Toggle</code> – Controls</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="signatures">
+            <h2><i class="fas fa-code"></i> Widget Signatures</h2>
+            <div class="card">
+                <h3><code>Column</code> & <code>Row</code></h3>
+                <pre><code>Column(MainAxisAlignment mainAlign, CrossAxisAlignment crossAlign, int spacing, const std::vector&lt;Widget&gt; &children, ScrollBehavior scroll = ScrollBehavior::None, ...)</code></pre>
+
+                <h3><code>Padding</code></h3>
+                <pre><code>Padding(Vector2 padding, Widget child, float expandX = 1, float expandY = 1)</code></pre>
+
+                <h3><code>Expanded</code></h3>
+                <pre><code>Expanded(float vertical, float horizontal, Widget child)</code></pre>
+
+                <h3><code>Stack</code></h3>
+                <pre><code>Stack(const std::vector&lt;Widget&gt;& children, Alignment align = {0.5f, 0.5f})</code></pre>
+
+                <h3><code>Scaffold</code></h3>
+                <pre><code>Scaffold(Widget body, SDL_Color bgColor = {255,255,255,255})
+Scaffold(Widget body, Widget background)</code></pre>
+
+                <h3><code>TextField</code></h3>
+                <pre><code>TextField(const std::string &id, std::string &text, const std::string &placeholder, Vector2 size, TextFieldStyle tfStyle)</code></pre>
+
+                <h3><code>Icon</code></h3>
+                <pre><code>Icon(IconData icon, TTF_Font* font, int size, SDL_Color color, Gradient grad = {}, int thickness = 0)</code></pre>
+            </div>
+        </section>
+
+        <section id="events">
+            <h2><i class="fas fa-bolt"></i> Event / Callback API</h2>
+            <div class="card">
+                <p>Attach behavior to any widget using chaining methods:</p>
+                <ul>
+                    <li><strong>OnHover:</strong> <code>OnHover(id, duration, animFn, curveFn)</code></li>
+                    <li><strong>OnClick:</strong> <code>OnClick(id, duration, cb, animFn, curveFn)</code></li>
+                    <li><strong>OnFocus:</strong> <code>OnFocus(id, duration, animFn, curveFn)</code></li>
+                    <li><strong>OnKeyPress:</strong> <code>OnKeyPress(key, cb, triggerClickFallback=false)</code></li>
+                    <li><strong>OnType:</strong> <code>OnType(cb)</code> - Triggers on string change</li>
+                    <li><strong>OnSubmit:</strong> <code>OnSubmit(cb)</code> - Triggers on Enter key</li>
+                    <li><strong>WithNav:</strong> <code>WithNav(up, down, left, right, next, prev)</code></li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="structs">
+            <h2><i class="fas fa-database"></i> Core Structs</h2>
+            <div class="card">
+                <h3><code>WidgetStyle</code></h3>
+                <p>Visual configuration including <code>radius</code>, <code>borderWidth</code>, <code>shadowBlur</code>, and <code>gradient</code> overlays.</p>
+                
+                <h3><code>InputState</code></h3>
+                <p>Global input tracking for <code>mouseX/Y</code>, <code>mouseClicked</code>, <code>keyPressed</code>, and SDL <code>textInput</code> strings.</p>
+                
+                <h3><code>TextFieldState</code></h3>
+                <p>Manages <code>cursorPosition</code>, <code>selectionAnchor</code>, and clipboard interactions.</p>
+            </div>
+        </section>
+
+        <section id="patterns">
+            <h2><i class="fas fa-project-diagram"></i> Common Layout Patterns</h2>
+            <div class="card">
+                <h3>Centered Panel</h3>
+                <pre><code>return Center(
+    RoundedBox({300, 220}, style,
+        Padding({20,20}, Column(MainAxisAlignment::Start, CrossAxisAlignment::Stretch, 16, {
+            Text("Title", font, {255,255,255,255}),
+            Text("Subtitle", font, {175,175,175,255})
+        }))));</code></pre>
+
+                <h3>Responsive Horizontal Menu</h3>
+                <pre><code>return Row(MainAxisAlignment::SpaceBetween, CrossAxisAlignment::Center, 24, {
+    MenuItem("Home"),
+    MenuItem("Search"),
+    MenuItem("Settings")
+}, ScrollBehavior::None, ScrollAxis::Horizontal);</code></pre>
+            </div>
+        </section>
+
+        <section id="input">
+            <h2><i class="fas fa-keyboard"></i> TextField / Input Patterns</h2>
+            <div class="card">
+                <p>Text fields bind directly to a string and expose change callbacks. Nimble automatically handles selection and cursor logic.</p>
+                <pre><code>Widget search = TextField("search_input", queryString, "Search…", {400, 44}, tfStyle)
+    .OnSubmit([&](std::string value) { /* handle submit */ })
+    .OnType([&](std::string value) { /* live update */ });</code></pre>
+            </div>
+        </section>
+
+        <section id="focus">
+            <h2><i class="fas fa-mouse-pointer"></i> Focus and Navigation</h2>
+            <div class="card">
+                <p>Explicit wiring is recommended for keyboard accessibility:</p>
+                <pre><code>Button("Prev").WithNav("", "next_id", "", ""),
+Button("Next").WithNav("", "", "prev_id", "")</code></pre>
+                <p>Focus is tracked via global IDs: <code>g_FocusedWidgetId</code>.</p>
+            </div>
+        </section>
+
+        <section id="custom">
+            <h2><i class="fas fa-tools"></i> Building Custom Widgets</h2>
+            <div class="card">
+                <p>Custom controls are composed of existing widgets. For example, a virtual keyboard is just a <code>Stack</code> of <code>RoundedBox</code> keys inside a <code>Position</code> wrapper.</p>
+                <pre><code>auto keyboard = onScreenKeyboard(width, fonts, currentText, "search_input", isVisible, [&]() {
+    // enter action
+});
+
+return Stack({ mainScreen, Position(PositionType::Fixed, {0, height - 300}, keyboard)});</code></pre>
+            </div>
+        </section>
+
+        <section id="summary" style="border-top: 1px solid var(--border); padding-top: 3rem;">
+            <h2><i class="fas fa-flag-checkered"></i> Summary</h2>
+            <p>Nimble provides a flexible model for modern SDL2 applications, bridging the gap between low-level rendering and high-level UI composition with a focus on keyboard-driven navigation and robust text input.</p>
+        </section>
+    </main>
+
+</body>
+</html>

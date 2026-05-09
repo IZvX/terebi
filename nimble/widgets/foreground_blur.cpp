@@ -7,6 +7,7 @@ namespace Widgets {
                  if(!children.empty()) children[0].render(renderer, rect, input, dbg);
                  return;
              }
+            if (rect.w <= 0 || rect.h <= 0) return;
              
              InputState localInput = input;
              localInput.mouseX -= rect.x;
@@ -14,8 +15,7 @@ namespace Widgets {
 
              SDL_Texture* parentTarget = SDL_GetRenderTarget(renderer);
 
-             SDL_Texture* target = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ABGR8888, SDL_TEXTUREACCESS_TARGET, rect.w, rect.h);
-             SDL_SetTextureBlendMode(target, SDL_BLENDMODE_BLEND);
+             SDL_Texture* target = GetClipTexture(renderer, rect.w, rect.h, "__fg_blur_target");
              SDL_SetRenderTarget(renderer, target);
              SDL_SetRenderDrawColor(renderer, 0,0,0,0); 
              SDL_RenderClear(renderer);
@@ -29,9 +29,7 @@ namespace Widgets {
              SDL_SetRenderTarget(renderer, parentTarget);
              
              // Fast GPU path (skips CPU ReadPixels entirely)
-             RenderGPUGaussian(renderer, target, rect.w, rect.h, blurRadius, rect);
-
-             SDL_DestroyTexture(target);
+             RenderGPUGaussian(renderer, target, rect.w, rect.h, std::min(blurRadius, 20), rect);
          }};
     }
 }

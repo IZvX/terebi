@@ -43,3 +43,4 @@
 #include "widgets/clip.cpp"
 #include "widgets/position.cpp"
 #include "widgets/opacity.cpp"
+#include "widgets/toggle.cpp"

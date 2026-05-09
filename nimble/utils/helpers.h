@@ -1,4 +1,5 @@
 #pragma once
+#include "math.h"
 #include <string>
 #include <vector>
 #include <unordered_map>
@@ -99,6 +100,7 @@ struct WidgetStyle
 
 struct InputState
 {
+    bool anyEvent = false;
     int mouseX = 0;
     int mouseY = 0;
     bool mouseClicked = false;

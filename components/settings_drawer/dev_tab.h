@@ -29,7 +29,7 @@ inline Widget SettingsTab_Dev(AppFonts& fonts) {
                     FontAwesome::ArrowLeft().codepoint,
                     "Back",
                     "drawer_dev_back",
-                    {"drawer_dev_statereset_toggle","drawer_dev_debugtoggle", "", "", "", ""},
+                    {"drawer_dev_statereset_toggle","drawer_dev_debugtoggle", "", "", "drawer_dev_debugtoggle", "drawer_dev_statereset_toggle"},
                     fonts
                 ).OnClick(
                     "drawer_system_back",
@@ -46,7 +46,7 @@ inline Widget SettingsTab_Dev(AppFonts& fonts) {
         ),
         Expanded(1,1,Column(MainAxisAlignment::Start, CrossAxisAlignment::Stretch, 10, {
                 // 1. Master Toggle (Always 1.0 opacity)
-                DrawerToggle(g_GlobalDebug.enabled,{},"Enable Debug","drawer_dev_debugtoggle",{"drawer_dev_back","","","","",""},fonts),
+                DrawerToggle(g_GlobalDebug.enabled,{},"Enable Debug","drawer_dev_debugtoggle",{"drawer_dev_back","","","","","drawer_dev_back"},fonts),
                 
                 // 2. Sub-Toggles (Wrapped in Opacity)
                 Opacity(subAlpha, DrawerToggle(g_GlobalDebug.showBounds, {}, "Show Bounds", "drawer_dev_showbounds_toggle", 
@@ -74,11 +74,15 @@ inline Widget SettingsTab_Dev(AppFonts& fonts) {
                     .WithDisabled(debugDisabled)),
                 
                 Opacity(subAlpha, DrawerToggle(g_GlobalDebug.showNavArrows, {}, "Show NavArrows", "drawer_dev_shownavarrows_toggle", 
-                    {"drawer_dev_showcolumn_toggle", "drawer_dev_childreninherit_toggle", "", "", "", ""}, fonts)
+                    {"drawer_dev_showcolumn_toggle", "drawer_dev_focusonlynav_toggle", "", "", "", ""}, fonts)
+                    .WithDisabled(debugDisabled)),
+
+                Opacity(subAlpha, DrawerToggle(g_GlobalDebug.focusOnlyNavArrows, {}, "Focus-Only NavArrows", "drawer_dev_focusonlynav_toggle", 
+                    {"drawer_dev_shownavarrows_toggle", "drawer_dev_childreninherit_toggle", "", "", "", ""}, fonts)
                     .WithDisabled(debugDisabled)),
                 
                 Opacity(subAlpha, DrawerToggle(g_GlobalDebug.childrenInherit, {}, "Children Inherit Debug", "drawer_dev_childreninherit_toggle", 
-                    {"drawer_dev_shownavarrows_toggle", "drawer_dev_widgetids_toggle", "", "", "", ""}, fonts)
+                    {"drawer_dev_focusonlynav_toggle", "drawer_dev_widgetids_toggle", "", "", "", ""}, fonts)
                     .WithDisabled(debugDisabled)),
 
                 // --- 1. Layout & Metrics ---
@@ -96,7 +100,7 @@ inline Widget SettingsTab_Dev(AppFonts& fonts) {
                 DrawerToggle(g_Settings.showFPSOverlay,{},"Show FPS Overlay","drawer_dev_fpsoverlay_toggle",{"","","","","",""},fonts),
 
                 // --- 4. Logic & Data ---
-                DrawerToggle(g_Settings.triggerStateReset,{},"Trigger State Reset","drawer_dev_statereset_toggle",{"","drawer_dev_back","","","",""},fonts)
+                DrawerToggle(g_Settings.triggerStateReset,{},"Trigger State Reset","drawer_dev_statereset_toggle",{"","drawer_dev_back","","","drawer_dev_back",""},fonts)
 
             },ScrollBehavior::Always,ScrollAxis::Vertical,"",0,0,true)
         )

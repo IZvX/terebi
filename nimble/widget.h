@@ -1,10 +1,9 @@
-
-
 #pragma once
 #include <cmath>
 #include <algorithm>
 #include <cstdlib>
 #include <unordered_set>
+#include <iostream>
 
 // --- Global Developer Settings ---
 struct GlobalSettings
@@ -46,6 +45,8 @@ struct WidgetNav
     std::string prev = ""; // Shift + Tab
 };
 
+inline std::unordered_map<std::string, WidgetNav> g_NavigationLinks;
+
 inline void NavLog(const std::string &from,
                    const std::string &dir,
                    const std::string &to)
@@ -59,146 +60,6 @@ inline void NavLog(const std::string &from,
               << " -> " << (to.empty() ? "NONE" : to)
               << std::endl;
 }
-
-// --- Debugging Structures ---
-struct WidgetDebug
-{
-    bool enabled = false;
-    bool showBounds = false;
-    bool showPadding = false;
-    bool showSpacing = false;
-    bool showExpanded = false;
-    bool showRow = false;
-    bool showColumn = false;
-    bool showNavArrows = false;
-    bool childrenInherit = false;
-
-    SDL_Color boundsColor = {255, 0, 0, 255};      // Red cross
-    SDL_Color paddingColor = {170, 255, 170, 120}; // Pastel Green
-    SDL_Color spacingColor = {255, 0, 255, 150};   // Magenta
-};
-
-inline WidgetDebug g_GlobalDebug = {false, false, false, false, false};
-
-namespace DebugDraw
-{
-    inline void DrawDiagonalRect(SDL_Renderer *r, SDL_Rect rect, SDL_Color color)
-    {
-        SDL_SetRenderDrawBlendMode(r, SDL_BLENDMODE_BLEND);
-        SDL_SetRenderDrawColor(r, color.r, color.g, color.b, 60);
-        SDL_RenderFillRect(r, &rect);
-        SDL_SetRenderDrawColor(r, color.r, color.g, color.b, color.a);
-        for (int i = -rect.h; i < rect.w; i += 8)
-            SDL_RenderDrawLine(r, rect.x + i, rect.y, rect.x + i + rect.h, rect.y + rect.h);
-        SDL_RenderDrawRect(r, &rect);
-    }
-
-    inline void DrawBoundsCross(SDL_Renderer *r, SDL_Rect rect, SDL_Color color)
-    {
-        SDL_SetRenderDrawBlendMode(r, SDL_BLENDMODE_BLEND);
-        SDL_SetRenderDrawColor(r, color.r, color.g, color.b, color.a);
-        SDL_RenderDrawRect(r, &rect);
-        SDL_RenderDrawLine(r, rect.x, rect.y, rect.x + rect.w, rect.y + rect.h);
-        SDL_RenderDrawLine(r, rect.x + rect.w, rect.y, rect.x, rect.y + rect.h);
-    }
-
-    // --- DEAD SIMPLE EDGE-TO-EDGE ARROW ---
-    inline void DrawEdgeToEdgeArrow(SDL_Renderer *r, SDL_Rect src, SDL_Rect dst, SDL_Color color)
-    {
-        // 1. Find the centers of both widgets
-        int srcCx = src.x + src.w / 2;
-        int srcCy = src.y + src.h / 2;
-        int dstCx = dst.x + dst.w / 2;
-        int dstCy = dst.y + dst.h / 2;
-
-        // 2. Clamp target's center to source's bounds -> Gives exact starting edge!
-        int startX = std::clamp(dstCx, src.x, src.x + src.w);
-        int startY = std::clamp(dstCy, src.y, src.y + src.h);
-
-        // 3. Clamp source's center to target's bounds -> Gives exact ending edge!
-        int endX = std::clamp(srcCx, dst.x, dst.x + dst.w);
-        int endY = std::clamp(srcCy, dst.y, dst.y + dst.h);
-
-        // Don't draw if they are somehow inside each other
-        if (startX == endX && startY == endY)
-            return;
-
-        SDL_SetRenderDrawBlendMode(r, SDL_BLENDMODE_BLEND);
-        SDL_SetRenderDrawColor(r, color.r, color.g, color.b, color.a);
-
-        // 4. Draw the straight line
-        SDL_RenderDrawLine(r, startX, startY, endX, endY);
-
-        // 5. Draw the arrow head (always points perfectly down the line)
-        float angle = atan2(endY - startY, endX - startX);
-        int arrowLen = 14; // Fixed readable size
-
-        SDL_RenderDrawLine(r, endX, endY, endX - arrowLen * cos(angle - M_PI / 6.0), endY - arrowLen * sin(angle - M_PI / 6.0));
-        SDL_RenderDrawLine(r, endX, endY, endX - arrowLen * cos(angle + M_PI / 6.0), endY - arrowLen * sin(angle + M_PI / 6.0));
-
-        // 6. Draw a tiny dot at the origin so you know which way it's flowing
-        SDL_Rect dot = {startX - 2, startY - 2, 5, 5};
-        SDL_RenderFillRect(r, &dot);
-    }
-
-    inline void DrawNavArrows(SDL_Renderer *r, SDL_Rect srcRect, const WidgetNav &nav, const std::unordered_map<std::string, SDL_Rect> &rects)
-    {
-        auto drawTo = [&](const std::string &targetId, SDL_Color color)
-        {
-            if (targetId.empty())
-                return;
-            auto it = rects.find(targetId);
-            if (it != rects.end())
-            {
-                DrawEdgeToEdgeArrow(r, srcRect, it->second, color);
-            }
-        };
-
-        // Keep the original simple color scheme
-        SDL_Color directionalColor = {255, 255, 0, 200}; // Yellow
-        SDL_Color tabColor = {0, 255, 255, 100};         // Cyan
-
-        drawTo(nav.up, directionalColor);
-        drawTo(nav.down, directionalColor);
-        drawTo(nav.left, directionalColor);
-        drawTo(nav.right, directionalColor);
-        drawTo(nav.next, tabColor);
-        drawTo(nav.prev, tabColor);
-    }
-}
-
-struct WidgetStateProxy
-{
-    std::string id;
-    void Animate()
-    {
-        g_UIState[id].isManuallyAnimated = !g_UIState[id].isManuallyAnimated;
-    }
-    void Animate(bool state)
-    {
-        g_UIState[id].isManuallyAnimated = state;
-    }
-    bool IsAnimating() const
-    {
-        return g_UIState[id].isManuallyAnimated;
-    }
-};
-
-inline WidgetStateProxy GetWidgetById(const std::string &id)
-{
-    return {id};
-}
-
-// Stores the texture cache for a specific widget ID
-struct WidgetCache {
-    SDL_Texture* texture = nullptr;
-    int lastW = 0;
-    int lastH = 0;
-    bool lastHovered = false;
-    bool lastFocused = false;
-};
-inline std::unordered_map<std::string, WidgetCache> g_WidgetCache;
-inline std::unordered_map<std::string, WidgetNav> g_NavigationLinks;
 
 inline std::string ResolveNavTarget(const std::string& startId, const std::string& direction)
 {
@@ -235,6 +96,445 @@ inline std::string ResolveNavTarget(const std::string& startId, const std::strin
     return currentTarget;
 }
 
+inline void MoveFocusIfTargetExists(const std::string &fromId, const char *direction, const char *label)
+{
+    const std::string target = ResolveNavTarget(fromId, direction);
+    if (!target.empty())
+        g_NextFocusedWidgetId = target;
+    NavLog(fromId, label, target);
+}
+
+// --- Debugging Structures ---
+struct WidgetDebug
+{
+    bool enabled = true;
+    bool showBounds = false;
+    bool showPadding = false;
+    bool showSpacing = false;
+    bool showExpanded = false;
+    bool showRow = false;
+    bool showColumn = false;
+    bool showNavArrows = true;
+    bool focusOnlyNavArrows = true;
+    bool childrenInherit = false;
+
+    SDL_Color boundsColor = {255, 0, 0, 255};      // Red cross
+    SDL_Color paddingColor = {170, 255, 170, 120}; // Pastel Green
+    SDL_Color spacingColor = {255, 0, 255, 150};   // Magenta
+};
+
+inline WidgetDebug g_GlobalDebug = {false, false, false, false, false};
+
+enum class DebugNavDrawKind
+{
+    DirectionalArrow,
+    NextOutline,
+    PrevOutline
+};
+
+struct DebugNavDrawRequest
+{
+    std::string widgetId;
+    std::string direction;
+    SDL_Rect rect = {0, 0, 0, 0};
+    SDL_Color color = {255, 255, 255, 255};
+    DebugNavDrawKind kind = DebugNavDrawKind::DirectionalArrow;
+};
+
+inline std::vector<DebugNavDrawRequest> g_DebugNavDrawQueue;
+
+namespace DebugDraw
+{
+    inline void DrawDiagonalRect(SDL_Renderer *r, SDL_Rect rect, SDL_Color color)
+    {
+        SDL_SetRenderDrawBlendMode(r, SDL_BLENDMODE_BLEND);
+        SDL_SetRenderDrawColor(r, color.r, color.g, color.b, 60);
+        SDL_RenderFillRect(r, &rect);
+        SDL_SetRenderDrawColor(r, color.r, color.g, color.b, color.a);
+        for (int i = -rect.h; i < rect.w; i += 8)
+            SDL_RenderDrawLine(r, rect.x + i, rect.y, rect.x + i + rect.h, rect.y + rect.h);
+        SDL_RenderDrawRect(r, &rect);
+    }
+
+    inline void DrawBoundsCross(SDL_Renderer *r, SDL_Rect rect, SDL_Color color)
+    {
+        SDL_SetRenderDrawBlendMode(r, SDL_BLENDMODE_BLEND);
+        SDL_SetRenderDrawColor(r, color.r, color.g, color.b, color.a);
+        SDL_RenderDrawRect(r, &rect);
+        SDL_RenderDrawLine(r, rect.x, rect.y, rect.x + rect.w, rect.y + rect.h);
+        SDL_RenderDrawLine(r, rect.x + rect.w, rect.y, rect.x, rect.y + rect.h);
+    }
+
+
+    inline void DrawDashedRect(SDL_Renderer *r, const SDL_Rect &rect, SDL_Color color, int dashLen = 6, int gapLen = 4)
+    {
+        SDL_SetRenderDrawBlendMode(r, SDL_BLENDMODE_BLEND);
+        SDL_SetRenderDrawColor(r, color.r, color.g, color.b, color.a);
+
+        for (int x = rect.x; x < rect.x + rect.w; x += dashLen + gapLen)
+        {
+            SDL_RenderDrawLine(r, x, rect.y, std::min(x + dashLen, rect.x + rect.w), rect.y);
+            SDL_RenderDrawLine(r, x, rect.y + rect.h, std::min(x + dashLen, rect.x + rect.w), rect.y + rect.h);
+        }
+
+        for (int y = rect.y; y < rect.y + rect.h; y += dashLen + gapLen)
+        {
+            SDL_RenderDrawLine(r, rect.x, y, rect.x, std::min(y + dashLen, rect.y + rect.h));
+            SDL_RenderDrawLine(r, rect.x + rect.w, y, rect.x + rect.w, std::min(y + dashLen, rect.y + rect.h));
+        }
+    }
+
+    inline void DrawDirectionalNavArrow(SDL_Renderer *r, const DebugNavDrawRequest &request)
+    {
+        const SDL_Rect src = request.rect;
+        const std::string targetId = ResolveNavTarget(request.widgetId, request.direction);
+        if (targetId.empty())
+            return;
+
+        auto targetIt = g_WidgetRects.find(targetId);
+        if (targetIt == g_WidgetRects.end())
+            return;
+        const SDL_Rect dst = targetIt->second;
+        const std::string &dirName = request.direction;
+
+        int startX = 0, startY = 0;
+        int startOutX = 0, startOutY = 0;
+        int endOutX = 0, endOutY = 0;
+        int endX = 0, endY = 0;
+
+        constexpr int edgeInset = 4;
+        constexpr int offset = 10;
+
+        if (dirName == "up")
+        {
+            startX = src.x + (src.w / 2);
+            startY = src.y + edgeInset;
+            startOutX = startX;
+            startOutY = src.y - offset;
+            endX = dst.x + (dst.w / 2);
+            endY = dst.y + dst.h - edgeInset;
+            endOutX = endX;
+            endOutY = dst.y + dst.h + offset;
+        }
+        else if (dirName == "down")
+        {
+            startX = src.x + (src.w / 2);
+            startY = src.y + src.h - edgeInset;
+            startOutX = startX;
+            startOutY = src.y + src.h + offset;
+            endX = dst.x + (dst.w / 2);
+            endY = dst.y + edgeInset;
+            endOutX = endX;
+            endOutY = dst.y - offset;
+        }
+        else if (dirName == "left")
+        {
+            startX = src.x + edgeInset;
+            startY = src.y + (src.h / 2);
+            startOutX = src.x - offset;
+            startOutY = startY;
+            endX = dst.x + dst.w - edgeInset;
+            endY = dst.y + (dst.h / 2);
+            endOutX = dst.x + dst.w + offset;
+            endOutY = endY;
+        }
+        else if (dirName == "right")
+        {
+            startX = src.x + src.w - edgeInset;
+            startY = src.y + (src.h / 2);
+            startOutX = src.x + src.w + offset;
+            startOutY = startY;
+            endX = dst.x + edgeInset;
+            endY = dst.y + (dst.h / 2);
+            endOutX = dst.x - offset;
+            endOutY = endY;
+        }
+        else
+        {
+            return;
+        }
+
+        if ((startOutX == endOutX) && (startOutY == endOutY))
+            return;
+
+        auto lineIntersectsRect = [](int x1, int y1, int x2, int y2, const SDL_Rect &rect)
+        {
+            int lx1 = x1, ly1 = y1, lx2 = x2, ly2 = y2;
+            return SDL_IntersectRectAndLine(&rect, &lx1, &ly1, &lx2, &ly2) == SDL_TRUE;
+        };
+
+        auto countPathCollisions = [&](const std::vector<SDL_Point> &pts)
+        {
+            if (pts.size() < 2)
+                return 0;
+
+            int collisions = 0;
+            for (const auto &entry : g_WidgetRects)
+            {
+                if (entry.first == request.widgetId || entry.first == targetId)
+                    continue;
+
+                SDL_Rect obstacle = entry.second;
+                obstacle.x -= 2;
+                obstacle.y -= 2;
+                obstacle.w += 4;
+                obstacle.h += 4;
+                for (size_t i = 0; i + 1 < pts.size(); ++i)
+                {
+                    if (lineIntersectsRect(pts[i].x, pts[i].y, pts[i + 1].x, pts[i + 1].y, obstacle))
+                    {
+                        collisions++;
+                        break;
+                    }
+                }
+            }
+            return collisions;
+        };
+
+        auto routeLength = [](const std::vector<SDL_Point> &pts)
+        {
+            int length = 0;
+            for (size_t i = 0; i + 1 < pts.size(); ++i)
+                length += std::abs(pts[i + 1].x - pts[i].x) + std::abs(pts[i + 1].y - pts[i].y);
+            return length;
+        };
+
+        std::vector<SDL_Point> route = {
+            {startX, startY},
+            {startOutX, startOutY},
+            {endOutX, endOutY},
+            {endX, endY}
+        };
+
+        const int routeMargin = 16;
+        std::vector<std::vector<SDL_Point>> candidates;
+        candidates.push_back(route);
+
+        if (dirName == "left" || dirName == "right")
+        {
+            std::vector<int> yLanes;
+            yLanes.push_back(std::max(src.y + src.h, dst.y + dst.h) + routeMargin); // Prefer under
+            yLanes.push_back(std::min(src.y, dst.y) - routeMargin);                  // Then above
+
+            for (const auto &entry : g_WidgetRects)
+            {
+                if (entry.first == request.widgetId || entry.first == targetId)
+                    continue;
+                const SDL_Rect &o = entry.second;
+                yLanes.push_back(o.y - routeMargin);
+                yLanes.push_back(o.y + o.h + routeMargin);
+            }
+
+            std::sort(yLanes.begin(), yLanes.end());
+            yLanes.erase(std::unique(yLanes.begin(), yLanes.end()), yLanes.end());
+
+            for (int y : yLanes)
+            {
+                candidates.push_back({
+                    {startX, startY},
+                    {startOutX, startOutY},
+                    {startOutX, y},
+                    {endOutX, y},
+                    {endOutX, endOutY},
+                    {endX, endY}
+                });
+            }
+        }
+        else if (dirName == "up" || dirName == "down")
+        {
+            std::vector<int> xLanes;
+            xLanes.push_back(std::max(src.x + src.w, dst.x + dst.w) + routeMargin);
+            xLanes.push_back(std::min(src.x, dst.x) - routeMargin);
+
+            for (const auto &entry : g_WidgetRects)
+            {
+                if (entry.first == request.widgetId || entry.first == targetId)
+                    continue;
+                const SDL_Rect &o = entry.second;
+                xLanes.push_back(o.x - routeMargin);
+                xLanes.push_back(o.x + o.w + routeMargin);
+            }
+
+            std::sort(xLanes.begin(), xLanes.end());
+            xLanes.erase(std::unique(xLanes.begin(), xLanes.end()), xLanes.end());
+
+            for (int x : xLanes)
+            {
+                candidates.push_back({
+                    {startX, startY},
+                    {startOutX, startOutY},
+                    {x, startOutY},
+                    {x, endOutY},
+                    {endOutX, endOutY},
+                    {endX, endY}
+                });
+            }
+        }
+
+        int bestScore = INT_MAX;
+        std::vector<SDL_Point> bestRoute = route;
+        for (const auto &candidate : candidates)
+        {
+            const int collisions = countPathCollisions(candidate);
+            const int length = routeLength(candidate);
+            // Strongly prioritize no-collision routes; then prefer shorter.
+            const int score = collisions * 100000 + length;
+            if (score < bestScore)
+            {
+                bestScore = score;
+                bestRoute = candidate;
+            }
+        }
+        route = bestRoute;
+
+        SDL_SetRenderDrawBlendMode(r, SDL_BLENDMODE_BLEND);
+        SDL_SetRenderDrawColor(r, request.color.r, request.color.g, request.color.b, request.color.a);
+        for (size_t i = 0; i + 1 < route.size(); ++i)
+            SDL_RenderDrawLine(r, route[i].x, route[i].y, route[i + 1].x, route[i + 1].y);
+
+        const SDL_Point &lastStart = route[route.size() - 2];
+        const SDL_Point &lastEnd = route[route.size() - 1];
+        const float angle = atan2f((float)(lastEnd.y - lastStart.y), (float)(lastEnd.x - lastStart.x));
+        constexpr float arrowSpread = (float)M_PI / 7.5f;
+        constexpr int arrowLen = 8;
+
+        const int h1x = lastEnd.x - (int)(arrowLen * cosf(angle - arrowSpread));
+        const int h1y = lastEnd.y - (int)(arrowLen * sinf(angle - arrowSpread));
+        const int h2x = lastEnd.x - (int)(arrowLen * cosf(angle + arrowSpread));
+        const int h2y = lastEnd.y - (int)(arrowLen * sinf(angle + arrowSpread));
+        SDL_RenderDrawLine(r, lastEnd.x, lastEnd.y, h1x, h1y);
+        SDL_RenderDrawLine(r, lastEnd.x, lastEnd.y, h2x, h2y);
+    }
+
+    inline void DrawNavRequest(SDL_Renderer *r, const DebugNavDrawRequest &request)
+    {
+        if (request.kind == DebugNavDrawKind::DirectionalArrow)
+        {
+            DrawDirectionalNavArrow(r, request);
+            return;
+        }
+
+        const std::string targetId = ResolveNavTarget(request.widgetId, request.direction);
+        if (targetId.empty())
+            return;
+
+        auto targetIt = g_WidgetRects.find(targetId);
+        if (targetIt == g_WidgetRects.end())
+            return;
+
+        SDL_Rect outline = targetIt->second;
+        const int offset = (request.kind == DebugNavDrawKind::NextOutline) ? 3 : 5;
+        outline.x -= offset;
+        outline.y -= offset;
+        outline.w += offset * 2;
+        outline.h += offset * 2;
+
+        SDL_Color glow = request.color;
+        glow.a = (Uint8)std::min(255, (int)request.color.a / 2);
+        SDL_Rect glowRect = outline;
+        glowRect.x -= 1;
+        glowRect.y -= 1;
+        glowRect.w += 2;
+        glowRect.h += 2;
+        DrawDashedRect(r, glowRect, glow, 8, 4);
+        DrawDashedRect(r, outline, request.color, 6, 4);
+    }
+}
+
+inline void QueueNavDebugRequests(const WidgetDebug &activeDebug, const std::string &widgetId, const SDL_Rect &widgetRect, bool isFocused)
+{
+    if (!activeDebug.enabled || !activeDebug.showNavArrows || widgetId.empty())
+        return;
+
+    if (activeDebug.focusOnlyNavArrows && !isFocused)
+        return;
+
+    auto queueDirection = [&](const std::string &direction, SDL_Color color)
+    {
+        g_DebugNavDrawQueue.push_back({
+            widgetId,
+            direction,
+            widgetRect,
+            color,
+            DebugNavDrawKind::DirectionalArrow
+        });
+    };
+
+    auto queueOutline = [&](const std::string &direction, SDL_Color color, DebugNavDrawKind kind)
+    {
+        g_DebugNavDrawQueue.push_back({
+            widgetId,
+            direction,
+            widgetRect,
+            color,
+            kind
+        });
+    };
+
+    queueDirection("up", {255, 80, 80, 170});
+    queueDirection("down", {80, 255, 80, 170});
+    queueDirection("left", {80, 180, 255, 170});
+    queueDirection("right", {255, 180, 50, 170});
+
+    queueOutline("next", {0, 240, 255, 210}, DebugNavDrawKind::NextOutline);
+    queueOutline("prev", {180, 90, 255, 210}, DebugNavDrawKind::PrevOutline);
+}
+
+inline void RenderDebugNavigationOverlay(SDL_Renderer *renderer)
+{
+    if (g_DebugNavDrawQueue.empty())
+        return;
+
+    const bool clipEnabled = SDL_RenderIsClipEnabled(renderer);
+    SDL_Rect previousClip = {0, 0, 0, 0};
+    if (clipEnabled)
+        SDL_RenderGetClipRect(renderer, &previousClip);
+
+    SDL_RenderSetClipRect(renderer, nullptr);
+    for (const auto &request : g_DebugNavDrawQueue)
+        DebugDraw::DrawNavRequest(renderer, request);
+
+    if (clipEnabled)
+        SDL_RenderSetClipRect(renderer, &previousClip);
+    else
+        SDL_RenderSetClipRect(renderer, nullptr);
+
+    g_DebugNavDrawQueue.clear();
+}
+
+struct WidgetStateProxy
+{
+    std::string id;
+    void Animate()
+    {
+        g_UIState[id].isManuallyAnimated = !g_UIState[id].isManuallyAnimated;
+    }
+    void Animate(bool state)
+    {
+        g_UIState[id].isManuallyAnimated = state;
+    }
+    bool IsAnimating() const
+    {
+        return g_UIState[id].isManuallyAnimated;
+    }
+};
+
+inline WidgetStateProxy GetWidgetById(const std::string &id)
+{
+    return {id};
+}
+
+// Stores the texture cache for a specific widget ID
+struct WidgetCache {
+    SDL_Texture* texture = nullptr;
+    int lastW = 0;
+    int lastH = 0;
+    int lastX = 0;
+    int lastY = 0;
+    bool lastHovered = false;
+    bool lastFocused = false;
+};
+inline std::unordered_map<std::string, WidgetCache> g_WidgetCache;
 
 // --- Core Widget Struct ---
 struct Widget
@@ -448,11 +748,11 @@ struct Widget
 
             // Handle Mouse Click & Focus Gain
             
-                if (!this->disabled && currentlyHovered && input.mouseClicked)
-                {
-                    g_UIState[this->id].isClicked = true;
-                    g_NextFocusedWidgetId = this->id;
-                    if (onClickFn) onClickFn();                // --- 2.2 Input Capture Highlight ---
+            if (!this->disabled && currentlyHovered && input.mouseClicked)
+            {
+                g_UIState[this->id].isClicked = true;
+                g_NextFocusedWidgetId = this->id;
+                if (onClickFn) onClickFn();                // --- 2.2 Input Capture Highlight ---
                 if (g_Settings.highlightInputCapture)
                 {
                     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
@@ -465,32 +765,26 @@ struct Widget
             if (isFocused && !this->disabled && input.keyPressed != SDLK_UNKNOWN)
             {
                 if (input.keyPressed == SDLK_UP) {
-                    g_NextFocusedWidgetId = ResolveNavTarget(this->id, "up");
-                    NavLog(this->id, "UP", g_NextFocusedWidgetId);
+                    MoveFocusIfTargetExists(this->id, "up", "UP");
                 }
                 else if (input.keyPressed == SDLK_DOWN) {
-                    g_NextFocusedWidgetId = ResolveNavTarget(this->id, "down");
-                    NavLog(this->id, "DOWN", g_NextFocusedWidgetId);
+                    MoveFocusIfTargetExists(this->id, "down", "DOWN");
                 }
                 else if (input.keyPressed == SDLK_LEFT) {
                     if (boundText == nullptr || (g_TextFieldState[this->id].cursorPosition == 0 && !(input.keyMod & KMOD_SHIFT))) {
-                        g_NextFocusedWidgetId = ResolveNavTarget(this->id, "left");
-                        NavLog(this->id, "LEFT", g_NextFocusedWidgetId);
+                        MoveFocusIfTargetExists(this->id, "left", "LEFT");
                     }
                 }
                 else if (input.keyPressed == SDLK_RIGHT) {
                     if (boundText == nullptr || (g_TextFieldState[this->id].cursorPosition == (int)boundText->length() && !(input.keyMod & KMOD_SHIFT))) {
-                        g_NextFocusedWidgetId = ResolveNavTarget(this->id, "right");
-                        NavLog(this->id, "RIGHT", g_NextFocusedWidgetId);
+                        MoveFocusIfTargetExists(this->id, "right", "RIGHT");
                     }
                 }
                 else if (input.keyPressed == SDLK_TAB) {
                     if (input.keyMod & KMOD_SHIFT) {
-                        g_NextFocusedWidgetId = ResolveNavTarget(this->id, "prev");
-                        NavLog(this->id, "SHIFT+TAB", g_NextFocusedWidgetId);
+                        MoveFocusIfTargetExists(this->id, "prev", "SHIFT+TAB");
                     } else {
-                        g_NextFocusedWidgetId = ResolveNavTarget(this->id, "next");
-                        NavLog(this->id, "TAB", g_NextFocusedWidgetId);
+                        MoveFocusIfTargetExists(this->id, "next", "TAB");
                     }
                 }
                 // Trigger Action (Enter key)
@@ -695,23 +989,28 @@ struct Widget
             }
         }
 
-        // 5. PAINT
-        // We pass the visualRect (the offset one) to the paint function
-// Find "5. PAINT" in your Widget::render method and replace it with this:
-
         // 5. PAINT & CACHE
         if (this->useCache && !this->id.empty()) 
         {
             WidgetCache& cache = g_WidgetCache[this->id];
             bool dirty = false;
+            const AnimState &anim = g_UIState[this->id];
+            const bool animating = (anim.hoverProgress > 0.0f && anim.hoverProgress < 1.0f) ||
+                                   (anim.focusProgress > 0.0f && anim.focusProgress < 1.0f) ||
+                                   anim.clickProgress > 0.0f ||
+                                   (anim.manualProgress > 0.0f && anim.manualProgress < 1.0f) ||
+                                   anim.isClicked || anim.isManuallyAnimated;
+            const bool focusedTextEditing = isFocused && boundText != nullptr &&
+                                           (!input.textInput.empty() || input.backspacePressed || input.deletePressed ||
+                                            input.leftPressed || input.rightPressed || input.enterPressed);
 
             // Determine if the widget's visuals need to be refreshed
             if (cache.lastW != visualRect.w || cache.lastH != visualRect.h) dirty = true;
             if (cache.lastHovered != currentlyHovered) dirty = true;
             if (cache.lastFocused != isFocused) dirty = true;
-            // Any global keystroke or text typing usually means we should invalidate UI caches
-            if (input.mouseClicked || input.keyPressed != SDLK_UNKNOWN || !input.textInput.empty()) dirty = true;
-            if (g_UIState[this->id].isManuallyAnimated) dirty = true;
+            if (cache.lastX != visualRect.x || cache.lastY != visualRect.y) dirty = true;
+            if (animating) dirty = true;
+            if (focusedTextEditing) dirty = true;
 
             // If state changed OR texture doesn't exist, draw to texture
             if (dirty || !cache.texture) 
@@ -736,6 +1035,8 @@ struct Widget
                 // Update cached states
                 cache.lastW = visualRect.w;
                 cache.lastH = visualRect.h;
+                cache.lastX = visualRect.x;
+                cache.lastY = visualRect.y;
                 cache.lastHovered = currentlyHovered;
                 cache.lastFocused = isFocused;
             }
@@ -791,11 +1092,7 @@ struct Widget
                 }
             }
 
-            if (activeDebug.showNavArrows && !this->id.empty())
-            {
-                DebugDraw::DrawNavArrows(renderer, visualRect, nav, g_WidgetRects);
-            }
+            QueueNavDebugRequests(activeDebug, this->id, visualRect, isFocused);
         }
     }
 };
-
