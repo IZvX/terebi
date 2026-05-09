@@ -68,6 +68,7 @@ inline void StartUIFrame()
 
   // Clear the debug rects map so it's fresh for this frame's layout
   g_WidgetRects.clear();
+  g_DebugNavDrawQueue.clear();
 }
 
 inline void ApplySurfaceGradient(SDL_Surface *surface, const Gradient &grad)

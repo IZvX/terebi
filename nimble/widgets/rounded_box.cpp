@@ -2,11 +2,26 @@
 
 namespace Widgets
 {
-    inline Widget RoundedBox(Vector2 size, WidgetStyle style, Widget child = {}, Vector2 align = {0, 0},std::string id = "RoundedBox")
-    {
-        const bool shouldAutoSize = (size.x <= 0.0f || size.y <= 0.0f);
 
-        Widget w = {id, size, style, {}, {}, [style, shouldAutoSize, align](SDL_Renderer *renderer, SDL_Rect rect, const WidgetStyle &s, const InputState &input, const std::vector<Widget> &childrenList, WidgetDebug dbg)
+    struct RoundedBoxArgs
+    {
+        Vector2 size = {0, 0};
+        WidgetStyle style{};
+        Widget child{};
+        Vector2 align = {0, 0};
+        std::string id = "RoundedBox";
+    };
+
+    // New struct-based RoundedBox implementation
+    inline Widget RoundedBox(RoundedBoxArgs args = {})
+    {
+        const bool shouldAutoSize = (args.size.x <= 0.0f || args.size.y <= 0.0f);
+
+        // Extract captured variables to pass into the lambda safely
+        WidgetStyle style = args.style;
+        Vector2 align = args.align;
+
+        Widget w = {args.id, args.size, style, {}, {}, [style, shouldAutoSize, align](SDL_Renderer *renderer, SDL_Rect rect, const WidgetStyle &s, const InputState &input, const std::vector<Widget> &childrenList, WidgetDebug dbg)
                     {
                         if (rect.w <= 0 || rect.h <= 0) return;
                         // 1. Shadow
@@ -80,8 +95,8 @@ namespace Widgets
                         }
                     }};
 
-        if (child.paint)
-            w.children.push_back(std::move(child));
+        if (args.child.paint)
+            w.children.push_back(std::move(args.child));
 
         if (shouldAutoSize && !w.children.empty())
         {
@@ -95,11 +110,37 @@ namespace Widgets
         return w;
     }
 
-    inline Widget Box(Vector2 size, WidgetStyle style, Widget child = {}, Vector2 align = {0, 0})
+    // Backward-compatible positional wrapper
+    inline Widget RoundedBox(Vector2 size, WidgetStyle style, Widget child = {}, Vector2 align = {0, 0}, std::string id = "RoundedBox")
     {
-        const bool shouldAutoSize = (size.x <= 0.0f || size.y <= 0.0f);
+        return RoundedBox(RoundedBoxArgs{
+            .size = size,
+            .style = style,
+            .child = std::move(child),
+            .align = align,
+            .id = std::move(id)
+        });
+    }
 
-        Widget w = {"Box", size, style, {}, {}, [style, shouldAutoSize, align](SDL_Renderer *renderer, SDL_Rect rect, const WidgetStyle &s, const InputState &input, const std::vector<Widget> &childrenList, WidgetDebug dbg)
+    struct BoxArgs
+    {
+        Vector2 size = {0, 0};
+        WidgetStyle style{};
+        Widget child{};
+        Vector2 align = {0, 0};
+        std::string id = "Box";
+    };
+
+    // New struct-based Box implementation
+    inline Widget Box(BoxArgs args)
+    {
+        const bool shouldAutoSize = (args.size.x <= 0.0f || args.size.y <= 0.0f);
+
+        // Extract captured variables
+        WidgetStyle style = args.style;
+        Vector2 align = args.align;
+
+        Widget w = {args.id, args.size, style, {}, {}, [style, shouldAutoSize, align](SDL_Renderer *renderer, SDL_Rect rect, const WidgetStyle &s, const InputState &input, const std::vector<Widget> &childrenList, WidgetDebug dbg)
                     {
                         // 1. Shadow
                         if (s.shadowColor.a > 0)
@@ -155,8 +196,8 @@ namespace Widgets
                         }
                     }};
 
-        if (child.paint)
-            w.children.push_back(std::move(child));
+        if (args.child.paint)
+            w.children.push_back(std::move(args.child));
 
         if (shouldAutoSize && !w.children.empty())
         {
@@ -169,4 +210,17 @@ namespace Widgets
 
         return w;
     }
+
+    // Backward-compatible positional wrapper
+    inline Widget Box(Vector2 size, WidgetStyle style, Widget child = {}, Vector2 align = {0, 0})
+    {
+        return Box(BoxArgs{
+            .size = size,
+            .style = style,
+            .child = std::move(child),
+            .align = align,
+            .id = "Box"
+        });
+    }
+
 } // namespace Widgets

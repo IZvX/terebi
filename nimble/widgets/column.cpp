@@ -44,13 +44,21 @@ namespace Widgets {
                 }
                 for (size_t i = 0; i < navWidgets.size(); ++i) {
                     if (i > 0) {
-                        navWidgets[i]->nav.up       = navWidgets[i-1]->id;
-                        navWidgets[i-1]->nav.down   = navWidgets[i]->id;
-                    }
+                        if (navWidgets[i]->nav.up.empty())
+                            navWidgets[i]->nav.up = navWidgets[i-1]->id;
+                    
+                        if (navWidgets[i-1]->nav.down.empty())
+                            navWidgets[i-1]->nav.down = navWidgets[i]->id;
+
+                        if (navWidgets[i]->nav.prev.empty())
+                            navWidgets[i]->nav.prev = navWidgets[i-1]->id;
+                        
+                        if (navWidgets[i-1]->nav.next.empty())
+                            navWidgets[i-1]->nav.next = navWidgets[i]->id;                    }
                 }
             }
         
-        w.paint =[mainAlign, crossAlign, spacing, scroll, axis, id, autoSetupNav, w](SDL_Renderer *r, SDL_Rect rect, const WidgetStyle& st, const InputState& in, const std::vector<Widget>& childs, WidgetDebug dbg) mutable {            if (rect.w <= 0 || rect.h <= 0) return;
+        w.paint =[mainAlign, crossAlign, spacing, scroll, axis, id](SDL_Renderer *r, SDL_Rect rect, const WidgetStyle& st, const InputState& in, const std::vector<Widget>& childs, WidgetDebug dbg) mutable {            if (rect.w <= 0 || rect.h <= 0) return;
 
             int actualFixedH = 0;
             float totalFlexY = 0.0f;
@@ -156,6 +164,11 @@ namespace Widgets {
                 else if (crossAlign == CrossAxisAlignment::End)    cx += (rect.w - cw);
 
                 SDL_Rect cRect = {cx, currentY, cw, ch};
+                if (cRect.x + cRect.w < rect.x || cRect.x > rect.x + rect.w ||
+                    cRect.y + cRect.h < rect.y || cRect.y > rect.y + rect.h) {
+                    currentY += ch + stepGap;
+                    continue;
+                }
                 c.render(r, cRect, in, dbg);
                 currentY += ch + stepGap;
 
