@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nimble UI Framework - Widgets API</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="glass-panel">
+                <h2 style="color: var(--accent-primary); margin-bottom: var(--spacing-lg);">Nimble</h2>
+                <nav>
+                    <ul class="sidebar-nav">
+                        <li><a href="../index.html">Home</a></li>
+                        <li><a href="../getting-started.html">Getting Started</a></li>
+                        <li><a href="core.html">Core API</a></li>
+                        <li><a href="widgets.html">Widgets</a></li>
+                        <li><a href="layouts.html">Layouts</a></li>
+                        <li><a href="input.html">Input & Navigation</a></li>
+                        <li><a href="styling.html">Styling</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </aside>
+
+        <!-- Top Bar -->
+        <header class="top-bar">
+            <div class="glass-panel">
+                <input type="text" class="search-input" placeholder="Search documentation...">
+                <button class="theme-toggle">🌙</button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <h1>Widgets API</h1>
+
+            <section>
+                <h2>Overview</h2>
+                <p>Widgets are the building blocks of Nimble UI. Each widget is a self-contained UI component that handles its own rendering and interaction.</p>
+            </section>
+
+            <div class="api-item">
+                <h3>Text</h3>
+                <p>Renders static text using a TTF font.</p>
+                <div class="api-signature">
+                    Widget Text(const std::string& text, TTF_Font* font, SDL_Color color, Gradient grad = {});
+                </div>
+                <dl class="api-params">
+                    <dt>Parameters</dt>
+                    <dd><strong>text:</strong> The text string to render</dd>
+                    <dd><strong>font:</strong> TTF font pointer for rendering</dd>
+                    <dd><strong>color:</strong> Text color as SDL_Color</dd>
+                    <dd><strong>grad:</strong> Optional gradient effect</dd>
+                </dl>
+                <dl class="api-return">
+                    <dt>Returns</dt>
+                    <dd>Widget instance configured for text rendering</dd>
+                </dl>
+                <p><strong>Header:</strong> nimble/widgets/text.cpp</p>
+                <h4>Usage Example</h4>
+                <div class="code-block">
+                    <pre><code>TTF_Font* font = Nimble::LoadFont("arial.ttf", 16);
+auto textWidget = Widgets::Text("Hello World", font, {255, 255, 255, 255});</code></pre>
+                </div>
+            </div>
+
+            <div class="api-item">
+                <h3>TextField</h3>
+                <p>Interactive text input field with cursor and selection support.</p>
+                <div class="api-signature">
+                    Widget TextField(const std::string &id, std::string &text, const std::string &placeholder, Vector2 size, TextFieldStyle tfStyle);
+                </div>
+                <dl class="api-params">
+                    <dt>Parameters</dt>
+                    <dd><strong>id:</strong> Unique identifier for the widget</dd>
+                    <dd><strong>text:</strong> Reference to string that will be modified by user input</dd>
+                    <dd><strong>placeholder:</strong> Placeholder text shown when field is empty</dd>
+                    <dd><strong>size:</strong> Widget dimensions</dd>
+                    <dd><strong>tfStyle:</strong> TextFieldStyle configuration</dd>
+                </dl>
+                <dl class="api-return">
+                    <dt>Returns</dt>
+                    <dd>Widget instance with text input functionality</dd>
+                </dl>
+                <p><strong>Header:</strong> nimble/widgets/text_field.cpp</p>
+                <h4>Usage Example</h4>
+                <div class="code-block">
+                    <pre><code>std::string userInput;
+TextFieldStyle style;
+style.font = font;
+style.textColor = {255, 255, 255, 255};
+auto field = Widgets::TextField("username", userInput, "Enter username", {200, 30}, style);</code></pre>
+                </div>
+            </div>
+
+            <div class="api-item">
+                <h3>Row</h3>
+                <p>Arranges child widgets horizontally in a row.</p>
+                <div class="api-signature">
+                    Widget Row(RowArgs args = {});
+                </div>
+                <dl class="api-params">
+                    <dt>Parameters</dt>
+                    <dd><strong>args:</strong> RowArgs struct containing configuration</dd>
+                </dl>
+                <p><strong>RowArgs structure:</strong></p>
+                <div class="api-signature">
+                    struct RowArgs {<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;MainAxisAlignment mainAlign{};<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;CrossAxisAlignment crossAlign{};<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;int spacing = 0;<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;std::vector&lt;Widget&gt; children{};<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;ScrollBehavior scroll = ScrollBehavior::None;<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;ScrollAxis axis = ScrollAxis::Horizontal;<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;std::string id = "";<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;float expandX = 0.0f;<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;float expandY = 0.0f;<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;bool autoSetupNav = false;<br>
+                    };
+                </div>
+                <p><strong>Header:</strong> nimble/widgets/row.cpp</p>
+                <h4>Usage Example</h4>
+                <div class="code-block">
+                    <pre><code>auto row = Widgets::Row({
+    .mainAlign = MainAxisAlignment::Start,
+    .crossAlign = CrossAxisAlignment::Center,
+    .spacing = 10,
+    .children = {button1, button2, button3}
+});</code></pre>
+                </div>
+            </div>
+
+            <div class="api-item">
+                <h3>Column</h3>
+                <p>Arranges child widgets vertically in a column.</p>
+                <div class="api-signature">
+                    Widget Column(ColumnArgs args = {});
+                </div>
+                <p>Similar to Row but arranges children vertically.</p>
+                <p><strong>Header:</strong> nimble/widgets/column.cpp</p>
+            </div>
+
+            <div class="api-item">
+                <h3>Stack</h3>
+                <p>Stacks child widgets on top of each other.</p>
+                <div class="api-signature">
+                    Widget Stack(std::vector&lt;Widget&gt; children);
+                </div>
+                <dl class="api-params">
+                    <dt>Parameters</dt>
+                    <dd><strong>children:</strong> Vector of widgets to stack</dd>
+                </dl>
+                <p><strong>Header:</strong> nimble/widgets/stack.cpp</p>
+                <h4>Usage Example</h4>
+                <div class="code-block">
+                    <pre><code>auto stack = Widgets::Stack({
+    backgroundImage,
+    overlayText,
+    closeButton
+});</code></pre>
+                </div>
+            </div>
+
+            <div class="api-item">
+                <h3>Scaffold</h3>
+                <p>Provides a basic app structure with optional app bar and body.</p>
+                <div class="api-signature">
+                    Widget Scaffold(std::vector&lt;Widget&gt; children, Widget background = {});
+                </div>
+                <p><strong>Header:</strong> nimble/widgets/scaffold.cpp</p>
+            </div>
+
+            <div class="api-item">
+                <h3>Padding</h3>
+                <p>Adds padding around a child widget.</p>
+                <div class="api-signature">
+                    Widget Padding(Vector2 padding, Widget child);
+                </div>
+                <dl class="api-params">
+                    <dt>Parameters</dt>
+                    <dd><strong>padding:</strong> Padding amount as Vector2</dd>
+                    <dd><strong>child:</strong> The widget to pad</dd>
+                </dl>
+                <p><strong>Header:</strong> nimble/widgets/padding.cpp</p>
+            </div>
+
+            <div class="api-item">
+                <h3>Center</h3>
+                <p>Centers a child widget within its bounds.</p>
+                <div class="api-signature">
+                    Widget Center(Widget child);
+                </div>
+                <p><strong>Header:</strong> nimble/widgets/center.cpp</p>
+            </div>
+
+            <div class="api-item">
+                <h3>SizedBox</h3>
+                <p>A widget that enforces a specific size.</p>
+                <div class="api-signature">
+                    Widget SizedBox(Vector2 size);
+                </div>
+                <p><strong>Header:</strong> nimble/widgets/sized_box.cpp</p>
+            </div>
+
+            <div class="api-item">
+                <h3>Expanded</h3>
+                <p>Expands to fill available space in a flex container.</p>
+                <div class="api-signature">
+                    Widget Expanded(float flexX, float flexY, Widget child);
+                </div>
+                <p><strong>Header:</strong> nimble/widgets/expanded.cpp</p>
+            </div>
+
+            <div class="api-item">
+                <h3>Clip</h3>
+                <p>Clips child rendering to the widget bounds.</p>
+                <div class="api-signature">
+                    Widget Clip(Widget child);
+                </div>
+                <p><strong>Header:</strong> nimble/widgets/clip.cpp</p>
+            </div>
+
+            <div class="api-item">
+                <h3>Opacity</h3>
+                <p>Applies opacity to a child widget.</p>
+                <div class="api-signature">
+                    Widget Opacity(float opacity, Widget child);
+                </div>
+                <p><strong>Header:</strong> nimble/widgets/opacity.cpp</p>
+            </div>
+
+            <div class="api-item">
+                <h3>Position</h3>
+                <p>Positions a child widget at specific coordinates.</p>
+                <div class="api-signature">
+                    Widget Position(Vector2 position, Widget child);
+                </div>
+                <p><strong>Header:</strong> nimble/widgets/position.cpp</p>
+            </div>
+
+            <div class="api-item">
+                <h3>RoundedBox</h3>
+                <p>Renders a rounded rectangle with background color.</p>
+                <div class="api-signature">
+                    Widget RoundedBox(Vector2 size, WidgetStyle style, Widget child = {});
+                </div>
+                <p><strong>Header:</strong> nimble/widgets/rounded_box.cpp</p>
+            </div>
+
+            <div class="api-item">
+                <h3>Image</h3>
+                <p>Renders an image from file path.</p>
+                <div class="api-signature">
+                    Widget Image(const std::string& path, Vector2 size);
+                </div>
+                <p><strong>Header:</strong> nimble/widgets/image.cpp</p>
+            </div>
+
+            <div class="api-item">
+                <h3>Toggle</h3>
+                <p>A toggleable widget (checkbox-style).</p>
+                <div class="api-signature">
+                    Widget Toggle(const std::string& id, bool& value, Vector2 size);
+                </div>
+                <p><strong>Header:</strong> nimble/widgets/toggle.cpp</p>
+            </div>
+
+            <div class="api-item">
+                <h3>BackdropBlur</h3>
+                <p>Applies backdrop blur effect.</p>
+                <div class="api-signature">
+                    Widget BackdropBlur(float intensity, Widget child);
+                </div>
+                <p><strong>Header:</strong> nimble/widgets/backdrop_blur.cpp</p>
+            </div>
+
+            <div class="api-item">
+                <h3>ForegroundBlur</h3>
+                <p>Applies foreground blur effect.</p>
+                <div class="api-signature">
+                    Widget ForegroundBlur(float intensity, Widget child);
+                </div>
+                <p><strong>Header:</strong> nimble/widgets/foreground_blur.cpp</p>
+            </div>
+
+            <div class="api-item">
+                <h3>Icon</h3>
+                <p>Renders an icon using a font (like FontAwesome).</p>
+                <div class="api-signature">
+                    Widget Icon(const std::string& iconCode, TTF_Font* font, SDL_Color color);
+                </div>
+                <p><strong>Header:</strong> nimble/widgets/icon.cpp</p>
+            </div>
+
+            <div class="api-item">
+                <h3>Svg</h3>
+                <p>Renders SVG content (limited support).</p>
+                <div class="api-signature">
+                    Widget Svg(const std::string& svgData, Vector2 size);
+                </div>
+                <p><strong>Header:</strong> nimble/widgets/svg.cpp</p>
+            </div>
+        </main>
+
+        <!-- Table of Contents -->
+        <aside class="toc">
+            <div class="glass-panel">
+                <h3>On this page</h3>
+                <ul>
+                    <li><a href="#overview">Overview</a></li>
+                    <li><a href="#text">Text</a></li>
+                    <li><a href="#textfield">TextField</a></li>
+                    <li><a href="#row">Row</a></li>
+                    <li><a href="#column">Column</a></li>
+                    <li><a href="#stack">Stack</a></li>
+                    <li><a href="#scaffold">Scaffold</a></li>
+                    <li><a href="#padding">Padding</a></li>
+                    <li><a href="#center">Center</a></li>
+                    <li><a href="#sizedbox">SizedBox</a></li>
+                    <li><a href="#expanded">Expanded</a></li>
+                    <li><a href="#clip">Clip</a></li>
+                    <li><a href="#opacity">Opacity</a></li>
+                    <li><a href="#position">Position</a></li>
+                    <li><a href="#roundedbox">RoundedBox</a></li>
+                    <li><a href="#image">Image</a></li>
+                    <li><a href="#toggle">Toggle</a></li>
+                    <li><a href="#backdropblur">BackdropBlur</a></li>
+                    <li><a href="#foregroundblur">ForegroundBlur</a></li>
+                    <li><a href="#icon">Icon</a></li>
+                    <li><a href="#svg">Svg</a></li>
+                </ul>
+            </div>
+        </aside>
+    </div>
+
+    <script src="assets/js/search.js"></script>
+    <script src="assets/js/navigation.js"></script>
+    <script src="assets/js/copy-code.js"></script>
+    <script src="assets/js/theme.js"></script>
+</body>
+</html>

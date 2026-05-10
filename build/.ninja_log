@@ -1,10 +1,12 @@
 # ninja log v7
-5	8373	1778308141831102283	CMakeFiles/sdl_app.dir/nimble/utils/cursors.cpp.o	beef2e7319cb2c8c
-8	13202	1778308141834060121	CMakeFiles/sdl_app.dir/imgui/imgui_tables.cpp.o	57b770327b949de8
-7	13864	1778308141833398800	CMakeFiles/sdl_app.dir/imgui/imgui_draw.cpp.o	df4dc0946869545d
-8380	16627	1778308150209817183	CMakeFiles/sdl_app.dir/imgui/backends/imgui_impl_sdl2.cpp.o	3ca4999e5ade5208
-13203	16880	1778308155029624230	CMakeFiles/sdl_app.dir/imgui/backends/imgui_impl_sdlrenderer2.cpp.o	c547ac5136ea3741
-7	18875	1778308141833765206	CMakeFiles/sdl_app.dir/imgui/imgui_widgets.cpp.o	2edc89fa11736acb
-6	18998	1778308141832800739	CMakeFiles/sdl_app.dir/imgui/imgui.cpp.o	9293be829f9dee5
-4	16054	1778309946015894003	CMakeFiles/sdl_app.dir/main.cpp.o	c6713676929c0ae8
-16056	16479	1778309962065808478	sdl_app	a0786e00de310c65
+210	6501	1778334308902394037	CMakeFiles/sdl_app.dir/nimble/utils/cursors.cpp.o	99a47fb571939d5a
+215	6667	1778334308907276717	CMakeFiles/sdl_app.dir/imgui/imgui_tables.cpp.o	5310c17949680f55
+210	10652	1778334308902792908	CMakeFiles/sdl_app.dir/imgui/imgui_draw.cpp.o	e0ed081cb8c28c9
+6503	11149	1778334315193031769	CMakeFiles/sdl_app.dir/imgui/backends/imgui_impl_sdl2.cpp.o	f41f22c4306106f2
+6667	9633	1778339635753114366	CMakeFiles/sdl_app.dir/imgui/backends/imgui_impl_sdlrenderer2.cpp.o	67a27f273fcbdd39
+214	11245	1778334308906365415	CMakeFiles/sdl_app.dir/imgui/imgui_widgets.cpp.o	6cc1c652c690214f
+210	12566	1778334308902589309	CMakeFiles/sdl_app.dir/imgui/imgui.cpp.o	e7590f85858d09aa
+16	17924	1778348040872255891	CMakeFiles/sdl_app.dir/main.cpp.o	1a62b110bfce181
+17924	18479	1778348058779383695	sdl_app	a87141b3e0afb388
+80	17265	1778385727182381647	CMakeFiles/sdl_app.dir/main.cpp.o	1a62b110bfce181
+17266	22026	1778385744371955905	sdl_app	a87141b3e0afb388

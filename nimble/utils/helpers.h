@@ -131,6 +131,7 @@ struct AnimState
     float clickProgress = 0.0f;
     float clickDuration = 0.2f;
     bool isFocused = false;
+    bool isSecondaryFocused = false;
     float focusProgress = 0.0f;
     float focusDuration = 0.2f;
 

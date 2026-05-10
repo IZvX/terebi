@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nimble UI Framework - Modern C++ UI for SDL</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="glass-panel">
+                <h2 style="color: var(--accent-primary); margin-bottom: var(--spacing-lg);">Nimble</h2>
+                <nav>
+                    <ul class="sidebar-nav">
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="getting-started.html">Getting Started</a></li>
+                        <li><a href="api/core.html">Core API</a></li>
+                        <li><a href="api/widgets.html">Widgets</a></li>
+                        <li><a href="api/layouts.html">Layouts</a></li>
+                        <li><a href="api/input.html">Input & Navigation</a></li>
+                        <li><a href="api/styling.html">Styling</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </aside>
+
+        <!-- Top Bar -->
+        <header class="top-bar">
+            <div class="glass-panel">
+                <input type="text" class="search-input" placeholder="Search documentation...">
+                <button class="theme-toggle">🌙</button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <section class="hero fade-in">
+                <h1>Nimble UI Framework</h1>
+                <p>A modern, high-performance C++ UI framework built on SDL. Create beautiful, responsive applications with a focus on developer experience and runtime efficiency.</p>
+                <div class="cta-buttons">
+                    <a href="getting-started.html" class="btn">Get Started</a>
+                    <a href="api/widgets.html" class="btn secondary">Browse API</a>
+                </div>
+            </section>
+
+            <section class="features">
+                <div class="feature-card">
+                    <h3>🚀 High Performance</h3>
+                    <p>Optimized rendering pipeline with minimal overhead. Built for games and real-time applications.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🎮 Game-Ready Input</h3>
+                    <p>Comprehensive input handling for keyboard, mouse, gamepad, and TV remote controls.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>📱 Cross-Platform</h3>
+                    <p>Seamless deployment across desktop, mobile, and embedded platforms via SDL.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🎨 Modern Styling</h3>
+                    <p>Flexible theming system with animations, shadows, and custom visual effects.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🔧 Developer Friendly</h3>
+                    <p>Intuitive API with comprehensive debugging tools and clear documentation.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>📦 Zero Dependencies</h3>
+                    <p>Only requires SDL2/3 and standard C++ libraries. No external UI frameworks.</p>
+                </div>
+            </section>
+
+            <section>
+                <h2>Quick Example</h2>
+                <p>Here's how simple it is to create a basic Nimble application:</p>
+                <div class="code-block">
+                    <pre><code>#include &lt;nimble/application.h&gt;
+#include &lt;nimble/widgets/text.h&gt;
+
+int main() {
+    Nimble::Application app("My App", 800, 600);
+
+    auto textWidget = Widgets::Text("Hello, Nimble!", font, color);
+    app.setRootWidget(textWidget);
+
+    return app.run();
+}</code></pre>
+                </div>
+            </section>
+        </main>
+
+        <!-- Table of Contents -->
+        <aside class="toc">
+            <div class="glass-panel">
+                <h3>On this page</h3>
+                <ul>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#quick-example">Quick Example</a></li>
+                </ul>
+            </div>
+        </aside>
+    </div>
+
+    <script src="assets/js/search.js"></script>
+    <script src="assets/js/navigation.js"></script>
+    <script src="assets/js/copy-code.js"></script>
+    <script src="assets/js/theme.js"></script>
+</body>
+</html>

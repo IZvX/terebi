@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nimble UI Framework - Input & Navigation API</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="glass-panel">
+                <h2 style="color: var(--accent-primary); margin-bottom: var(--spacing-lg);">Nimble</h2>
+                <nav>
+                    <ul class="sidebar-nav">
+                        <li><a href="../index.html">Home</a></li>
+                        <li><a href="../getting-started.html">Getting Started</a></li>
+                        <li><a href="core.html">Core API</a></li>
+                        <li><a href="widgets.html">Widgets</a></li>
+                        <li><a href="layouts.html">Layouts</a></li>
+                        <li><a href="input.html">Input & Navigation</a></li>
+                        <li><a href="styling.html">Styling</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </aside>
+
+        <!-- Top Bar -->
+        <header class="top-bar">
+            <div class="glass-panel">
+                <input type="text" class="search-input" placeholder="Search documentation...">
+                <button class="theme-toggle">🌙</button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <h1>Input & Navigation API</h1>
+
+            <section>
+                <h2>Focus Management</h2>
+                <p>Nimble provides comprehensive focus management for keyboard and gamepad navigation.</p>
+            </section>
+
+            <div class="api-item">
+                <h3>g_FocusedWidgetId</h3>
+                <p>Global variable containing the currently focused widget ID.</p>
+                <div class="api-signature">std::string g_FocusedWidgetId;</div>
+                <p><strong>Header:</strong> nimble/widget.h</p>
+            </div>
+
+            <div class="api-item">
+                <h3>g_NextFocusedWidgetId</h3>
+                <p>Set this to change focus to a different widget.</p>
+                <div class="api-signature">std::string g_NextFocusedWidgetId;</div>
+                <p><strong>Header:</strong> nimble/widget.h</p>
+                <h4>Usage Example</h4>
+                <div class="code-block">
+                    <pre><code>// Focus a specific widget
+g_NextFocusedWidgetId = "submit_button";</code></pre>
+                </div>
+            </div>
+
+            <div class="api-item">
+                <h3>g_SecondaryFocusedWidgetId</h3>
+                <p>Secondary focus for complex interactions.</p>
+                <div class="api-signature">std::string g_SecondaryFocusedWidgetId;</div>
+                <p><strong>Header:</strong> nimble/widget.h</p>
+            </div>
+
+            <div class="api-item">
+                <h3>g_inputFocused</h3>
+                <p>Indicates if a text input widget currently has focus.</p>
+                <div class="api-signature">bool g_inputFocused;</div>
+                <p><strong>Header:</strong> nimble/widget.h</p>
+            </div>
+
+            <section>
+                <h2>Navigation System</h2>
+                <p>Widgets can be connected in navigation graphs for keyboard/gamepad traversal.</p>
+            </section>
+
+            <div class="api-item">
+                <h3>WidgetNav</h3>
+                <p>Structure defining navigation links for a widget.</p>
+                <div class="api-signature">
+                    struct WidgetNav {<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;std::string up = "";<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;std::string down = "";<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;std::string left = "";<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;std::string right = "";<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;std::string next = ""; // Tab<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;std::string prev = ""; // Shift+Tab<br>
+                    };
+                </div>
+                <p><strong>Header:</strong> nimble/widget.h</p>
+            </div>
+
+            <div class="api-item">
+                <h3>g_NavigationLinks</h3>
+                <p>Global map of widget navigation configurations.</p>
+                <div class="api-signature">std::unordered_map&lt;std::string, WidgetNav&gt; g_NavigationLinks;</div>
+                <p><strong>Header:</strong> nimble/widget.h</p>
+            </div>
+
+            <div class="api-item">
+                <h3>ResolveNavTarget(startId, direction)</h3>
+                <p>Finds the next widget in a given navigation direction.</p>
+                <div class="api-signature">std::string ResolveNavTarget(const std::string& startId, const std::string& direction);</div>
+                <dl class="api-params">
+                    <dt>Parameters</dt>
+                    <dd><strong>startId:</strong> Starting widget ID</dd>
+                    <dd><strong>direction:</strong> Navigation direction ("up", "down", "left", "right", "next", "prev")</dd>
+                </dl>
+                <dl class="api-return">
+                    <dt>Returns</dt>
+                    <dd>Target widget ID or empty string if none found</dd>
+                </dl>
+                <p><strong>Header:</strong> nimble/widget.h</p>
+            </div>
+
+            <section>
+                <h2>Widget Modifiers</h2>
+                <p>Methods to configure widget behavior and navigation.</p>
+            </section>
+
+            <div class="api-item">
+                <h3>WithNav(up, down, left, right, next, prev)</h3>
+                <p>Configures navigation links for a widget.</p>
+                <div class="api-signature">
+                    Widget WithNav(std::string up, std::string down, std::string left, std::string right, std::string next = "", std::string prev = "");
+                </div>
+                <p><strong>Header:</strong> nimble/widget.h</p>
+                <h4>Usage Example</h4>
+                <div class="code-block">
+                    <pre><code>auto button = Widgets::Text("OK", font, color)
+    .WithNav("", "cancel_btn", "", "submit_btn", "submit_btn", "cancel_btn");</code></pre>
+                </div>
+            </div>
+
+            <div class="api-item">
+                <h3>OnKeyPress(key, callback, triggerClickFallback)</h3>
+                <p>Binds a key press to a callback function.</p>
+                <div class="api-signature">
+                    Widget OnKeyPress(SDL_Keycode key, std::function&lt;void()&gt; cb, bool triggerClickFallback = false);
+                </div>
+                <dl class="api-params">
+                    <dt>Parameters</dt>
+                    <dd><strong>key:</strong> SDL keycode to bind</dd>
+                    <dd><strong>cb:</strong> Callback function</dd>
+                    <dd><strong>triggerClickFallback:</strong> Also trigger onClick if set</dd>
+                </dl>
+                <p><strong>Header:</strong> nimble/widget.h</p>
+            </div>
+
+            <div class="api-item">
+                <h3>OnClick(callback)</h3>
+                <p>Binds a click event to a callback function.</p>
+                <div class="api-signature">
+                    Widget OnClick(std::function&lt;void()&gt; cb);
+                </div>
+                <p><strong>Header:</strong> nimble/widget.h</p>
+            </div>
+
+            <section>
+                <h2>Text Input Events</h2>
+                <p>Specialized events for text field focus changes.</p>
+            </section>
+
+            <div class="api-item">
+                <h3>OnTextFieldFocus(callback)</h3>
+                <p>Registers a callback for text field focus events.</p>
+                <div class="api-signature">void OnTextFieldFocus(std::function&lt;void(const std::string&, bool)&gt; callback);</div>
+                <dl class="api-params">
+                    <dt>Parameters</dt>
+                    <dd><strong>callback:</strong> Function called with (fieldId, focused)</dd>
+                </dl>
+                <p><strong>Header:</strong> nimble/application.h</p>
+            </div>
+
+            <div class="api-item">
+                <h3>FireTextFieldFocusEvent(id, focused)</h3>
+                <p>Internally fires text field focus events.</p>
+                <div class="api-signature">void FireTextFieldFocusEvent(const std::string& id, bool focused);</div>
+                <p><strong>Header:</strong> nimble/application.h</p>
+            </div>
+
+            <section>
+                <h2>Disabled States</h2>
+                <p>Widgets can be disabled to prevent interaction.</p>
+            </section>
+
+            <div class="api-item">
+                <h3>g_DisabledStates</h3>
+                <p>Global map of disabled widget states.</p>
+                <div class="api-signature">std::unordered_map&lt;std::string, bool&gt; g_DisabledStates;</div>
+                <p><strong>Header:</strong> nimble/widget.h</p>
+            </div>
+
+            <div class="api-item">
+                <h3>WithDisabled(state)</h3>
+                <p>Sets the disabled state of a widget.</p>
+                <div class="api-signature">Widget WithDisabled(bool state);</div>
+                <p><strong>Header:</strong> nimble/widget.h</p>
+            </div>
+        </main>
+
+        <!-- Table of Contents -->
+        <aside class="toc">
+            <div class="glass-panel">
+                <h3>On this page</h3>
+                <ul>
+                    <li><a href="#focus-management">Focus Management</a></li>
+                    <li><a href="#navigation-system">Navigation System</a></li>
+                    <li><a href="#widget-modifiers">Widget Modifiers</a></li>
+                    <li><a href="#text-input-events">Text Input Events</a></li>
+                    <li><a href="#disabled-states">Disabled States</a></li>
+                </ul>
+            </div>
+        </aside>
+    </div>
+
+    <script src="assets/js/search.js"></script>
+    <script src="assets/js/navigation.js"></script>
+    <script src="assets/js/copy-code.js"></script>
+    <script src="assets/js/theme.js"></script>
+</body>
+</html>

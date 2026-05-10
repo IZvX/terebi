@@ -4,6 +4,7 @@
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
 
+#include <algorithm>
 #include <functional>
 #include <cmath>
 #include <memory>
@@ -51,13 +52,109 @@ namespace Nimble
         inline std::vector<std::function<void()>> g_onInitCallbacks;
         inline std::vector<std::function<void()>> g_onShutdownCallbacks;
         inline std::vector<std::function<void()>> g_debugCallbacks;
-        inline std::unordered_map<std::string, TTF_Font *> g_fontsByKey;
+        inline std::unordered_map<std::string, TTF_Font*> g_fontsByKey;
         inline std::unordered_map<std::string, std::string> g_fontIds;
 
-        inline std::string FontKey(const std::string &path, int size)
+        inline std::string FontKey(const std::string& path, int size)
         {
             return path + "#" + std::to_string(size);
         }
+
+        // Text field focus event state
+        inline std::vector<
+            std::function<void(const std::string&, bool)>
+        > g_onTextFieldFocusCallbacks;
+
+        inline std::unordered_map<std::string, bool>
+            g_previousTextFieldFocus;
+
+        // Layers for overlay widgets like toasts
+        struct Layer {
+            std::string id;
+            Widget widget;
+        };
+
+        inline std::vector<Layer> g_layers;
+    }
+
+    // Public API (in namespace Nimble, NOT inside Detail)
+    inline void OnTextFieldFocus(
+        std::function<void(const std::string&, bool)> callback)
+    {
+        Detail::g_onTextFieldFocusCallbacks.push_back(std::move(callback));
+    }
+
+    inline bool IsTextFieldFocused()
+    {
+        return g_inputFocused;
+    }
+
+    inline void FireTextFieldFocusEvent(
+        const std::string& id,
+        bool focused)
+    {
+        auto it = Detail::g_previousTextFieldFocus.find(id);
+
+        // First time this widget appears: store state, don't fire.
+        if (it == Detail::g_previousTextFieldFocus.end())
+        {
+            Detail::g_previousTextFieldFocus[id] = focused;
+            return;
+        }
+
+        // No change.
+        if (it->second == focused)
+            return;
+
+        // Update stored state.
+        it->second = focused;
+
+        // Notify listeners.
+        for (auto& callback : Detail::g_onTextFieldFocusCallbacks)
+        {
+            callback(id, focused);
+        }
+    }
+
+    inline void AddLayer(Widget layer)
+    {
+        Detail::g_layers.push_back({"", std::move(layer)});
+    }
+
+    inline void AddLayer(Widget layer, const std::string &id)
+    {
+        if (id.empty())
+        {
+            AddLayer(std::move(layer));
+            return;
+        }
+
+        for (auto &entry : Detail::g_layers)
+        {
+            if (entry.id == id)
+            {
+                entry.widget = std::move(layer);
+                return;
+            }
+        }
+
+        Detail::g_layers.push_back({id, std::move(layer)});
+    }
+
+    inline void RemoveLayer(const std::string &id)
+    {
+        auto it = std::remove_if(
+            Detail::g_layers.begin(),
+            Detail::g_layers.end(),
+            [&](const Detail::Layer &entry) {
+                return entry.id == id;
+            });
+        Detail::g_layers.erase(it, Detail::g_layers.end());
+    }
+
+    inline void ClearLayers()
+    {
+        Detail::g_layers.clear();
     }
 
     inline void Init()
@@ -115,6 +212,21 @@ namespace Nimble
     inline const std::string &FocusedWidget()
     {
         return g_FocusedWidgetId;
+    }
+
+    inline const std::string &SecondaryFocusedWidget()
+    {
+        return g_SecondaryFocusedWidgetId;
+    }
+
+    inline void SetSecondaryFocus(const std::string &id)
+    {
+        g_NextSecondaryFocusedWidgetId = id;
+    }
+
+    inline void ClearSecondaryFocus()
+    {
+        g_NextSecondaryFocusedWidgetId.clear();
     }
 
     class IApp
@@ -197,6 +309,9 @@ namespace Nimble
                 float dt = static_cast<float>(now - lastTicks) / 1000.0f;
                 lastTicks = now;
 
+                // Reset per-frame overlay layers before the app draws.
+                Detail::g_layers.clear();
+
                 StartUIFrame();
                 UpdateUIAnimations(dt);
                 ResetCursor();
@@ -218,6 +333,12 @@ namespace Nimble
                     root.render(renderer_, {0, 0, width, height}, input);
                 }
 
+                // Render overlay layers (e.g., toasts)
+                for (auto& layer : Detail::g_layers)
+                {
+                    layer.widget.render(renderer_, {0, 0, width, height}, input);
+                }
+
                 RenderDebugNavigationOverlay(renderer_);
 
 #ifndef NDEBUG
@@ -228,6 +349,7 @@ namespace Nimble
                 ImGui::Render();
                 ImGui_ImplSDLRenderer2_RenderDrawData(ImGui::GetDrawData(), renderer_);
                 SDL_RenderPresent(renderer_);
+
             }
         }
 
@@ -264,6 +386,8 @@ namespace Nimble
             window_ = nullptr;
             initialized_ = false;
         }
+
+        
 
     private:
         InputState GatherInput(bool &quit)

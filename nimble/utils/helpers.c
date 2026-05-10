@@ -65,6 +65,7 @@ inline void StartUIFrame()
 {
   // Commit focus changes from previous frame
   g_FocusedWidgetId = g_NextFocusedWidgetId;
+  g_SecondaryFocusedWidgetId = g_NextSecondaryFocusedWidgetId;
 
   // Clear the debug rects map so it's fresh for this frame's layout
   g_WidgetRects.clear();

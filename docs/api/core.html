@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nimble UI Framework - Core API</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="glass-panel">
+                <h2 style="color: var(--accent-primary); margin-bottom: var(--spacing-lg);">Nimble</h2>
+                <nav>
+                    <ul class="sidebar-nav">
+                        <li><a href="../index.html">Home</a></li>
+                        <li><a href="../getting-started.html">Getting Started</a></li>
+                        <li><a href="core.html">Core API</a></li>
+                        <li><a href="widgets.html">Widgets</a></li>
+                        <li><a href="layouts.html">Layouts</a></li>
+                        <li><a href="input.html">Input & Navigation</a></li>
+                        <li><a href="styling.html">Styling</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </aside>
+
+        <!-- Top Bar -->
+        <header class="top-bar">
+            <div class="glass-panel">
+                <input type="text" class="search-input" placeholder="Search documentation...">
+                <button class="theme-toggle">🌙</button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <h1>Core API</h1>
+
+            <section>
+                <h2>Application Lifecycle</h2>
+                <p>The core of any Nimble application is the Application class, which manages the SDL window, rendering loop, and widget hierarchy.</p>
+            </section>
+
+            <div class="api-item">
+                <h3>ApplicationConfig</h3>
+                <p>Configuration structure for Application initialization.</p>
+                <div class="api-signature">
+                    struct ApplicationConfig {<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;std::string title = "Nimble Application";<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;int width = 1280;<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;int height = 720;<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;RendererBackend renderer = RendererBackend::SDL;<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;Uint32 sdlWindowFlags = SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE;<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;Uint32 sdlRendererFlags = SDL_RENDERER_ACCELERATED;<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;bool enableVSync = true;<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;bool enableGPU = false;<br>
+                    };
+                </div>
+                <dl class="api-params">
+                    <dt>Members</dt>
+                    <dd><strong>title:</strong> Window title string</dd>
+                    <dd><strong>width/height:</strong> Window dimensions in pixels</dd>
+                    <dd><strong>renderer:</strong> Backend renderer type</dd>
+                    <dd><strong>sdlWindowFlags:</strong> SDL window creation flags</dd>
+                    <dd><strong>sdlRendererFlags:</strong> SDL renderer creation flags</dd>
+                    <dd><strong>enableVSync:</strong> Enable vertical sync</dd>
+                    <dd><strong>enableGPU:</strong> Enable GPU acceleration</dd>
+                </dl>
+                <p><strong>Header:</strong> nimble/application.h</p>
+            </div>
+
+            <div class="api-item">
+                <h3>class Application</h3>
+                <p>Main application class that manages the SDL window and rendering loop.</p>
+                <div class="api-signature">
+                    class Application {<br>
+                    public:<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;Application(const ApplicationConfig& config, IApp& app);<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;bool Initialize();<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;int Run();<br>
+                    };
+                </div>
+                <dl class="api-params">
+                    <dt>Methods</dt>
+                    <dd><strong>Application(config, app):</strong> Constructor taking configuration and app instance</dd>
+                    <dd><strong>Initialize():</strong> Initialize SDL and create window</dd>
+                    <dd><strong>Run():</strong> Start the main application loop</dd>
+                </dl>
+                <p><strong>Header:</strong> nimble/application.h</p>
+                <h4>Usage Example</h4>
+                <div class="code-block">
+                    <pre><code>ApplicationConfig config;
+config.title = "My App";
+config.width = 800;
+config.height = 600;
+
+MyApp app;
+Application application(config, app);
+if (application.Initialize()) {
+    return application.Run();
+}</code></pre>
+                </div>
+            </div>
+
+            <div class="api-item">
+                <h3>class IApp</h3>
+                <p>Interface that user applications must implement to provide the root widget.</p>
+                <div class="api-signature">
+                    class IApp {<br>
+                    public:<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;virtual Widget Build(int width, int height, float deltaTime) = 0;<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;virtual void OnStart() {}<br>
+                    };
+                </div>
+                <dl class="api-params">
+                    <dt>Methods</dt>
+                    <dd><strong>Build(width, height, deltaTime):</strong> Called each frame to build the widget tree</dd>
+                    <dd><strong>OnStart():</strong> Called once at application startup</dd>
+                </dl>
+                <p><strong>Header:</strong> nimble/application.h</p>
+            </div>
+
+            <div class="api-item">
+                <h3>Init()</h3>
+                <p>Initialize the Nimble framework. Must be called before creating any widgets.</p>
+                <div class="api-signature">void Init();</div>
+                <p><strong>Header:</strong> nimble/application.h</p>
+                <h4>Usage Example</h4>
+                <div class="code-block">
+                    <pre><code>int main() {
+    Nimble::Init();
+    // Now safe to create widgets
+}</code></pre>
+                </div>
+            </div>
+
+            <div class="api-item">
+                <h3>LoadFont(path, size)</h3>
+                <p>Load a TTF font for use in text rendering.</p>
+                <div class="api-signature">TTF_Font* LoadFont(const std::string& path, int size);</div>
+                <dl class="api-params">
+                    <dt>Parameters</dt>
+                    <dd><strong>path:</strong> Path to the TTF font file</dd>
+                    <dd><strong>size:</strong> Font size in points</dd>
+                </dl>
+                <dl class="api-return">
+                    <dt>Returns</dt>
+                    <dd>TTF_Font pointer, or nullptr on failure</dd>
+                </dl>
+                <p><strong>Header:</strong> nimble/application.h</p>
+            </div>
+
+            <section>
+                <h2>Global State</h2>
+                <p>Nimble maintains global state for focus management, navigation, and debugging.</p>
+            </section>
+
+            <div class="api-item">
+                <h3>g_FocusedWidgetId</h3>
+                <p>Global variable containing the ID of the currently focused widget.</p>
+                <div class="api-signature">std::string g_FocusedWidgetId;</div>
+                <p><strong>Header:</strong> nimble/widget.h</p>
+            </div>
+
+            <div class="api-item">
+                <h3>g_NextFocusedWidgetId</h3>
+                <p>Global variable to set the next widget to receive focus.</p>
+                <div class="api-signature">std::string g_NextFocusedWidgetId;</div>
+                <p><strong>Header:</strong> nimble/widget.h</p>
+            </div>
+
+            <div class="api-item">
+                <h3>g_inputFocused</h3>
+                <p>Global flag indicating if a text input widget currently has focus.</p>
+                <div class="api-signature">bool g_inputFocused;</div>
+                <p><strong>Header:</strong> nimble/widget.h</p>
+            </div>
+        </main>
+
+        <!-- Table of Contents -->
+        <aside class="toc">
+            <div class="glass-panel">
+                <h3>On this page</h3>
+                <ul>
+                    <li><a href="#application-lifecycle">Application Lifecycle</a></li>
+                    <li><a href="#applicationconfig">ApplicationConfig</a></li>
+                    <li><a href="#class-application">Application</a></li>
+                    <li><a href="#class-iapp">IApp</a></li>
+                    <li><a href="#init">Init()</a></li>
+                    <li><a href="#loadfont">LoadFont()</a></li>
+                    <li><a href="#global-state">Global State</a></li>
+                </ul>
+            </div>
+        </aside>
+    </div>
+
+    <script src="assets/js/search.js"></script>
+    <script src="assets/js/navigation.js"></script>
+    <script src="assets/js/copy-code.js"></script>
+    <script src="assets/js/theme.js"></script>
+</body>
+</html>

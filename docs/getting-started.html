@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nimble UI Framework - Getting Started</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="glass-panel">
+                <h2 style="color: var(--accent-primary); margin-bottom: var(--spacing-lg);">Nimble</h2>
+                <nav>
+                    <ul class="sidebar-nav">
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="getting-started.html">Getting Started</a></li>
+                        <li><a href="api/core.html">Core API</a></li>
+                        <li><a href="api/widgets.html">Widgets</a></li>
+                        <li><a href="api/layouts.html">Layouts</a></li>
+                        <li><a href="api/input.html">Input & Navigation</a></li>
+                        <li><a href="api/styling.html">Styling</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </aside>
+
+        <!-- Top Bar -->
+        <header class="top-bar">
+            <div class="glass-panel">
+                <input type="text" class="search-input" placeholder="Search documentation...">
+                <button class="theme-toggle">🌙</button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <h1>Getting Started with Nimble</h1>
+
+            <section>
+                <h2>Requirements</h2>
+                <ul>
+                    <li><strong>C++17</strong> or later compiler</li>
+                    <li><strong>SDL2</strong> or <strong>SDL3</strong> development libraries</li>
+                    <li><strong>CMake 3.10+</strong> for building</li>
+                    <li><strong>TTF fonts</strong> for text rendering</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Installation</h2>
+                <p>Add Nimble as a submodule to your CMake project:</p>
+                <div class="code-block">
+                    <pre><code>git submodule add https://github.com/your-org/nimble.git third_party/nimble</code></pre>
+                </div>
+
+                <p>Or download the source and copy to your project.</p>
+            </section>
+
+            <section>
+                <h2>CMake Integration</h2>
+                <p>Add to your CMakeLists.txt:</p>
+                <div class="code-block">
+                    <pre><code>add_subdirectory(third_party/nimble)
+target_link_libraries(your_app nimble SDL2 SDL2_ttf)</code></pre>
+                </div>
+            </section>
+
+            <section>
+                <h2>Basic Application</h2>
+                <p>Create your first Nimble application:</p>
+                <div class="code-block">
+                    <pre><code>#include &lt;nimble/application.h&gt;
+#include &lt;nimble/widgets/text.h&gt;
+
+class MyApp : public Nimble::IApp {
+public:
+    Widget Build(int width, int height, float deltaTime) override {
+        return Widgets::Text("Hello, World!", nullptr, {255, 255, 255, 255});
+    }
+};
+
+int main() {
+    Nimble::ApplicationConfig config;
+    config.title = "My Nimble App";
+    config.width = 800;
+    config.height = 600;
+
+    MyApp app;
+    Nimble::Application application(config, app);
+    return application.Initialize() ? application.Run() : -1;
+}</code></pre>
+                </div>
+            </section>
+
+            <section>
+                <h2>Building</h2>
+                <p>Build with CMake:</p>
+                <div class="code-block">
+                    <pre><code>mkdir build
+cd build
+cmake ..
+make</code></pre>
+                </div>
+            </section>
+
+            <section>
+                <h2>Next Steps</h2>
+                <ul>
+                    <li>Explore the <a href="api/widgets.html">Widgets API</a> for UI components</li>
+                    <li>Learn about <a href="api/layouts.html">Layouts</a> for arranging widgets</li>
+                    <li>Check out <a href="api/input.html">Input handling</a> for user interaction</li>
+                </ul>
+            </section>
+        </main>
+
+        <!-- Table of Contents -->
+        <aside class="toc">
+            <div class="glass-panel">
+                <h3>On this page</h3>
+                <ul>
+                    <li><a href="#requirements">Requirements</a></li>
+                    <li><a href="#installation">Installation</a></li>
+                    <li><a href="#cmake-integration">CMake Integration</a></li>
+                    <li><a href="#basic-application">Basic Application</a></li>
+                    <li><a href="#building">Building</a></li>
+                    <li><a href="#next-steps">Next Steps</a></li>
+                </ul>
+            </div>
+        </aside>
+    </div>
+
+    <script src="assets/js/search.js"></script>
+    <script src="assets/js/navigation.js"></script>
+    <script src="assets/js/copy-code.js"></script>
+    <script src="assets/js/theme.js"></script>
+</body>
+</html>

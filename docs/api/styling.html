@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nimble UI Framework - Styling API</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="glass-panel">
+                <h2 style="color: var(--accent-primary); margin-bottom: var(--spacing-lg);">Nimble</h2>
+                <nav>
+                    <ul class="sidebar-nav">
+                        <li><a href="../index.html">Home</a></li>
+                        <li><a href="../getting-started.html">Getting Started</a></li>
+                        <li><a href="core.html">Core API</a></li>
+                        <li><a href="widgets.html">Widgets</a></li>
+                        <li><a href="layouts.html">Layouts</a></li>
+                        <li><a href="input.html">Input & Navigation</a></li>
+                        <li><a href="styling.html">Styling</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </aside>
+
+        <!-- Top Bar -->
+        <header class="top-bar">
+            <div class="glass-panel">
+                <input type="text" class="search-input" placeholder="Search documentation...">
+                <button class="theme-toggle">🌙</button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <h1>Styling API</h1>
+
+            <section>
+                <h2>WidgetStyle</h2>
+                <p>The core styling structure for widgets, controlling appearance and layout properties.</p>
+            </section>
+
+            <div class="api-item">
+                <h3>WidgetStyle</h3>
+                <p>Structure containing all visual and layout styling properties for widgets.</p>
+                <div class="api-signature">
+                    struct WidgetStyle {<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;SDL_Color color = {0, 0, 0, 0};<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;Gradient gradient;<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;int radius = 0;<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;int borderWidth = 0;<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;Vector2 position = {0, 0};<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;bool positionChangesBounds = false;<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;Vector2 padding = {0, 0};<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;SDL_Color borderColor = {0, 0, 0, 0};<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;Vector2 shadowOffset = {0, 0};<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;SDL_Color shadowColor = {0, 0, 0, 0};<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;int shadowSpread = 0;<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;int shadowBlur = 0;<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;ScrollbarStyle scrollbarStyle = g_GlobalScrollbarStyle;<br>
+                    };
+                </div>
+                <table class="table">
+                    <tr><th>Property</th><th>Type</th><th>Description</th></tr>
+                    <tr><td>color</td><td>SDL_Color</td><td>Background color (RGBA)</td></tr>
+                    <tr><td>gradient</td><td>Gradient</td><td>Background gradient</td></tr>
+                    <tr><td>radius</td><td>int</td><td>Border radius for rounded corners</td></tr>
+                    <tr><td>borderWidth</td><td>int</td><td>Border thickness</td></tr>
+                    <tr><td>position</td><td>Vector2</td><td>Absolute positioning offset</td></tr>
+                    <tr><td>positionChangesBounds</td><td>bool</td><td>Whether position affects layout bounds</td></tr>
+                    <tr><td>padding</td><td>Vector2</td><td>Internal padding</td></tr>
+                    <tr><td>borderColor</td><td>SDL_Color</td><td>Border color</td></tr>
+                    <tr><td>shadowOffset</td><td>Vector2</td><td>Shadow offset</td></tr>
+                    <tr><td>shadowColor</td><td>SDL_Color</td><td>Shadow color</td></tr>
+                    <tr><td>shadowSpread</td><td>int</td><td>Shadow spread radius</td></tr>
+                    <tr><td>shadowBlur</td><td>int</td><td>Shadow blur radius</td></tr>
+                    <tr><td>scrollbarStyle</td><td>ScrollbarStyle</td><td>Scrollbar appearance</td></tr>
+                </table>
+                <p><strong>Header:</strong> nimble/utils/helpers.h</p>
+                <h4>Usage Example</h4>
+                <div class="code-block">
+                    <pre><code>WidgetStyle style;
+style.color = {255, 0, 0, 255}; // Red background
+style.radius = 10; // Rounded corners
+style.borderWidth = 2;
+style.borderColor = {0, 0, 0, 255};
+
+auto styledWidget = Widgets::RoundedBox(size, style, child);</code></pre>
+                </div>
+            </div>
+
+            <div class="api-item">
+                <h3>TextFieldStyle</h3>
+                <p>Specialized styling for text input fields.</p>
+                <div class="api-signature">
+                    struct TextFieldStyle {<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;SDL_Color textColor = {255, 255, 255, 255};<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;SDL_Color placeholderColor = {150, 150, 150, 255};<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;SDL_Color backgroundColor = {30, 30, 30, 0};<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;SDL_Color cursorColor = {255, 255, 255, 255};<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;SDL_Color borderColor = {100, 100, 100, 255};<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;SDL_Color focusedBorderColor = {0, 150, 255, 0};<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;int borderWidth = 1;<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;int radius = 4;<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;Vector2 padding = {10, 5};<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;TTF_Font *font = nullptr;<br>
+                    };
+                </div>
+                <p><strong>Header:</strong> nimble/utils/helpers.h</p>
+            </div>
+
+            <section>
+                <h2>Animations</h2>
+                <p>Nimble supports smooth animations for various properties.</p>
+            </section>
+
+            <div class="api-item">
+                <h3>animatePosition(targetPos, t)</h3>
+                <p>Animates widget position over time.</p>
+                <div class="api-signature">void animatePosition(Vector2 targetPos, float t);</div>
+                <p><strong>Header:</strong> nimble/widget.h</p>
+            </div>
+
+            <div class="api-item">
+                <h3>animateSize(targetSize, t)</h3>
+                <p>Animates widget size over time.</p>
+                <div class="api-signature">void animateSize(Vector2 targetSize, float t);</div>
+                <p><strong>Header:</strong> nimble/widget.h</p>
+            </div>
+
+            <div class="api-item">
+                <h3>animateColor(targetColor, t)</h3>
+                <p>Animates widget background color.</p>
+                <div class="api-signature">void animateColor(SDL_Color targetColor, float t);</div>
+                <p><strong>Header:</strong> nimble/widget.h</p>
+            </div>
+
+            <div class="api-item">
+                <h3>animateRadius(targetRadius, t)</h3>
+                <p>Animates border radius.</p>
+                <div class="api-signature">void animateRadius(int targetRadius, float t);</div>
+                <p><strong>Header:</strong> nimble/widget.h</p>
+            </div>
+
+            <div class="api-item">
+                <h3>animateShadow(targetColor, targetOffset, targetSpread, targetBlur, t)</h3>
+                <p>Animates shadow properties.</p>
+                <div class="api-signature">void animateShadow(SDL_Color targetColor, Vector2 targetOffset, int targetSpread, int targetBlur, float t);</div>
+                <p><strong>Header:</strong> nimble/widget.h</p>
+            </div>
+
+            <div class="api-item">
+                <h3>animateBorder(targetColor, targetWidth, t)</h3>
+                <p>Animates border properties.</p>
+                <div class="api-signature">void animateBorder(SDL_Color targetColor, int targetWidth, float t);</div>
+                <p><strong>Header:</strong> nimble/widget.h</p>
+            </div>
+
+            <section>
+                <h2>Animation Modifiers</h2>
+                <p>Widget methods for configuring animations.</p>
+            </section>
+
+            <div class="api-item">
+                <h3>OnHover(animId, duration, animFn, curve)</h3>
+                <p>Configures hover animation.</p>
+                <div class="api-signature">
+                    Widget OnHover(const std::string &animId, float durationSec, std::function&lt;void(Widget &, float)&gt; animFn, std::function&lt;float(float)&gt; curveFn = Easing::EaseInOutQuad);
+                </div>
+                <p><strong>Header:</strong> nimble/widget.h</p>
+                <h4>Usage Example</h4>
+                <div class="code-block">
+                    <pre><code>auto button = Widgets::Text("Hover me", font, color)
+    .OnHover("hover", 0.3f, [](Widget &w, float t) {
+        w.animateColor({255, 0, 0, 255}, t); // Animate to red
+    });</code></pre>
+                </div>
+            </div>
+
+            <div class="api-item">
+                <h3>OnClick(animId, duration, cb, animFn, curve, captureFocus, captureSecondary)</h3>
+                <p>Configures click animation and callback.</p>
+                <div class="api-signature">
+                    Widget OnClick(const std::string &animId, float durationSec, std::function&lt;void()&gt; cb, std::function&lt;void(Widget &, float)&gt; animFn, std::function&lt;float(float)&gt; curveFn = Easing::EaseOutQuad, bool captureFocus = true, bool captureSecondaryFocus = false);
+                </div>
+                <p><strong>Header:</strong> nimble/widget.h</p>
+            </div>
+
+            <div class="api-item">
+                <h3>OnFocus(animId, duration, animFn, curve)</h3>
+                <p>Configures focus animation.</p>
+                <div class="api-signature">
+                    Widget OnFocus(const std::string &animId, float durationSec, std::function&lt;void(Widget &, float)&gt; animFn, std::function&lt;float(float)&gt; curveFn = Easing::EaseInOutQuad);
+                </div>
+                <p><strong>Header:</strong> nimble/widget.h</p>
+            </div>
+
+            <div class="api-item">
+                <h3>OnAnimate(animId, duration, animFn, curve)</h3>
+                <p>Configures custom animation.</p>
+                <div class="api-signature">
+                    Widget OnAnimate(const std::string &animId, float durationSec, std::function&lt;void(Widget &, float)&gt; animFn, std::function&lt;float(float)&gt; curveFn = Easing::EaseInOutQuad);
+                </div>
+                <p><strong>Header:</strong> nimble/widget.h</p>
+            </div>
+
+            <section>
+                <h2>Global Settings</h2>
+                <p>Debug and development settings that affect all widgets.</p>
+            </section>
+
+            <div class="api-item">
+                <h3>GlobalSettings</h3>
+                <p>Structure containing global developer settings.</p>
+                <div class="api-signature">
+                    struct GlobalSettings {<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;bool showWidgetIds = false;<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;bool showClipRects = false;<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;bool showFlexWeights = false;<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;bool showFocusLoop = false;<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;bool highlightInputCapture = false;<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;bool slowAnimations = false;<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;bool paintFlashMode = false;<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;bool showFPSOverlay = false;<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;bool triggerStateReset = false;<br>
+                    };
+                </div>
+                <p><strong>Header:</strong> nimble/widget.h</p>
+            </div>
+
+            <div class="api-item">
+                <h3>g_Settings</h3>
+                <p>Global instance of developer settings.</p>
+                <div class="api-signature">GlobalSettings g_Settings;</div>
+                <p><strong>Header:</strong> nimble/widget.h</p>
+                <h4>Usage Example</h4>
+                <div class="code-block">
+                    <pre><code>g_Settings.showWidgetIds = true; // Show widget IDs for debugging
+g_Settings.showFPSOverlay = true; // Display FPS counter</code></pre>
+                </div>
+            </div>
+        </main>
+
+        <!-- Table of Contents -->
+        <aside class="toc">
+            <div class="glass-panel">
+                <h3>On this page</h3>
+                <ul>
+                    <li><a href="#widgetstyle">WidgetStyle</a></li>
+                    <li><a href="#animations">Animations</a></li>
+                    <li><a href="#animation-modifiers">Animation Modifiers</a></li>
+                    <li><a href="#global-settings">Global Settings</a></li>
+                </ul>
+            </div>
+        </aside>
+    </div>
+
+    <script src="assets/js/search.js"></script>
+    <script src="assets/js/navigation.js"></script>
+    <script src="assets/js/copy-code.js"></script>
+    <script src="assets/js/theme.js"></script>
+</body>
+</html>

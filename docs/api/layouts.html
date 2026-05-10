@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nimble UI Framework - Layouts API</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="glass-panel">
+                <h2 style="color: var(--accent-primary); margin-bottom: var(--spacing-lg);">Nimble</h2>
+                <nav>
+                    <ul class="sidebar-nav">
+                        <li><a href="../index.html">Home</a></li>
+                        <li><a href="../getting-started.html">Getting Started</a></li>
+                        <li><a href="core.html">Core API</a></li>
+                        <li><a href="widgets.html">Widgets</a></li>
+                        <li><a href="layouts.html">Layouts</a></li>
+                        <li><a href="input.html">Input & Navigation</a></li>
+                        <li><a href="styling.html">Styling</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </aside>
+
+        <!-- Top Bar -->
+        <header class="top-bar">
+            <div class="glass-panel">
+                <input type="text" class="search-input" placeholder="Search documentation...">
+                <button class="theme-toggle">🌙</button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <h1>Layouts API</h1>
+
+            <section>
+                <h2>Overview</h2>
+                <p>Layout widgets control how child widgets are positioned and sized. Nimble provides flexible layout containers that adapt to different screen sizes and content.</p>
+            </section>
+
+            <div class="api-item">
+                <h3>Row</h3>
+                <p>Arranges children horizontally in a row with configurable alignment and spacing.</p>
+                <div class="api-signature">
+                    Widget Row(RowArgs args = {});
+                </div>
+                <p><strong>RowArgs:</strong></p>
+                <table class="table">
+                    <tr><th>Property</th><th>Type</th><th>Description</th></tr>
+                    <tr><td>mainAlign</td><td>MainAxisAlignment</td><td>Horizontal alignment of children</td></tr>
+                    <tr><td>crossAlign</td><td>CrossAxisAlignment</td><td>Vertical alignment of children</td></tr>
+                    <tr><td>spacing</td><td>int</td><td>Space between children</td></tr>
+                    <tr><td>children</td><td>std::vector&lt;Widget&gt;</td><td>Child widgets to arrange</td></tr>
+                    <tr><td>scroll</td><td>ScrollBehavior</td><td>Scrolling behavior</td></tr>
+                    <tr><td>axis</td><td>ScrollAxis</td><td>Scroll axis</td></tr>
+                    <tr><td>id</td><td>std::string</td><td>Widget identifier</td></tr>
+                    <tr><td>expandX</td><td>float</td><td>Horizontal expansion factor</td></tr>
+                    <tr><td>expandY</td><td>float</td><td>Vertical expansion factor</td></tr>
+                    <tr><td>autoSetupNav</td><td>bool</td><td>Automatically setup navigation</td></tr>
+                </table>
+                <p><strong>Header:</strong> nimble/widgets/row.cpp</p>
+                <h4>Usage Example</h4>
+                <div class="code-block">
+                    <pre><code>auto row = Widgets::Row({
+    .mainAlign = MainAxisAlignment::SpaceBetween,
+    .crossAlign = CrossAxisAlignment::Center,
+    .spacing = 20,
+    .children = {icon, title, button}
+});</code></pre>
+                </div>
+            </div>
+
+            <div class="api-item">
+                <h3>Column</h3>
+                <p>Arranges children vertically in a column with configurable alignment and spacing.</p>
+                <div class="api-signature">
+                    Widget Column(ColumnArgs args = {});
+                </div>
+                <p>ColumnArgs has the same structure as RowArgs but arranges children vertically.</p>
+                <p><strong>Header:</strong> nimble/widgets/column.cpp</p>
+                <h4>Usage Example</h4>
+                <div class="code-block">
+                    <pre><code>auto column = Widgets::Column({
+    .mainAlign = MainAxisAlignment::Start,
+    .crossAlign = CrossAxisAlignment::Stretch,
+    .spacing = 10,
+    .children = {header, content, footer}
+});</code></pre>
+                </div>
+            </div>
+
+            <div class="api-item">
+                <h3>Stack</h3>
+                <p>Stacks children on top of each other, allowing for layered layouts.</p>
+                <div class="api-signature">
+                    Widget Stack(std::vector&lt;Widget&gt; children);
+                </div>
+                <dl class="api-params">
+                    <dt>Parameters</dt>
+                    <dd><strong>children:</strong> Vector of widgets to stack, rendered in order</dd>
+                </dl>
+                <p><strong>Header:</strong> nimble/widgets/stack.cpp</p>
+                <h4>Usage Example</h4>
+                <div class="code-block">
+                    <pre><code>auto stack = Widgets::Stack({
+    Widgets::Image("background.jpg", {400, 300}),
+    Widgets::Center(Widgets::Text("Overlay Text", font, color)),
+    closeButton
+});</code></pre>
+                </div>
+            </div>
+
+            <div class="api-item">
+                <h3>Scaffold</h3>
+                <p>Provides a basic app structure with background and content areas.</p>
+                <div class="api-signature">
+                    Widget Scaffold(std::vector&lt;Widget&gt; children, Widget background = {});
+                </div>
+                <dl class="api-params">
+                    <dt>Parameters</dt>
+                    <dd><strong>children:</strong> Content widgets</dd>
+                    <dd><strong>background:</strong> Optional background widget</dd>
+                </dl>
+                <p><strong>Header:</strong> nimble/widgets/scaffold.cpp</p>
+            </div>
+
+            <div class="api-item">
+                <h3>Padding</h3>
+                <p>Adds space around a child widget.</p>
+                <div class="api-signature">
+                    Widget Padding(Vector2 padding, Widget child);
+                </div>
+                <dl class="api-params">
+                    <dt>Parameters</dt>
+                    <dd><strong>padding:</strong> Padding amount as Vector2 (x, y)</dd>
+                    <dd><strong>child:</strong> Widget to pad</dd>
+                </dl>
+                <p><strong>Header:</strong> nimble/widgets/padding.cpp</p>
+                <h4>Usage Example</h4>
+                <div class="code-block">
+                    <pre><code>auto paddedButton = Widgets::Padding({10, 5}, button);</code></pre>
+                </div>
+            </div>
+
+            <div class="api-item">
+                <h3>Center</h3>
+                <p>Centers a child widget within the available space.</p>
+                <div class="api-signature">
+                    Widget Center(Widget child);
+                </div>
+                <p><strong>Header:</strong> nimble/widgets/center.cpp</p>
+            </div>
+
+            <div class="api-item">
+                <h3>Expanded</h3>
+                <p>Expands to fill available space in flex layouts.</p>
+                <div class="api-signature">
+                    Widget Expanded(float flexX, float flexY, Widget child);
+                </div>
+                <dl class="api-params">
+                    <dt>Parameters</dt>
+                    <dd><strong>flexX:</strong> Horizontal expansion factor</dd>
+                    <dd><strong>flexY:</strong> Vertical expansion factor</dd>
+                    <dd><strong>child:</strong> Widget to expand</dd>
+                </dl>
+                <p><strong>Header:</strong> nimble/widgets/expanded.cpp</p>
+            </div>
+
+            <section>
+                <h2>Alignment Enums</h2>
+            </section>
+
+            <div class="api-item">
+                <h3>MainAxisAlignment</h3>
+                <p>Controls alignment along the main axis (horizontal for Row, vertical for Column).</p>
+                <div class="api-signature">
+                    enum class MainAxisAlignment {<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;Start,<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;Center,<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;End,<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;SpaceBetween,<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;SpaceAround,<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;SpaceEvenly<br>
+                    };
+                </div>
+            </div>
+
+            <div class="api-item">
+                <h3>CrossAxisAlignment</h3>
+                <p>Controls alignment along the cross axis (vertical for Row, horizontal for Column).</p>
+                <div class="api-signature">
+                    enum class CrossAxisAlignment {<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;Start,<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;Center,<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;End,<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;Stretch<br>
+                    };
+                </div>
+            </div>
+        </main>
+
+        <!-- Table of Contents -->
+        <aside class="toc">
+            <div class="glass-panel">
+                <h3>On this page</h3>
+                <ul>
+                    <li><a href="#overview">Overview</a></li>
+                    <li><a href="#row">Row</a></li>
+                    <li><a href="#column">Column</a></li>
+                    <li><a href="#stack">Stack</a></li>
+                    <li><a href="#scaffold">Scaffold</a></li>
+                    <li><a href="#padding">Padding</a></li>
+                    <li><a href="#center">Center</a></li>
+                    <li><a href="#expanded">Expanded</a></li>
+                    <li><a href="#alignment-enums">Alignment Enums</a></li>
+                </ul>
+            </div>
+        </aside>
+    </div>
+
+    <script src="assets/js/search.js"></script>
+    <script src="assets/js/navigation.js"></script>
+    <script src="assets/js/copy-code.js"></script>
+    <script src="assets/js/theme.js"></script>
+</body>
+</html>

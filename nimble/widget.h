@@ -30,10 +30,13 @@ inline GlobalSettings g_Settings;
 
 inline std::string g_FocusedWidgetId = "";
 inline std::string g_NextFocusedWidgetId = "";
+inline std::string g_SecondaryFocusedWidgetId = "";
+inline std::string g_NextSecondaryFocusedWidgetId = "";
+inline bool g_inputFocused = false;
 inline std::unordered_map<std::string, SDL_Rect> g_WidgetRects;
 inline bool g_DebugNavigation = true;
 inline std::unordered_map<std::string, bool> g_DisabledStates;
-
+    
 // --- Navigation Struct ---
 struct WidgetNav
 {
@@ -547,6 +550,8 @@ struct Widget
 
     std::function<void(SDL_Renderer *, SDL_Rect, const WidgetStyle &, const InputState &, const std::vector<Widget> &, WidgetDebug)> paint; // Must remain 6th!
     std::function<void()> onClickFn;
+    bool captureFocusOnClick = true;
+    bool captureSecondaryFocusOnClick = false;
 
     // --- Placed at the end to not break positional {} initializations ---
     float expandX = 0.0f;
@@ -648,13 +653,15 @@ struct Widget
         return *this;
     }
 
-    Widget OnClick(const std::string &animId, float durationSec, std::function<void()> cb, std::function<void(Widget &, float)> animFn, std::function<float(float)> curveFn = Easing::EaseOutQuad)
+    Widget OnClick(const std::string &animId, float durationSec, std::function<void()> cb, std::function<void(Widget &, float)> animFn, std::function<float(float)> curveFn = Easing::EaseOutQuad, bool captureFocus = true, bool captureSecondaryFocus = false)
     {
         if (this->id.empty())
             this->id = animId;
         AnimState &anim = g_UIState[this->id];
         anim.clickDuration = durationSec;
         this->onClickFn = cb;
+        this->captureFocusOnClick = captureFocus;
+        this->captureSecondaryFocusOnClick = captureSecondaryFocus;
         anim.curve = curveFn;
         if (anim.clickProgress > 0.0f)
             animFn(*this, anim.curve(anim.clickProgress));
@@ -736,11 +743,13 @@ struct Widget
             g_DisabledStates[this->id] = this->disabled;       // Store disabled state
             g_NavigationLinks[this->id] = this->nav;           // Store nav links
 
+            bool isSecondaryFocused = (g_SecondaryFocusedWidgetId == this->id);
             bool justGainedFocus = (!g_UIState[this->id].isFocused && (g_FocusedWidgetId == this->id));
             isFocused = (g_FocusedWidgetId == this->id);
 
             // Sync global state for animations (Progress is updated in UpdateUIAnimations)
             g_UIState[this->id].isFocused = isFocused;
+            g_UIState[this->id].isSecondaryFocused = isSecondaryFocused;
             g_UIState[this->id].isHovered = currentlyHovered;
 
             if (justGainedFocus && boundText != nullptr)
@@ -751,7 +760,10 @@ struct Widget
             if (!this->disabled && currentlyHovered && input.mouseClicked)
             {
                 g_UIState[this->id].isClicked = true;
-                g_NextFocusedWidgetId = this->id;
+                if (this->captureFocusOnClick)
+                    g_NextFocusedWidgetId = this->id;
+                if (this->captureSecondaryFocusOnClick)
+                    g_NextSecondaryFocusedWidgetId = this->id;
                 if (onClickFn) onClickFn();                // --- 2.2 Input Capture Highlight ---
                 if (g_Settings.highlightInputCapture)
                 {
@@ -762,7 +774,9 @@ struct Widget
             }
 
             // 3. KEYBOARD NAVIGATION HANDLING
-            if (isFocused && !this->disabled && input.keyPressed != SDLK_UNKNOWN)
+            bool activeKeyboardNav = !this->disabled && input.keyPressed != SDLK_UNKNOWN &&
+                                     (isSecondaryFocused || (isFocused && g_SecondaryFocusedWidgetId.empty()));
+            if (activeKeyboardNav)
             {
                 if (input.keyPressed == SDLK_UP) {
                     MoveFocusIfTargetExists(this->id, "up", "UP");
@@ -809,6 +823,7 @@ struct Widget
                 bool typed = false;
                 TextFieldState &tfState = g_TextFieldState[this->id];
                 bool ctrl = (input.keyMod & KMOD_CTRL) != 0;
+                bool allowTextNavigation = g_SecondaryFocusedWidgetId.empty();
 
                 // Clipboard shortcuts
                 if (ctrl && input.keyPressed == SDLK_c)
@@ -918,58 +933,61 @@ struct Widget
                     }
                 }
                 // Cursor Movement
-                if (input.leftPressed)
+                if (allowTextNavigation)
                 {
-                    int targetPos = tfState.cursorPosition;
-                    if (input.keyMod & KMOD_CTRL)
+                    if (input.leftPressed)
                     {
-                        targetPos = FindWordBoundaryLeft(*boundText, tfState.cursorPosition);
-                    }
-                    else if (tfState.cursorPosition > 0)
-                    {
-                        targetPos = tfState.cursorPosition - 1;
-                    }
+                        int targetPos = tfState.cursorPosition;
+                        if (input.keyMod & KMOD_CTRL)
+                        {
+                            targetPos = FindWordBoundaryLeft(*boundText, tfState.cursorPosition);
+                        }
+                        else if (tfState.cursorPosition > 0)
+                        {
+                            targetPos = tfState.cursorPosition - 1;
+                        }
 
-                    if (input.keyMod & KMOD_SHIFT)
-                    {
-                        if (!tfState.HasSelection())
-                            tfState.selectionAnchor = tfState.cursorPosition;
-                        tfState.cursorPosition = targetPos;
-                    }
-                    else
-                    {
-                        if (tfState.HasSelection())
-                            tfState.cursorPosition = tfState.selectionAnchor = tfState.GetSelectionStart();
-                        else
+                        if (input.keyMod & KMOD_SHIFT)
+                        {
+                            if (!tfState.HasSelection())
+                                tfState.selectionAnchor = tfState.cursorPosition;
                             tfState.cursorPosition = targetPos;
-                        tfState.selectionAnchor = tfState.cursorPosition;
+                        }
+                        else
+                        {
+                            if (tfState.HasSelection())
+                                tfState.cursorPosition = tfState.selectionAnchor = tfState.GetSelectionStart();
+                            else
+                                tfState.cursorPosition = targetPos;
+                            tfState.selectionAnchor = tfState.cursorPosition;
+                        }
                     }
-                }
-                if (input.rightPressed)
-                {
-                    int targetPos = tfState.cursorPosition;
-                    if (input.keyMod & KMOD_CTRL)
+                    if (input.rightPressed)
                     {
-                        targetPos = FindWordBoundaryRight(*boundText, tfState.cursorPosition);
-                    }
-                    else if (tfState.cursorPosition < (int)boundText->length())
-                    {
-                        targetPos = tfState.cursorPosition + 1;
-                    }
+                        int targetPos = tfState.cursorPosition;
+                        if (input.keyMod & KMOD_CTRL)
+                        {
+                            targetPos = FindWordBoundaryRight(*boundText, tfState.cursorPosition);
+                        }
+                        else if (tfState.cursorPosition < (int)boundText->length())
+                        {
+                            targetPos = tfState.cursorPosition + 1;
+                        }
 
-                    if (input.keyMod & KMOD_SHIFT)
-                    {
-                        if (!tfState.HasSelection())
-                            tfState.selectionAnchor = tfState.cursorPosition;
-                        tfState.cursorPosition = targetPos;
-                    }
-                    else
-                    {
-                        if (tfState.HasSelection())
-                            tfState.cursorPosition = tfState.selectionAnchor = tfState.GetSelectionEnd();
-                        else
+                        if (input.keyMod & KMOD_SHIFT)
+                        {
+                            if (!tfState.HasSelection())
+                                tfState.selectionAnchor = tfState.cursorPosition;
                             tfState.cursorPosition = targetPos;
-                        tfState.selectionAnchor = tfState.cursorPosition;
+                        }
+                        else
+                        {
+                            if (tfState.HasSelection())
+                                tfState.cursorPosition = tfState.selectionAnchor = tfState.GetSelectionEnd();
+                            else
+                                tfState.cursorPosition = targetPos;
+                            tfState.selectionAnchor = tfState.cursorPosition;
+                        }
                     }
                 }
 
@@ -984,7 +1002,7 @@ struct Widget
                     onTypeFn(*boundText);
                 if (changed && onValueChangeFn)
                     onValueChangeFn(*boundText);
-                if (input.enterPressed && onSubmitFn)
+                if (allowTextNavigation && input.enterPressed && onSubmitFn)
                     onSubmitFn(*boundText);
             }
         }

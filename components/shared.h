@@ -26,6 +26,9 @@ struct GlobalContext {
     std::string searchString = "";
     bool pywalEnabled = true;
     WalTheme currentTheme = {};
+
+    bool oskVisible = false;
+    std::string oskTargetFieldId;
 };
 
 // C++17 inline allows this to be shared across all files including this header

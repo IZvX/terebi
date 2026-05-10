@@ -2,6 +2,10 @@
 #include <string>
 #include "../utils/cursors.h"
 
+namespace Nimble {
+    void FireTextFieldFocusEvent(const std::string& id, bool focused);
+}
+
 namespace Widgets
 {
     inline Widget TextField(const std::string &id, std::string &text, const std::string &placeholder, Vector2 size, TextFieldStyle tfStyle)
@@ -12,16 +16,16 @@ namespace Widgets
         w.style.borderWidth = tfStyle.borderWidth;
         w.style.borderColor = tfStyle.borderColor;
 
-        // Note: You might want to disable native w.BindText() logic if it overrides
-        // the new text insertion handled in ProcessTextFieldEvent > SDL_TEXTINPUT
         w.BindText(&text);
 
         w.paint = [&text, placeholder, tfStyle, id](SDL_Renderer *renderer, SDL_Rect rect, const WidgetStyle &s, const InputState &input, const std::vector<Widget> &, WidgetDebug)
         {
             bool isFocused = g_UIState[id].isFocused;
+            Nimble::FireTextFieldFocusEvent(id, isFocused);
+            g_inputFocused = isFocused;
             TextFieldState &tfState = g_TextFieldState[id];
 
-            // Safegaurd against underlying text manipulation
+            // Safeguard against underlying text manipulation
             if (tfState.cursorPosition > text.length())
                 tfState.cursorPosition = text.length();
             if (tfState.selectionAnchor > text.length())
@@ -100,7 +104,6 @@ namespace Widgets
 
                 SDL_Rect selRect = {textX + w1, rect.y + yOff, w2 - w1, fontH};
 
-                // Typical Windows Blue Selection Highlight
                 SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
                 SDL_SetRenderDrawColor(renderer, 0, 120, 215, 128);
                 SDL_RenderFillRect(renderer, &selRect);

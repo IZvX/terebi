@@ -4,7 +4,6 @@
 #include "../nimble/application.h"
 #include "../screens/home_page.h"
 #include "../utils/theme.h"
-#include "./virtual_keyboard.h"
 
 class TerebiApp : public Nimble::IApp
 {
@@ -32,8 +31,11 @@ public:
 
     Widget Build(int width, int height, float deltaTime) override
     {
-        // return Widgets::onScreenKeyboard(fonts_);
-        return HomePage(width, height, deltaTime, searchString_, fonts_, context_);
+        using namespace Widgets;
+        Widget page = HomePage(width, height, deltaTime, searchString_, fonts_, context_);
+
+
+        return page;
     }
 
 private:
