@@ -1,8 +1,7 @@
 #pragma once
 
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-#include <SDL2/SDL_ttf.h>
+#include "sdl_compat.h"
+#include <SDL3_image/SDL_image.h>
 
 #include <algorithm>
 #include <functional>
@@ -14,8 +13,8 @@
 #include <vector>
 
 #include "../imgui/imgui.h"
-#include "../imgui/backends/imgui_impl_sdl2.h"
-#include "../imgui/backends/imgui_impl_sdlrenderer2.h"
+#include "../imgui/backends/imgui_impl_sdl3.h"
+#include "../imgui/backends/imgui_impl_sdlrenderer3.h"
 #include "nimble.cpp"
 #include "utils/cursors.h"
 
@@ -33,8 +32,7 @@ namespace Nimble
         int height = 720;
         RendererBackend renderer = RendererBackend::SDL;
 
-        Uint32 sdlWindowFlags = SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE;
-        Uint32 sdlRendererFlags = SDL_RENDERER_ACCELERATED;
+        Uint32 sdlWindowFlags = SDL_WINDOW_RESIZABLE;
         bool enableVSync = true;
         bool enableGPU = false;
     };
@@ -77,7 +75,7 @@ namespace Nimble
         inline std::vector<Layer> g_layers;
     }
 
-    // Public API (in namespace Nimble, NOT inside Detail)
+    // Public API
     inline void OnTextFieldFocus(
         std::function<void(const std::string&, bool)> callback)
     {
@@ -95,21 +93,18 @@ namespace Nimble
     {
         auto it = Detail::g_previousTextFieldFocus.find(id);
 
-        // First time this widget appears: store state, don't fire.
         if (it == Detail::g_previousTextFieldFocus.end())
         {
             Detail::g_previousTextFieldFocus[id] = focused;
             return;
         }
 
-        // No change.
         if (it->second == focused)
             return;
 
-        // Update stored state.
         it->second = focused;
+        InvalidateUI();
 
-        // Notify listeners.
         for (auto& callback : Detail::g_onTextFieldFocusCallbacks)
         {
             callback(id, focused);
@@ -118,11 +113,13 @@ namespace Nimble
 
     inline void AddLayer(Widget layer)
     {
+        InvalidateUI();
         Detail::g_layers.push_back({"", std::move(layer)});
     }
 
     inline void AddLayer(Widget layer, const std::string &id)
     {
+        InvalidateUI();
         if (id.empty())
         {
             AddLayer(std::move(layer));
@@ -143,6 +140,7 @@ namespace Nimble
 
     inline void RemoveLayer(const std::string &id)
     {
+        InvalidateUI();
         auto it = std::remove_if(
             Detail::g_layers.begin(),
             Detail::g_layers.end(),
@@ -154,6 +152,7 @@ namespace Nimble
 
     inline void ClearLayers()
     {
+        InvalidateUI();
         Detail::g_layers.clear();
     }
 
@@ -222,11 +221,352 @@ namespace Nimble
     inline void SetSecondaryFocus(const std::string &id)
     {
         g_NextSecondaryFocusedWidgetId = id;
+        InvalidateUI();
     }
 
     inline void ClearSecondaryFocus()
     {
         g_NextSecondaryFocusedWidgetId.clear();
+        InvalidateUI();
+    }
+
+    using ::NavAction;
+
+    inline void ClearNavigationMappings()
+    {
+        ::ClearNavigationMappings();
+    }
+
+    inline void ResetDefaultNavigationMappings()
+    {
+        ::ResetDefaultNavigationMappings();
+    }
+
+    inline void MapNavigationKey(NavAction action, SDL_Keycode key, Uint16 requiredMod = 0, Uint16 rejectedMod = 0, const std::string &label = "")
+    {
+        ::MapNavigationKey(action, key, requiredMod, rejectedMod, label);
+    }
+
+    inline void MapNavigationMouseButton(NavAction action, Uint8 mouseButton, const std::string &label = "")
+    {
+        ::MapNavigationMouseButton(action, mouseButton, label);
+    }
+
+    inline void MapNavigationFlag(NavAction action, bool *flag, bool consume = true, const std::string &label = "")
+    {
+        ::MapNavigationFlag(action, flag, consume, label);
+    }
+
+    inline void MapNavigationPredicate(NavAction action, std::function<bool(const InputState &)> predicate, const std::string &label = "")
+    {
+        ::MapNavigationPredicate(action, std::move(predicate), label);
+    }
+
+    inline void MapNavigationCallback(NavAction action, std::function<bool()> callback, const std::string &label = "")
+    {
+        ::MapNavigationCallback(action, std::move(callback), label);
+    }
+
+    inline void OnNavigationAction(NavAction action, std::function<void()> callback)
+    {
+        ::OnNavigationAction(action, std::move(callback));
+    }
+
+    inline void OnBack(std::function<void()> callback)
+    {
+        ::OnNavigationAction(NavAction::Back, std::move(callback));
+    }
+
+    inline void OnForward(std::function<void()> callback)
+    {
+        ::OnNavigationAction(NavAction::Forward, std::move(callback));
+    }
+
+    inline void TriggerNavigationAction(NavAction action, const std::string &label = "")
+    {
+        ::TriggerNavigationAction(action, label);
+    }
+
+    inline void ClearNavigationActionCallbacks()
+    {
+        ::ClearNavigationActionCallbacks();
+    }
+
+    inline void ToggleWidgetInspector()
+    {
+        g_WidgetInspectorOpen = !g_WidgetInspectorOpen;
+        InvalidateUI();
+    }
+
+    inline bool IsWidgetInspectorOpen()
+    {
+        return g_WidgetInspectorOpen;
+    }
+
+    inline const WidgetInspectorRecord *FindInspectorRecord(const std::string &id)
+    {
+        if (id.empty())
+            return nullptr;
+
+        auto it = std::find_if(
+            g_WidgetInspectorRecords.begin(),
+            g_WidgetInspectorRecords.end(),
+            [&](const WidgetInspectorRecord &record) {
+                return record.id == id;
+            });
+
+        return it == g_WidgetInspectorRecords.end() ? nullptr : &(*it);
+    }
+
+    inline void RenderInspectorTreeNode(
+        const WidgetInspectorRecord &record,
+        const std::vector<WidgetInspectorRecord> &records)
+    {
+        if (record.id.empty())
+            return;
+
+        bool hasChildren = false;
+        for (const auto &candidate : records)
+        {
+            if (candidate.parentId == record.id)
+            {
+                hasChildren = true;
+                break;
+            }
+        }
+
+        ImGui::PushID(record.id.c_str());
+        std::string label = std::string(WidgetTypeIcon(record.type)) + " " + record.id + " [" + record.type + "]";
+        ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth;
+        if (!hasChildren)
+            flags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
+        if (record.id == g_WidgetInspectorSelectedId)
+            flags |= ImGuiTreeNodeFlags_Selected;
+
+        bool open = ImGui::TreeNodeEx(label.c_str(), flags);
+        if (ImGui::IsItemHovered())
+            g_WidgetInspectorHoveredId = record.id;
+        if (ImGui::IsItemClicked())
+            g_WidgetInspectorSelectedId = record.id;
+
+        if (open && hasChildren)
+        {
+            for (const auto &child : records)
+            {
+                if (child.parentId == record.id)
+                    RenderInspectorTreeNode(child, records);
+            }
+            ImGui::TreePop();
+        }
+
+        ImGui::PopID();
+    }
+
+    inline void RenderInspectorRecordProperties(const WidgetInspectorRecord &record)
+    {
+        ImGui::Text("ID: %s", record.id.c_str());
+        ImGui::Text("Type: %s", record.type.c_str());
+        ImGui::Text("Parent: %s", record.parentId.empty() ? "-" : record.parentId.c_str());
+        ImGui::Text("Rect: %d, %d  %dx%d", record.rect.x, record.rect.y, record.rect.w, record.rect.h);
+        ImGui::Text("Size: %.0f x %.0f", (float)record.size.x, (float)record.size.y);
+        ImGui::Text("Children: %d", record.childCount);
+        ImGui::Text("Focused: %s", record.focused ? "true" : "false");
+        ImGui::Text("Hovered: %s", record.hovered ? "true" : "false");
+        ImGui::Text("Disabled: %s", record.disabled ? "true" : "false");
+    }
+
+    inline void RenderInspectorStyleEditor(const WidgetInspectorRecord &record)
+    {
+        WidgetInspectorOverride &ov = g_WidgetInspectorOverrides[record.id];
+
+        if (ImGui::Checkbox("Override disabled", &ov.disabledSet))
+            InvalidateUI();
+        if (ov.disabledSet)
+        {
+            if (ImGui::Checkbox("Disabled", &ov.disabled))
+                InvalidateUI();
+        }
+
+        ImGui::Separator();
+        if (ImGui::Checkbox("Override color", &ov.colorSet))
+            InvalidateUI();
+        if (ov.colorSet)
+        {
+            if (ov.color.a == 0 && ov.color.r == 0 && ov.color.g == 0 && ov.color.b == 0)
+                ov.color = record.color;
+            float color[4] = {
+                ov.color.r / 255.0f,
+                ov.color.g / 255.0f,
+                ov.color.b / 255.0f,
+                ov.color.a / 255.0f
+            };
+            if (ImGui::ColorEdit4("Color", color))
+            {
+                ov.color = {
+                    (Uint8)(std::clamp(color[0], 0.0f, 1.0f) * 255),
+                    (Uint8)(std::clamp(color[1], 0.0f, 1.0f) * 255),
+                    (Uint8)(std::clamp(color[2], 0.0f, 1.0f) * 255),
+                    (Uint8)(std::clamp(color[3], 0.0f, 1.0f) * 255)
+                };
+                InvalidateUI();
+            }
+        }
+
+        ImGui::Separator();
+        if (ImGui::Checkbox("Override position", &ov.positionSet))
+            InvalidateUI();
+        if (ov.positionSet)
+        {
+            float pos[2] = {(float)ov.position.x, (float)ov.position.y};
+            if (ImGui::InputFloat2("Position", pos))
+            {
+                ov.position = {(int)pos[0], (int)pos[1]};
+                InvalidateUI();
+            }
+        }
+
+        if (ImGui::Checkbox("Override radius", &ov.radiusSet))
+            InvalidateUI();
+        if (ov.radiusSet)
+        {
+            if (ImGui::SliderInt("Radius", &ov.radius, 0, 64))
+                InvalidateUI();
+        }
+
+        ImGui::Separator();
+        if (ImGui::Button("Clear selected overrides"))
+        {
+            g_WidgetInspectorOverrides.erase(record.id);
+            InvalidateUI();
+        }
+        ImGui::SameLine();
+        if (ImGui::Button("Clear all"))
+        {
+            g_WidgetInspectorOverrides.clear();
+            InvalidateUI();
+        }
+    }
+
+    inline void RenderWidgetInspectorPanel(int height)
+    {
+        if (!g_WidgetInspectorOpen)
+            return;
+
+        ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Always);
+        ImGui::SetNextWindowSize(ImVec2((float)g_WidgetInspectorWidth, (float)height), ImGuiCond_Always);
+        ImGui::Begin("Nimble Inspector", &g_WidgetInspectorOpen,
+            ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
+
+        ImGui::Text("Focused: %s", g_FocusedWidgetId.c_str());
+        ImGui::Text("Secondary: %s", g_SecondaryFocusedWidgetId.empty() ? "-" : g_SecondaryFocusedWidgetId.c_str());
+        ImGui::Separator();
+
+        g_WidgetInspectorHoveredId.clear();
+        const float drawerHeight = std::max(220.0f, height * 0.38f);
+        if (ImGui::BeginChild("widget_tree", ImVec2(0, -drawerHeight), true))
+        {
+            const WidgetInspectorRecord *root = FindInspectorRecord("root");
+            if (root && ImGui::TreeNodeEx("Root", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth))
+            {
+                RenderInspectorTreeNode(*root, g_WidgetInspectorRecords);
+                for (const auto &record : g_WidgetInspectorRecords)
+                {
+                    if (!record.id.empty() && record.id != "root" && record.parentId.empty())
+                    {
+                        bool isLayerRoot = false;
+                        for (const auto &layer : Detail::g_layers)
+                        {
+                            if ((!layer.id.empty() && layer.id == record.id) ||
+                                (!layer.widget.id.empty() && layer.widget.id == record.id))
+                            {
+                                isLayerRoot = true;
+                                break;
+                            }
+                        }
+                        if (!isLayerRoot)
+                            RenderInspectorTreeNode(record, g_WidgetInspectorRecords);
+                    }
+                }
+                ImGui::TreePop();
+            }
+
+            if (ImGui::TreeNodeEx("Layers", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth))
+            {
+                if (Detail::g_layers.empty())
+                    ImGui::TextDisabled("No layers");
+                for (const auto &layer : Detail::g_layers)
+                {
+                    std::string layerRootId = !layer.id.empty() ? layer.id : layer.widget.id;
+                    const WidgetInspectorRecord *layerRecord = FindInspectorRecord(layerRootId);
+                    if (!layerRecord && !layer.widget.id.empty())
+                        layerRecord = FindInspectorRecord(layer.widget.id);
+                    if (layerRecord)
+                        RenderInspectorTreeNode(*layerRecord, g_WidgetInspectorRecords);
+                    else
+                        ImGui::TextDisabled("%s", layerRootId.empty() ? "(anonymous layer)" : layerRootId.c_str());
+                }
+                ImGui::TreePop();
+            }
+        }
+        ImGui::EndChild();
+
+        ImGui::Separator();
+        const WidgetInspectorRecord *selected = FindInspectorRecord(g_WidgetInspectorSelectedId);
+
+        if (!selected)
+        {
+            ImGui::TextDisabled("Select a widget to inspect it.");
+            ImGui::End();
+            return;
+        }
+
+        if (ImGui::BeginTabBar("inspector_drawer_tabs"))
+        {
+            if (ImGui::BeginTabItem("Properties"))
+            {
+                RenderInspectorRecordProperties(*selected);
+                ImGui::EndTabItem();
+            }
+            if (ImGui::BeginTabItem("Style"))
+            {
+                RenderInspectorStyleEditor(*selected);
+                ImGui::EndTabItem();
+            }
+            ImGui::EndTabBar();
+        }
+
+        ImGui::End();
+    }
+
+    inline void RenderWidgetInspectorHighlights(SDL_Renderer *renderer)
+    {
+        if (!g_WidgetInspectorOpen)
+            return;
+
+        auto drawRecord = [&](const std::string &id, SDL_Color color, int inset) {
+            const WidgetInspectorRecord *record = FindInspectorRecord(id);
+            if (!record || record->rect.w <= 0 || record->rect.h <= 0)
+                return;
+
+            SDL_Rect rect = record->rect;
+            rect.x -= inset;
+            rect.y -= inset;
+            rect.w += inset * 2;
+            rect.h += inset * 2;
+
+            SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+            SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
+            SDL_RenderDrawRect(renderer, &rect);
+            rect.x += 1;
+            rect.y += 1;
+            rect.w -= 2;
+            rect.h -= 2;
+            if (rect.w > 0 && rect.h > 0)
+                SDL_RenderDrawRect(renderer, &rect);
+        };
+
+        drawRecord(g_WidgetInspectorHoveredId, {80, 220, 255, 220}, 2);
+        drawRecord(g_WidgetInspectorSelectedId, {255, 210, 90, 240}, 4);
     }
 
     class IApp
@@ -253,38 +593,49 @@ namespace Nimble
             if (!Detail::g_initialized)
                 Init();
 
-            if (SDL_Init(SDL_INIT_VIDEO) < 0)
-                return false;
-            if (TTF_Init() == -1)
-                return false;
-            if ((IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG) == 0)
-                return false;
+            SDL_SetHint(SDL_HINT_APP_ID, "terebi");
+            SDL_SetHint(SDL_HINT_APP_NAME, "Terebi");
 
-            Uint32 rendererFlags = config_.sdlRendererFlags;
-            if (config_.enableVSync)
-                rendererFlags |= SDL_RENDERER_PRESENTVSYNC;
+            if (!SDL_Init(SDL_INIT_VIDEO))
+                return false;
+            if (!TTF_Init())
+                return false;
 
             window_ = SDL_CreateWindow(
                 config_.title.c_str(),
-                SDL_WINDOWPOS_CENTERED,
-                SDL_WINDOWPOS_CENTERED,
                 config_.width,
                 config_.height,
                 config_.sdlWindowFlags);
             if (!window_)
                 return false;
 
-            renderer_ = SDL_CreateRenderer(window_, -1, rendererFlags);
+            SDL_SetWindowPosition(window_, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
+
+            SDL_SetHint("SDL_VIDEO_EGL_ALLOW_TRANSPARENCY", "1");
+            SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
+
+            renderer_ = SDL_CreateRenderer(window_, nullptr);
+
+            std::cout << "[NIMBLE] Active Renderer Driver: " 
+                << (renderer_ ? SDL_GetRendererName(renderer_) : "NULL") 
+                << std::endl;
             if (!renderer_)
                 return false;
+                
+            if (config_.enableVSync)
+                SDL_SetRenderVSync(renderer_, 1);
 
             IMGUI_CHECKVERSION();
             ImGui::CreateContext();
-            ImGui_ImplSDL2_InitForSDLRenderer(window_, renderer_);
-            ImGui_ImplSDLRenderer2_Init(renderer_);
+            ImGui_ImplSDL3_InitForSDLRenderer(window_, renderer_);
+            ImGui_ImplSDLRenderer3_Init(renderer_);
+
+            SDL_StartTextInput(window_);
 
             Cursors_Init();
             g_NextFocusedWidgetId = "navbar_home";
+            if (g_NavigationBindings.empty())
+                ResetDefaultNavigationMappings();
 
             for (auto &cb : Detail::g_onInitCallbacks)
                 cb();
@@ -295,48 +646,74 @@ namespace Nimble
             return true;
         }
 
-        void Run()
+void Run()
         {
             if (!initialized_)
                 return;
 
             bool quit = false;
-            Uint32 lastTicks = SDL_GetTicks();
+            Uint64 lastPerfCounter = SDL_GetPerformanceCounter();
+            const double perfFreq = static_cast<double>(SDL_GetPerformanceFrequency());
+
+            // Rolling average profiling counters
+            int frameCounter = 0;
+            double accInput = 0.0, accBuild = 0.0, accRender = 0.0, accImGui = 0.0, accPresent = 0.0, accTotal = 0.0;
+            Uint64 fpsTimer = SDL_GetTicks();
+
             while (!quit)
             {
-                InputState input = GatherInput(quit);
-                Uint32 now = SDL_GetTicks();
-                float dt = static_cast<float>(now - lastTicks) / 1000.0f;
-                lastTicks = now;
+                Uint64 t0 = SDL_GetPerformanceCounter();
 
-                // Reset per-frame overlay layers before the app draws.
+                // 1. Calculate Delta Time (high precision)
+                float dt = static_cast<float>((t0 - lastPerfCounter) / perfFreq);
+                lastPerfCounter = t0;
+
+                // 2. Gather Input & Invalidation Check
+                const bool hasAnimations = HasActiveUIAnimations();
+                InputState input = GatherInput(quit, hasAnimations);
+                Uint64 t1 = SDL_GetPerformanceCounter();
+
+                // 3. Clear per-frame transient buffers (Fixes memory leaks)
+                g_WidgetInspectorRecords.clear();
                 Detail::g_layers.clear();
 
+                // 4. Update UI Framework Animations & Cursors
                 StartUIFrame();
                 UpdateUIAnimations(dt);
                 ResetCursor();
 
-                ImGui_ImplSDL2_NewFrame();
-                ImGui_ImplSDLRenderer2_NewFrame();
+                // 5. ImGui Frame Setup
+                ImGui_ImplSDL3_NewFrame();
+                ImGui_ImplSDLRenderer3_NewFrame();
                 ImGui::NewFrame();
 
                 int width = 0;
                 int height = 0;
                 SDL_GetWindowSize(window_, &width, &height);
+                const int inspectorOffset = g_WidgetInspectorOpen ? g_WidgetInspectorWidth : 0;
+                const int appWidth = std::max(1, width - inspectorOffset);
 
-                SDL_SetRenderDrawColor(renderer_, 30, 30, 35, 255);
+                // 6. Clear Frame Buffer (transparent background)
+                SDL_SetRenderDrawColor(renderer_, 0, 0, 0, 0);
                 SDL_RenderClear(renderer_);
 
+                // 7. App Tree Construction
+                Uint64 t2 = t1;
+                Uint64 t3 = t1;
                 if (app_)
                 {
-                    Widget root = app_->Build(width, height, dt);
-                    root.render(renderer_, {0, 0, width, height}, input);
+                    Widget root = app_->Build(appWidth, height, dt);
+                    t2 = SDL_GetPerformanceCounter();
+
+                    root.id = root.id.empty() ? "root" : root.id;
+                    root.render(renderer_, {inspectorOffset, 0, appWidth, height}, input);
+                    t3 = SDL_GetPerformanceCounter();
                 }
 
-                // Render overlay layers (e.g., toasts)
+                // 8. Render Overlay Layers (Toasts, Modals)
                 for (auto& layer : Detail::g_layers)
                 {
-                    layer.widget.render(renderer_, {0, 0, width, height}, input);
+                    layer.widget.render(renderer_, {inspectorOffset, 0, appWidth, height}, input);
                 }
 
                 RenderDebugNavigationOverlay(renderer_);
@@ -346,13 +723,63 @@ namespace Nimble
                     debugCb();
 #endif
 
-                ImGui::Render();
-                ImGui_ImplSDLRenderer2_RenderDrawData(ImGui::GetDrawData(), renderer_);
-                SDL_RenderPresent(renderer_);
+                // 9. Inspector & ImGui Draw Calls
+                RenderWidgetInspectorPanel(height);
+                RenderWidgetInspectorHighlights(renderer_);
 
+                ImGui::Render();
+                ImGui_ImplSDLRenderer3_RenderDrawData(ImGui::GetDrawData(), renderer_);
+                Uint64 t4 = SDL_GetPerformanceCounter();
+
+                // 10. GPU Presentation / Buffer Swap
+                SDL_RenderPresent(renderer_);
+                Uint64 t5 = SDL_GetPerformanceCounter();
+
+                EndUIFrame(renderer_);
+
+                // 11. Profile Accumulation & Display
+                double msInput   = ((t1 - t0) * 1000.0) / perfFreq;
+                double msBuild   = ((t2 - t1) * 1000.0) / perfFreq;
+                double msRender  = ((t3 - t2) * 1000.0) / perfFreq;
+                double msImGui   = ((t4 - t3) * 1000.0) / perfFreq;
+                double msPresent = ((t5 - t4) * 1000.0) / perfFreq;
+                double msTotal   = ((t5 - t0) * 1000.0) / perfFreq;
+
+                accInput += msInput;
+                accBuild += msBuild;
+                accRender += msRender;
+                accImGui += msImGui;
+                accPresent += msPresent;
+                accTotal += msTotal;
+                frameCounter++;
+
+                Uint32 currentTicks = SDL_GetTicks();
+                if (currentTicks - fpsTimer >= 1000)
+                {
+                    double avgFPS     = frameCounter * 1000.0 / (currentTicks - fpsTimer);
+                    double avgInput   = accInput / frameCounter;
+                    double avgBuild   = accBuild / frameCounter;
+                    double avgRender  = accRender / frameCounter;
+                    double avgImGui   = accImGui / frameCounter;
+                    double avgPresent = accPresent / frameCounter;
+                    double avgTotal   = accTotal / frameCounter;
+
+                    std::cout << "[FPS: " << static_cast<int>(avgFPS) << "] "
+                              << "Build: " << avgBuild << "ms | "
+                              << "Render: " << avgRender << "ms | "
+                              << "Present: " << avgPresent << "ms | "
+                              << "Input: " << avgInput << "ms | "
+                              << "ImGui: " << avgImGui << "ms | "
+                              << "FrameTime: " << avgTotal << "ms\n";
+
+                    frameCounter = 0;
+                    accInput = accBuild = accRender = accImGui = accPresent = accTotal = 0.0;
+                    fpsTimer = currentTicks;
+                }
             }
         }
 
+        
         void Shutdown()
         {
             if (!initialized_)
@@ -369,8 +796,9 @@ namespace Nimble
             Detail::g_fontsByKey.clear();
             Detail::g_fontIds.clear();
 
-            ImGui_ImplSDLRenderer2_Shutdown();
-            ImGui_ImplSDL2_Shutdown();
+            SDL_StopTextInput(window_);
+            ImGui_ImplSDLRenderer3_Shutdown();
+            ImGui_ImplSDL3_Shutdown();
             ImGui::DestroyContext();
 
             Cursors_Quit();
@@ -378,7 +806,6 @@ namespace Nimble
                 SDL_DestroyRenderer(renderer_);
             if (window_)
                 SDL_DestroyWindow(window_);
-            IMG_Quit();
             TTF_Quit();
             SDL_Quit();
 
@@ -387,54 +814,81 @@ namespace Nimble
             initialized_ = false;
         }
 
-        
-
     private:
-        InputState GatherInput(bool &quit)
+        InputState GatherInput(bool &quit, bool hasActiveAnimations)
         {
             InputState input = {};
             input.keyPressed = SDLK_UNKNOWN;
 
             SDL_Event event;
-            while (SDL_PollEvent(&event))
+
+            // When idle (no animations), wait up to 16ms for an event to avoid spinning 100% CPU
+            if (!hasActiveAnimations && !g_UINeedsRedraw && !g_WidgetInspectorOpen)
             {
-                input.anyEvent = true;
-                ImGui_ImplSDL2_ProcessEvent(&event);
-                if (event.type == SDL_QUIT)
-                    quit = true;
-                else if (event.type == SDL_MOUSEBUTTONDOWN)
+                if (SDL_WaitEventTimeout(&event, 16))
                 {
-                    if (event.button.button == SDL_BUTTON_LEFT)
-                        input.mouseClicked = true;
-                    if (event.button.button == SDL_BUTTON_RIGHT)
-                        input.rightMouseClicked = true;
-                }
-                else if (event.type == SDL_MOUSEWHEEL)
-                {
-                    input.mouseWheelX = static_cast<float>(event.wheel.x);
-                    input.mouseWheelY = static_cast<float>(event.wheel.y);
-                }
-                else if (event.type == SDL_KEYDOWN)
-                {
-                    input.keyPressed = event.key.keysym.sym;
-                    input.keyMod = event.key.keysym.mod;
-                    input.backspacePressed = (event.key.keysym.sym == SDLK_BACKSPACE);
-                    input.deletePressed = (event.key.keysym.sym == SDLK_DELETE);
-                    input.leftPressed = (event.key.keysym.sym == SDLK_LEFT);
-                    input.rightPressed = (event.key.keysym.sym == SDLK_RIGHT);
-                    input.enterPressed = (event.key.keysym.sym == SDLK_RETURN || event.key.keysym.sym == SDLK_KP_ENTER);
-                }
-                else if (event.type == SDL_TEXTINPUT)
-                {
-                    input.textInput += event.text.text;
+                    ProcessSingleEvent(event, input, quit);
                 }
             }
 
-            Uint32 buttons = SDL_GetMouseState(&input.mouseX, &input.mouseY);
-            input.leftMouseDown = (buttons & SDL_BUTTON(SDL_BUTTON_LEFT)) != 0;
-            input.rightMouseDown = (buttons & SDL_BUTTON(SDL_BUTTON_RIGHT)) != 0;
+            // Drain any remaining queued events
+            while (SDL_PollEvent(&event))
+            {
+                ProcessSingleEvent(event, input, quit);
+            }
+
+            float mouseX = 0.0f;
+            float mouseY = 0.0f;
+            SDL_MouseButtonFlags buttons = SDL_GetMouseState(&mouseX, &mouseY);
+            input.mouseX = static_cast<int>(mouseX);
+            input.mouseY = static_cast<int>(mouseY);
+            input.leftMouseDown = (buttons & SDL_BUTTON_MASK(SDL_BUTTON_LEFT)) != 0;
+            input.rightMouseDown = (buttons & SDL_BUTTON_MASK(SDL_BUTTON_RIGHT)) != 0;
+
+            EvaluateNavigationMappings(input);
 
             return input;
+        }
+
+        void ProcessSingleEvent(const SDL_Event &event, InputState &input, bool &quit)
+        {
+            input.anyEvent = true;
+            InvalidateUI();
+            ImGui_ImplSDL3_ProcessEvent(&event);
+
+            if (event.type == SDL_EVENT_QUIT)
+            {
+                quit = true;
+            }
+            else if (event.type == SDL_EVENT_MOUSE_BUTTON_DOWN)
+            {
+                input.mouseButtonPressed = event.button.button;
+                if (event.button.button == SDL_BUTTON_LEFT)
+                    input.mouseClicked = true;
+                if (event.button.button == SDL_BUTTON_RIGHT)
+                    input.rightMouseClicked = true;
+            }
+            else if (event.type == SDL_EVENT_MOUSE_WHEEL)
+            {
+                input.mouseWheelX = event.wheel.x;
+                input.mouseWheelY = event.wheel.y;
+            }
+            else if (event.type == SDL_EVENT_KEY_DOWN)
+            {
+                input.keyPressed = event.key.key;
+                input.keyMod = event.key.mod;
+                if (event.key.key == SDLK_F12)
+                    g_WidgetInspectorOpen = !g_WidgetInspectorOpen;
+                input.backspacePressed = (event.key.key == SDLK_BACKSPACE);
+                input.deletePressed = (event.key.key == SDLK_DELETE);
+                input.leftPressed = (event.key.key == SDLK_LEFT);
+                input.rightPressed = (event.key.key == SDLK_RIGHT);
+                input.enterPressed = (event.key.key == SDLK_RETURN || event.key.key == SDLK_KP_ENTER);
+            }
+            else if (event.type == SDL_EVENT_TEXT_INPUT)
+            {
+                input.textInput += event.text.text;
+            }
         }
 
         ApplicationConfig config_;

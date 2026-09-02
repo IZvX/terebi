@@ -6,8 +6,8 @@
 #include <algorithm>
 #include <functional>
 #include <cctype>
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_ttf.h>
+#include <utility>
+#include "../sdl_compat.h"
 
 struct Alignment
 {
@@ -98,11 +98,30 @@ struct WidgetStyle
     ScrollbarStyle scrollbarStyle = g_GlobalScrollbarStyle;
 };
 
+enum class NavAction
+{
+    Up,
+    Down,
+    Left,
+    Right,
+    Next,
+    Prev,
+    Back,
+    Forward
+};
+
+struct NavigationEvent
+{
+    NavAction action = NavAction::Next;
+    std::string label = "";
+};
+
 struct InputState
 {
     bool anyEvent = false;
     int mouseX = 0;
     int mouseY = 0;
+    Uint8 mouseButtonPressed = 0;
     bool mouseClicked = false;
     float mouseWheelX = 0.0f;
     float mouseWheelY = 0.0f;
@@ -120,7 +139,225 @@ struct InputState
     bool leftMouseDown = false;
     bool rightMouseDown = false;
     bool rightMouseClicked = false;
+    std::vector<NavigationEvent> navigationEvents;
 };
+
+struct NavigationBinding
+{
+    enum class Source
+    {
+        Key,
+        MouseButton,
+        Flag,
+        Predicate,
+        Callback
+    };
+
+    Source source = Source::Key;
+    NavAction action = NavAction::Next;
+    SDL_Keycode key = SDLK_UNKNOWN;
+    Uint16 requiredMod = 0;
+    Uint16 rejectedMod = 0;
+    Uint8 mouseButton = 0;
+    bool *flag = nullptr;
+    bool consumeFlag = false;
+    std::function<bool(const InputState &)> predicate;
+    std::function<bool()> callback;
+    std::string label = "";
+};
+
+inline std::vector<NavigationBinding> g_NavigationBindings;
+inline std::vector<std::pair<NavAction, std::function<void()>>> g_NavigationActionCallbacks;
+inline std::vector<NavigationEvent> g_QueuedNavigationActions;
+
+inline const char *NavActionName(NavAction action)
+{
+    switch (action)
+    {
+    case NavAction::Up: return "UP";
+    case NavAction::Down: return "DOWN";
+    case NavAction::Left: return "LEFT";
+    case NavAction::Right: return "RIGHT";
+    case NavAction::Next: return "NEXT";
+    case NavAction::Prev: return "PREV";
+    case NavAction::Back: return "BACK";
+    case NavAction::Forward: return "FORWARD";
+    }
+    return "NAV";
+}
+
+inline bool NavigationModsMatch(Uint16 current, Uint16 required, Uint16 rejected)
+{
+    return (current & required) == required && (current & rejected) == 0;
+}
+
+inline void QueueNavigationAction(InputState &input, NavAction action, const std::string &label = "")
+{
+    input.navigationEvents.push_back({action, label.empty() ? NavActionName(action) : label});
+
+    for (auto &entry : g_NavigationActionCallbacks)
+    {
+        if (entry.first == action && entry.second)
+            entry.second();
+    }
+}
+
+inline void ClearNavigationMappings()
+{
+    g_NavigationBindings.clear();
+}
+
+inline void ClearNavigationActionCallbacks()
+{
+    g_NavigationActionCallbacks.clear();
+}
+
+inline void MapNavigationKey(NavAction action, SDL_Keycode key, Uint16 requiredMod = 0, Uint16 rejectedMod = 0, const std::string &label = "")
+{
+    g_NavigationBindings.push_back({
+        NavigationBinding::Source::Key,
+        action,
+        key,
+        requiredMod,
+        rejectedMod,
+        0,
+        nullptr,
+        false,
+        {},
+        {},
+        label.empty() ? SDL_GetKeyName(key) : label
+    });
+}
+
+inline void MapNavigationMouseButton(NavAction action, Uint8 mouseButton, const std::string &label = "")
+{
+    g_NavigationBindings.push_back({
+        NavigationBinding::Source::MouseButton,
+        action,
+        SDLK_UNKNOWN,
+        0,
+        0,
+        mouseButton,
+        nullptr,
+        false,
+        {},
+        {},
+        label.empty() ? "MOUSE" : label
+    });
+}
+
+inline void MapNavigationFlag(NavAction action, bool *flag, bool consume = true, const std::string &label = "")
+{
+    g_NavigationBindings.push_back({
+        NavigationBinding::Source::Flag,
+        action,
+        SDLK_UNKNOWN,
+        0,
+        0,
+        0,
+        flag,
+        consume,
+        {},
+        {},
+        label.empty() ? "FLAG" : label
+    });
+}
+
+inline void MapNavigationPredicate(NavAction action, std::function<bool(const InputState &)> predicate, const std::string &label = "")
+{
+    g_NavigationBindings.push_back({
+        NavigationBinding::Source::Predicate,
+        action,
+        SDLK_UNKNOWN,
+        0,
+        0,
+        0,
+        nullptr,
+        false,
+        std::move(predicate),
+        {},
+        label.empty() ? "PREDICATE" : label
+    });
+}
+
+inline void MapNavigationCallback(NavAction action, std::function<bool()> callback, const std::string &label = "")
+{
+    g_NavigationBindings.push_back({
+        NavigationBinding::Source::Callback,
+        action,
+        SDLK_UNKNOWN,
+        0,
+        0,
+        0,
+        nullptr,
+        false,
+        {},
+        std::move(callback),
+        label.empty() ? "CALLBACK" : label
+    });
+}
+
+inline void OnNavigationAction(NavAction action, std::function<void()> callback)
+{
+    g_NavigationActionCallbacks.push_back({action, std::move(callback)});
+}
+
+inline void TriggerNavigationAction(NavAction action, const std::string &label = "")
+{
+    g_QueuedNavigationActions.push_back({action, label.empty() ? NavActionName(action) : label});
+}
+
+inline void ResetDefaultNavigationMappings()
+{
+    ClearNavigationMappings();
+    MapNavigationKey(NavAction::Up, SDLK_UP, 0, 0, "UP");
+    MapNavigationKey(NavAction::Down, SDLK_DOWN, 0, 0, "DOWN");
+    MapNavigationKey(NavAction::Left, SDLK_LEFT, 0, 0, "LEFT");
+    MapNavigationKey(NavAction::Right, SDLK_RIGHT, 0, 0, "RIGHT");
+    MapNavigationKey(NavAction::Prev, SDLK_TAB, SDL_KMOD_SHIFT, 0, "SHIFT+TAB");
+    MapNavigationKey(NavAction::Next, SDLK_TAB, 0, SDL_KMOD_SHIFT, "TAB");
+    MapNavigationKey(NavAction::Back, SDLK_ESCAPE, 0, 0, "ESC");
+    MapNavigationKey(NavAction::Forward, SDLK_F1, 0, 0, "F1");
+    MapNavigationMouseButton(NavAction::Back, SDL_BUTTON_X1, "MOUSE_BACK");
+    MapNavigationMouseButton(NavAction::Forward, SDL_BUTTON_X2, "MOUSE_FORWARD");
+}
+
+inline void EvaluateNavigationMappings(InputState &input)
+{
+    for (const NavigationEvent &event : g_QueuedNavigationActions)
+        QueueNavigationAction(input, event.action, event.label);
+    g_QueuedNavigationActions.clear();
+
+    for (auto &binding : g_NavigationBindings)
+    {
+        bool triggered = false;
+
+        switch (binding.source)
+        {
+        case NavigationBinding::Source::Key:
+            triggered = input.keyPressed == binding.key &&
+                        NavigationModsMatch(input.keyMod, binding.requiredMod, binding.rejectedMod);
+            break;
+        case NavigationBinding::Source::MouseButton:
+            triggered = input.mouseButtonPressed == binding.mouseButton;
+            break;
+        case NavigationBinding::Source::Flag:
+            triggered = binding.flag != nullptr && *binding.flag;
+            if (triggered && binding.consumeFlag)
+                *binding.flag = false;
+            break;
+        case NavigationBinding::Source::Predicate:
+            triggered = binding.predicate && binding.predicate(input);
+            break;
+        case NavigationBinding::Source::Callback:
+            triggered = binding.callback && binding.callback();
+            break;
+        }
+
+        if (triggered)
+            QueueNavigationAction(input, binding.action, binding.label);
+    }
+}
 
 struct AnimState
 {
@@ -160,8 +397,16 @@ struct TextFieldState
     int GetSelectionStart() const { return std::min(cursorPosition, selectionAnchor); }
     int GetSelectionEnd() const { return std::max(cursorPosition, selectionAnchor); }
 
+    void ClampToText(const std::string &text)
+    {
+        int len = (int)text.length();
+        cursorPosition = std::clamp(cursorPosition, 0, len);
+        selectionAnchor = std::clamp(selectionAnchor, 0, len);
+    }
+
     void DeleteSelection(std::string &text)
     {
+        ClampToText(text);
         if (!HasSelection())
             return;
         int start = GetSelectionStart();
@@ -195,6 +440,7 @@ struct TextFieldStyle
 // Declare globals before they're referenced by inline helpers.
 extern std::unordered_map<std::string, AnimState> g_UIState;
 extern std::unordered_map<std::string, TextFieldState> g_TextFieldState;
+extern std::unordered_map<std::string, std::string *> g_TextFieldBindings;
 
 // --- UTF-8 Aware Movement ---
 inline void MoveCursorLeft(const std::string &text, int &pos)
@@ -281,11 +527,11 @@ inline bool ProcessTextFieldEvent(const std::string &id, std::string &text, cons
     if (tfState.selectionAnchor > text.length())
         tfState.selectionAnchor = text.length();
 
-    bool shift = SDL_GetModState() & KMOD_SHIFT;
-    bool ctrl = SDL_GetModState() & KMOD_CTRL;
+    bool shift = SDL_GetModState() & SDL_KMOD_SHIFT;
+    bool ctrl = SDL_GetModState() & SDL_KMOD_CTRL;
 
     // --- MOUSE SELECTING ---
-    if (e.type == SDL_MOUSEBUTTONDOWN && e.button.button == SDL_BUTTON_LEFT)
+    if (e.type == SDL_EVENT_MOUSE_BUTTON_DOWN && e.button.button == SDL_BUTTON_LEFT)
     {
         if (e.button.x >= rect.x && e.button.x <= rect.x + rect.w && e.button.y >= rect.y && e.button.y <= rect.y + rect.h)
         {
@@ -295,21 +541,21 @@ inline bool ProcessTextFieldEvent(const std::string &id, std::string &text, cons
             return true;
         }
     }
-    else if (e.type == SDL_MOUSEMOTION && tfState.isDragging)
+    else if (e.type == SDL_EVENT_MOUSE_MOTION && tfState.isDragging)
     {
         int relX = e.motion.x - (rect.x + tfStyle.padding.x);
         tfState.cursorPosition = GetTextIndexFromMouse(tfStyle.font, text, relX);
         return true;
     }
-    else if (e.type == SDL_MOUSEBUTTONUP && e.button.button == SDL_BUTTON_LEFT)
+    else if (e.type == SDL_EVENT_MOUSE_BUTTON_UP && e.button.button == SDL_BUTTON_LEFT)
     {
         tfState.isDragging = false;
     }
 
     // --- KEYBOARD ACTIONS ---
-    else if (e.type == SDL_KEYDOWN)
+    else if (e.type == SDL_EVENT_KEY_DOWN)
     {
-        switch (e.key.keysym.sym)
+        switch (e.key.key)
         {
         case SDLK_LEFT:
         {
@@ -380,7 +626,7 @@ inline bool ProcessTextFieldEvent(const std::string &id, std::string &text, cons
         }
     }
     // --- TYPING NEW TEXT ---
-    else if (e.type == SDL_TEXTINPUT)
+    else if (e.type == SDL_EVENT_TEXT_INPUT)
     {
         if (tfState.HasSelection())
             tfState.DeleteSelection(text);
@@ -407,7 +653,56 @@ struct IconData
 inline std::unordered_map<std::string, AnimState> g_UIState;
 inline std::unordered_map<std::string, ScrollState> g_ScrollState;
 inline std::unordered_map<std::string, TextFieldState> g_TextFieldState;
+inline std::unordered_map<std::string, std::string *> g_TextFieldBindings;
 inline std::unordered_map<std::string, SDL_Texture *> g_ClipTextureCache;
+
+inline bool InsertTextIntoTextField(const std::string &id, const std::string &value)
+{
+    auto binding = g_TextFieldBindings.find(id);
+    if (binding == g_TextFieldBindings.end() || !binding->second || value.empty())
+        return false;
+
+    std::string &text = *binding->second;
+    TextFieldState &tfState = g_TextFieldState[id];
+    tfState.ClampToText(text);
+
+    if (tfState.HasSelection())
+        tfState.DeleteSelection(text);
+
+    tfState.ClampToText(text);
+    text.insert((size_t)tfState.cursorPosition, value);
+    tfState.cursorPosition += (int)value.length();
+    tfState.selectionAnchor = tfState.cursorPosition;
+    tfState.ClampToText(text);
+    return true;
+}
+
+inline bool BackspaceTextField(const std::string &id)
+{
+    auto binding = g_TextFieldBindings.find(id);
+    if (binding == g_TextFieldBindings.end() || !binding->second)
+        return false;
+
+    std::string &text = *binding->second;
+    TextFieldState &tfState = g_TextFieldState[id];
+    tfState.ClampToText(text);
+
+    if (tfState.HasSelection())
+    {
+        tfState.DeleteSelection(text);
+        return true;
+    }
+
+    if (tfState.cursorPosition <= 0)
+        return true;
+
+    int previous = tfState.cursorPosition;
+    MoveCursorLeft(text, tfState.cursorPosition);
+    text.erase((size_t)tfState.cursorPosition, (size_t)(previous - tfState.cursorPosition));
+    tfState.selectionAnchor = tfState.cursorPosition;
+    return true;
+}
+
 
 inline SDL_Texture *GetClipTexture(SDL_Renderer *r, int w, int h, const std::string &id)
 {

@@ -1,0 +1,373 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Terebi Remote</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0b0e13;
+      --panel: #151a22;
+      --panel-2: #1d2430;
+      --text: #edf2ff;
+      --muted: #8f9caf;
+      --accent: #58d5c9;
+      --danger: #ff6b7a;
+      --shadow: 0 18px 48px rgba(0, 0, 0, .35);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font: 15px/1.4 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 20% 0%, rgba(88, 213, 201, .12), transparent 32rem),
+        linear-gradient(180deg, #10151d, var(--bg));
+    }
+
+    main {
+      width: min(440px, 100%);
+      min-height: 100vh;
+      margin: 0 auto;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 26px;
+      letter-spacing: 0;
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--danger);
+      box-shadow: 0 0 18px currentColor;
+    }
+
+    .status.ok .dot { background: var(--accent); }
+    .card {
+      background: rgba(21, 26, 34, .86);
+      border: 1px solid rgba(255, 255, 255, .08);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      padding: 14px;
+    }
+
+    .connect {
+      display: grid;
+      grid-template-columns: 1fr 112px;
+      gap: 10px;
+    }
+
+    input, button {
+      min-height: 46px;
+      border: 0;
+      border-radius: 14px;
+      font: inherit;
+    }
+
+    input {
+      width: 100%;
+      color: var(--text);
+      background: var(--panel-2);
+      outline: 1px solid rgba(255, 255, 255, .08);
+      padding: 0 13px;
+    }
+
+    input:focus { outline-color: var(--accent); }
+
+    button {
+      color: var(--text);
+      background: var(--panel-2);
+      cursor: pointer;
+      touch-action: manipulation;
+      user-select: none;
+    }
+
+    button:active { transform: scale(.98); }
+    button.primary { background: var(--accent); color: #06110f; font-weight: 800; }
+    button.active { outline: 2px solid var(--accent); }
+
+    .modes {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .remote { display: none; }
+    .remote.active { display: block; }
+
+    .dpad {
+      width: min(82vw, 320px);
+      aspect-ratio: 1;
+      margin: 10px auto 4px;
+      display: grid;
+      grid-template:
+        ". up ." 1fr
+        "left select right" 1fr
+        ". down ." 1fr / 1fr 1fr 1fr;
+      gap: 10px;
+      padding: 14px;
+      border-radius: 50%;
+      background: linear-gradient(145deg, #1c2430, #10151d);
+      border: 1px solid rgba(255, 255, 255, .08);
+    }
+
+    .dpad button {
+      border-radius: 22px;
+      font-size: 18px;
+      font-weight: 800;
+    }
+
+    .up { grid-area: up; }
+    .down { grid-area: down; }
+    .left { grid-area: left; }
+    .right { grid-area: right; }
+    .select {
+      grid-area: select;
+      border-radius: 50% !important;
+      background: var(--accent);
+      color: #06110f;
+    }
+
+    .touchpad {
+      height: min(58vh, 430px);
+      display: grid;
+      place-items: center;
+      color: var(--muted);
+      text-align: center;
+      border-radius: 22px;
+      border: 1px solid rgba(255, 255, 255, .08);
+      background:
+        linear-gradient(rgba(255, 255, 255, .03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, .03) 1px, transparent 1px),
+        #111721;
+      background-size: 28px 28px;
+      touch-action: none;
+    }
+
+    .bottom {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+    }
+
+    .keyboard-box {
+      min-height: 220px;
+      display: grid;
+      gap: 14px;
+      align-content: center;
+      text-align: center;
+      color: var(--muted);
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 120px;
+      resize: none;
+      border: 0;
+      border-radius: 18px;
+      outline: 1px solid rgba(255, 255, 255, .08);
+      background: var(--panel-2);
+      color: var(--text);
+      padding: 14px;
+      font: inherit;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <h1>Terebi</h1>
+      <span id="status" class="status"><span class="dot"></span><span>Disconnected</span></span>
+    </header>
+
+    <section class="card connect">
+      <input id="host" autocomplete="off" placeholder="TV IP: 192.168.1.20:3000">
+      <input id="code" inputmode="numeric" pattern="[0-9]*" placeholder="Code">
+      <button id="connect" class="primary">Connect</button>
+    </section>
+
+    <section class="modes">
+      <button id="dpadMode" class="active">DPAD</button>
+      <button id="mouseMode">MOUSE</button>
+      <button id="keyboardMode">KEYS</button>
+    </section>
+
+    <section id="dpadPanel" class="remote active">
+      <div class="dpad">
+        <button class="up" data-nav="up">UP</button>
+        <button class="left" data-nav="left">LEFT</button>
+        <button class="select" data-nav="select">OK</button>
+        <button class="right" data-nav="right">RIGHT</button>
+        <button class="down" data-nav="down">DOWN</button>
+      </div>
+    </section>
+
+    <section id="mousePanel" class="remote">
+      <div id="touchpad" class="touchpad">Drag to move<br>Tap to click</div>
+    </section>
+
+    <section id="keyboardPanel" class="remote">
+      <div class="card keyboard-box">
+        <div>Use this device's keyboard to type into Terebi.</div>
+        <textarea id="keyboardInput" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="Tap here and type"></textarea>
+      </div>
+    </section>
+
+    <section class="bottom">
+      <button data-nav="back">BACK</button>
+      <button data-nav="forward">FWD</button>
+      <button data-nav="home">HOME</button>
+      <button data-nav="menu">MENU</button>
+      <button data-pointer-click="true">CLICK</button>
+    </section>
+  </main>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+    let ws = null;
+    let mode = "dpad";
+    let down = false;
+    let moved = false;
+    let last = null;
+
+    $("host").value = localStorage.getItem("terebiHost") || location.host || "localhost:3000";
+
+    $("connect").onclick = () => {
+      const host = $("host").value.trim() || location.host;
+      const code = $("code").value.trim();
+      localStorage.setItem("terebiHost", host);
+      ws = new WebSocket(`ws://${host}`);
+      setStatus("Connecting");
+
+      ws.onopen = () => {
+        const token = localStorage.getItem(`terebiToken:${host}`) || "";
+        if (code || token) send({ type: "system", action: "connect", code, token });
+        else send({ type: "system", action: "request_pair" });
+      };
+      ws.onclose = () => setStatus("Disconnected");
+      ws.onerror = () => setStatus("Error");
+      ws.onmessage = (event) => {
+        const msg = safeJson(event.data);
+        if (msg && msg.type === "system" && msg.action === "paired") {
+          if (msg.token) localStorage.setItem(`terebiToken:${host}`, msg.token);
+          setStatus("Connected", true);
+        }
+        if (msg && msg.type === "system" && msg.action === "pair_required") setStatus("Enter TV code");
+        if (msg && msg.type === "system" && msg.action === "rejected") setStatus("Invalid code");
+        if (msg && msg.type === "system" && msg.action === "error") setStatus(msg.reason || "Error");
+      };
+    };
+
+    $("dpadMode").onclick = () => setMode("dpad");
+    $("mouseMode").onclick = () => setMode("mouse");
+    $("keyboardMode").onclick = () => setMode("keyboard");
+
+    document.querySelectorAll("[data-nav]").forEach((button) => {
+      button.addEventListener("click", () => {
+        send({ type: "nav", action: button.dataset.nav });
+      });
+    });
+
+    document.querySelectorAll("[data-pointer-click]").forEach((button) => {
+      button.addEventListener("click", () => send({ type: "pointer", action: "click" }));
+    });
+
+    const pad = $("touchpad");
+    pad.addEventListener("pointerdown", (event) => {
+      down = true;
+      moved = false;
+      last = point(event);
+      pad.setPointerCapture(event.pointerId);
+    });
+
+    pad.addEventListener("pointermove", (event) => {
+      if (!down) return;
+      const next = point(event);
+      const dx = next.x - last.x;
+      const dy = next.y - last.y;
+      if (Math.abs(dx) + Math.abs(dy) > 1) {
+        moved = true;
+        send({ type: "pointer", dx: Math.round(dx), dy: Math.round(dy) });
+      }
+      last = next;
+    });
+
+    pad.addEventListener("pointerup", () => {
+      if (down && !moved) send({ type: "pointer", action: "click" });
+      down = false;
+      last = null;
+    });
+
+    $("keyboardInput").addEventListener("input", (event) => {
+      const text = event.target.value;
+      if (text) send({ type: "keyboard", text });
+      event.target.value = "";
+    });
+
+    $("keyboardInput").addEventListener("keydown", (event) => {
+      if (event.key === "Backspace") {
+        send({ type: "keyboard", action: "backspace" });
+        event.preventDefault();
+      } else if (event.key === "Enter") {
+        send({ type: "keyboard", action: "enter" });
+        event.preventDefault();
+      }
+    });
+
+    function setMode(next) {
+      mode = next;
+      $("dpadMode").classList.toggle("active", mode === "dpad");
+      $("mouseMode").classList.toggle("active", mode === "mouse");
+      $("keyboardMode").classList.toggle("active", mode === "keyboard");
+      $("dpadPanel").classList.toggle("active", mode === "dpad");
+      $("mousePanel").classList.toggle("active", mode === "mouse");
+      $("keyboardPanel").classList.toggle("active", mode === "keyboard");
+      if (mode === "keyboard") $("keyboardInput").focus();
+    }
+
+    function send(message) {
+      if (!ws || ws.readyState !== WebSocket.OPEN) return setStatus("Disconnected");
+      ws.send(JSON.stringify(message));
+    }
+
+    function setStatus(text, ok = false) {
+      const status = $("status");
+      status.classList.toggle("ok", ok);
+      status.lastElementChild.textContent = text;
+    }
+
+    function point(event) {
+      return { x: event.clientX, y: event.clientY };
+    }
+
+    function safeJson(text) {
+      try { return JSON.parse(text); } catch { return null; }
+    }
+  </script>
+</body>
+</html>

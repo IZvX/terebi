@@ -10,11 +10,11 @@ namespace Widgets {
             if (rect.w <= 0 || rect.h <= 0) return;
 
             // Capture Background Segment
-            SDL_Surface* screen = SDL_CreateRGBSurfaceWithFormat(0, rect.w, rect.h, 32, SDL_PIXELFORMAT_ABGR8888);
-            SDL_RenderReadPixels(renderer, &rect, SDL_PIXELFORMAT_ABGR8888, screen->pixels, screen->pitch);
+            SDL_Surface* screen = SDL_RenderReadPixels(renderer, &rect);
+            if (!screen) return;
 
             SDL_Texture* screenTex = SDL_CreateTextureFromSurface(renderer, screen);
-            SDL_FreeSurface(screen);
+            SDL_DestroySurface(screen);
 
             // Fast GPU Path
             RenderGPUGaussian(renderer, screenTex, rect.w, rect.h, std::min(blurRadius, 20), rect);

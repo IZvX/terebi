@@ -177,6 +177,21 @@ if (application.Initialize()) {
                 <div class="api-signature">bool g_inputFocused;</div>
                 <p><strong>Header:</strong> nimble/widget.h</p>
             </div>
+
+            <section>
+                <h2>Widget Inspector</h2>
+                <p>Nimble includes a built-in inspector for live widget debugging. Press F12 to toggle it. When open, the application viewport is shrunk and shifted so the inspector sidebar does not cover the app.</p>
+            </section>
+
+            <div class="api-item">
+                <h3>Inspector APIs</h3>
+                <p>The inspector lists rendered widgets, their IDs, guessed widget type, rect, child count, and live override controls for common visual/state values.</p>
+                <div class="api-signature">
+                    void ToggleWidgetInspector();<br>
+                    bool IsWidgetInspectorOpen();
+                </div>
+                <p><strong>Header:</strong> nimble/application.h</p>
+            </div>
         </main>
 
         <!-- Table of Contents -->

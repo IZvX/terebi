@@ -1,9 +1,8 @@
 #pragma once
 
 // --- Standard & External Libraries ---
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_ttf.h>
-#include <SDL2/SDL_image.h>
+#include "sdl_compat.h"
+#include <SDL3_image/SDL_image.h>
 #include <vector>
 #include <functional>
 #include <algorithm>

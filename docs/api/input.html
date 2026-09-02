@@ -82,6 +82,84 @@ g_NextFocusedWidgetId = "submit_button";</code></pre>
             </section>
 
             <div class="api-item">
+                <h3>NavAction</h3>
+                <p>Logical navigation actions that can be triggered by any mapped input source.</p>
+                <div class="api-signature">
+                    enum class NavAction { Up, Down, Left, Right, Next, Prev, Back, Forward };
+                </div>
+                <p><strong>Header:</strong> nimble/application.h</p>
+            </div>
+
+            <div class="api-item">
+                <h3>Navigation Mapping</h3>
+                <p>Maps physical inputs or app-provided signals to logical navigation actions. Default mappings keep the built-in behavior: arrow keys move by direction, Tab moves next, Shift+Tab moves previous, Esc or mouse back triggers Back, and F1 or mouse forward triggers Forward.</p>
+                <div class="api-signature">
+                    void ResetDefaultNavigationMappings();<br>
+                    void ClearNavigationMappings();<br>
+                    void MapNavigationKey(NavAction action, SDL_Keycode key, Uint16 requiredMod = 0, Uint16 rejectedMod = 0, const std::string&amp; label = "");<br>
+                    void MapNavigationMouseButton(NavAction action, Uint8 mouseButton, const std::string&amp; label = "");<br>
+                    void MapNavigationFlag(NavAction action, bool* flag, bool consume = true, const std::string&amp; label = "");<br>
+                    void MapNavigationPredicate(NavAction action, std::function&lt;bool(const InputState&amp;)&gt; predicate, const std::string&amp; label = "");<br>
+                    void MapNavigationCallback(NavAction action, std::function&lt;bool()&gt; callback, const std::string&amp; label = "");<br>
+                    void TriggerNavigationAction(NavAction action, const std::string&amp; label = "");
+                </div>
+                <p><strong>Header:</strong> nimble/application.h</p>
+                <h4>Usage Example</h4>
+                <div class="code-block">
+                    <pre><code>// Vim-style keyboard navigation plus default Tab behavior
+Nimble::ClearNavigationMappings();
+Nimble::MapNavigationKey(Nimble::NavAction::Left,  SDLK_h, 0, 0, "H");
+Nimble::MapNavigationKey(Nimble::NavAction::Down,  SDLK_j, 0, 0, "J");
+Nimble::MapNavigationKey(Nimble::NavAction::Up,    SDLK_k, 0, 0, "K");
+Nimble::MapNavigationKey(Nimble::NavAction::Right, SDLK_l, 0, 0, "L");
+Nimble::MapNavigationKey(Nimble::NavAction::Prev,  SDLK_TAB, KMOD_SHIFT, 0, "SHIFT+TAB");
+Nimble::MapNavigationKey(Nimble::NavAction::Next,  SDLK_TAB, 0, KMOD_SHIFT, "TAB");</code></pre>
+                </div>
+                <h4>External Input Example</h4>
+                <div class="code-block">
+                    <pre><code>// Android, websocket, gamepad, or another thread can flip this flag.
+static bool remoteNext = false;
+Nimble::MapNavigationFlag(Nimble::NavAction::Next, &amp;remoteNext);
+
+// Or poll any custom input source.
+Nimble::MapNavigationCallback(Nimble::NavAction::Up, [] {
+    return MyRemoteController::Pressed("up");
+}, "REMOTE_UP");
+
+// Or queue a one-shot action directly from your bridge code.
+Nimble::TriggerNavigationAction(Nimble::NavAction::Down, "REMOTE_DOWN");</code></pre>
+                </div>
+            </div>
+
+            <div class="api-item">
+                <h3>OnNavigationAction(action, callback)</h3>
+                <p>Registers a callback that fires whenever a logical navigation action is queued.</p>
+                <div class="api-signature">void OnNavigationAction(NavAction action, std::function&lt;void()&gt; callback);</div>
+                <p><strong>Header:</strong> nimble/application.h</p>
+            </div>
+
+            <div class="api-item">
+                <h3>OnBack / OnForward</h3>
+                <p>Registers application-level browser-style navigation handlers. Use these for route history, drawer dismissal, modal closing, or custom page stacks.</p>
+                <div class="api-signature">
+                    void OnBack(std::function&lt;void()&gt; callback);<br>
+                    void OnForward(std::function&lt;void()&gt; callback);
+                </div>
+                <p><strong>Header:</strong> nimble/application.h</p>
+                <h4>Usage Example</h4>
+                <div class="code-block">
+                    <pre><code>Nimble::OnBack([] {
+    if (ModalOpen()) CloseModal();
+    else Router::Back();
+});
+
+Nimble::OnForward([] {
+    Router::Forward();
+});</code></pre>
+                </div>
+            </div>
+
+            <div class="api-item">
                 <h3>WidgetNav</h3>
                 <p>Structure defining navigation links for a widget.</p>
                 <div class="api-signature">

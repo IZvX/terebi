@@ -10,7 +10,7 @@ namespace Widgets {
                 if(st.gradient.enabled) ApplySurfaceGradient(surf, st.gradient);
                 SDL_Texture* tex = SDL_CreateTextureFromSurface(r, surf);
                 if (tex) { 
-                    SDL_SetTextureScaleMode(tex, SDL_ScaleModeLinear);
+                    SDL_SetTextureScaleMode(tex, SDL_SCALEMODE_LINEAR);
                     
                     // Render exactly at surface size, aligned to the left and centered vertically
                     SDL_Rect targetRect = {rect.x, rect.y + (rect.h - surf->h) / 2, surf->w, surf->h};

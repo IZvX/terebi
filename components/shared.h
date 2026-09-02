@@ -1,5 +1,5 @@
 #pragma once
-#include <SDL2/SDL_ttf.h>
+#include <SDL3_ttf/SDL_ttf.h>
 #include <string>
 #include "../utils/wal.h"
 #include "../utils/theme.h"
@@ -14,6 +14,8 @@ struct AppFonts {
     TTF_Font* arial16;
     TTF_Font* arial18;
     TTF_Font* arial20;
+    TTF_Font* arial22;
+    TTF_Font* arial24;
     TTF_Font* arial28;
     TTF_Font* fontAwesome24;
     TTF_Font* fontAwesomeB24;
@@ -22,7 +24,10 @@ struct AppFonts {
 // Application State
 struct GlobalContext {
     bool settingsOpen = false;
-    bool wifiToggled = false;
+    bool wifiToggled = true;
+    bool remoteEnabled = true;
+    bool oskEnabled = true;
+    bool remotePairPopup = false;
     std::string searchString = "";
     bool pywalEnabled = true;
     WalTheme currentTheme = {};

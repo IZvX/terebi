@@ -3,6 +3,7 @@
 #include "../drawer.h"
 #include "../drawer_item.h"
 #include "../../fontawesome/fontawesome.h"
+// #include "../../compositor/wlroots.h"
 
 inline Widget SettingsTab_Main(AppFonts& fonts) {
     using namespace Widgets;
@@ -17,7 +18,10 @@ inline Widget SettingsTab_Main(AppFonts& fonts) {
                 NavItemRounded(FontAwesome::Times().codepoint, "Close Settings", "drawer_settings_closesettings",
                 { "drawer_settings_main_system", "drawer_settings_main_network", "", "", "", "" }, fonts)
                 .OnClick("navbar_settings", 0.25f, []() {
-                    g_Context.settingsOpen = !g_Context.settingsOpen; 
+                    g_Context.settingsOpen = false;
+                    // if (g_terebi_shared) {
+                        // g_terebi_shared->drawer_open = false;
+                    // }
                     g_NextFocusedWidgetId = "navbar_settings";
                 }, [](Widget &w, float t) {})
             })
@@ -57,19 +61,26 @@ inline Widget SettingsTab_Main(AppFonts& fonts) {
 
                 // 5. Interface (Enabled)
                 DrawerItem(FontAwesome::PaintBrush().codepoint, "Interface", "drawer_settings_main_interface",
-                { "drawer_settings_main_apps", "drawer_settings_main_accessibility", "", "", "", "" }, fonts)
+                { "drawer_settings_main_apps", "drawer_settings_main_inputs", "", "", "", "" }, fonts)
                 .OnClick("drawer_settings_main_interface", 0.2f, []() { 
                     SetDrawerTab("settings_drawer", "interface"); g_NextFocusedWidgetId = "drawer_interface_back"; 
                 }, [](Widget&, float){}),
 
-                // 6. Accessibility (Disabled)
+                // 6. Inputs (Enabled)
+                DrawerItem(0xf11c, "Inputs", "drawer_settings_main_inputs",
+                { "drawer_settings_main_interface", "drawer_settings_main_accessibility", "", "", "", "" }, fonts)
+                .OnClick("drawer_settings_main_inputs", 0.2f, []() {
+                    SetDrawerTab("settings_drawer", "inputs"); g_NextFocusedWidgetId = "drawer_inputs_back";
+                }, [](Widget&, float){}),
+
+                // 7. Accessibility (Disabled)
                 Opacity(disabledOpacity,
                     DrawerItem(FontAwesome::UniversalAccess().codepoint, "Accessibility", "drawer_settings_main_accessibility",
-                    { "drawer_settings_main_interface", "drawer_settings_main_system", "", "", "", "" }, fonts)
+                    { "drawer_settings_main_inputs", "drawer_settings_main_system", "", "", "", "" }, fonts)
                     .WithDisabled(true)
                 ),
 
-                // 7. System (Enabled)
+                // 8. System (Enabled)
                 DrawerItem(FontAwesome::Cogs().codepoint, "System", "drawer_settings_main_system",
                 { "drawer_settings_main_accessibility", "drawer_settings_closesettings", "", "", "", "" }, fonts)
                 .OnClick("drawer_settings_main_system", 0.2f, []() { 

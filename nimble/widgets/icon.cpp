@@ -13,7 +13,7 @@ namespace Widgets {
                 if(st.gradient.enabled) ApplySurfaceGradient(surf, st.gradient);
                 SDL_Texture* tex = SDL_CreateTextureFromSurface(r, surf);
                 if (tex) {
-                    SDL_SetTextureScaleMode(tex, SDL_ScaleModeLinear);
+                    SDL_SetTextureScaleMode(tex, SDL_SCALEMODE_LINEAR);
                     float scale = std::min((float)size/surf->w, (float)size/surf->h);
                     SDL_Rect iRect = {rect.x + (rect.w - (int)(surf->w*scale))/2, rect.y + (rect.h - (int)(surf->h*scale))/2, (int)(surf->w*scale), (int)(surf->h*scale)};
                     

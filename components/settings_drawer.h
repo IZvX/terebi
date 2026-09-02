@@ -6,6 +6,7 @@
 #include "settings_drawer/main_tab.h"
 #include "settings_drawer/network_tab.h"
 #include "settings_drawer/interface_tab.h"
+#include "settings_drawer/inputs_tab.h"
 #include "settings_drawer/system_tab.h"
 #include "settings_drawer/dev_tab.h"
 
@@ -15,6 +16,7 @@ inline Widget RenderSettingsDrawer(int ww, int wh, float dt, AppFonts& fonts) {
         {"network",               [&]() -> Widget { return SettingsTab_Network(fonts); }},
             {"network_details",       [&]() -> Widget { return SettingsTab_NetworkDetails(fonts); }},
         {"interface",             [&]() -> Widget { return SettingsTab_Interface(fonts); }},
+        {"inputs",                [&]() -> Widget { return SettingsTab_Inputs(fonts); }},
         {"system",             [&]() -> Widget { return SettingsTab_System(fonts); }},
             {"dev",             [&]() -> Widget { return SettingsTab_Dev(fonts); }},
     });

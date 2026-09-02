@@ -20,10 +20,14 @@ CMAKE_ADDR2LINE:FILEPATH=/usr/bin/addr2line
 //Path to a program.
 CMAKE_AR:FILEPATH=/usr/bin/ar
 
-//No help, variable specified on the command line.
+//Build type for single-configuration generators (Makefile Generators,
+// Ninja, etc.). Typical values: Debug, Release, RelWithDebInfo,
+// MinSizeRel; custom build types may also be defined.
 CMAKE_BUILD_TYPE:STRING=Debug
 
-//No help, variable specified on the command line.
+//Full path to the compiler used for language <LANG>. Set by CMake
+// during compiler detection on the first configure; users may
+// override on the command line to select a specific toolchain.
 CMAKE_CXX_COMPILER:FILEPATH=/usr/bin/g++
 
 //A wrapper around 'ar' adding the appropriate '--plugin' option
@@ -49,7 +53,9 @@ CMAKE_CXX_FLAGS_RELEASE:STRING=-O3 -DNDEBUG
 //Flags used by the CXX compiler during RELWITHDEBINFO builds.
 CMAKE_CXX_FLAGS_RELWITHDEBINFO:STRING=-O2 -g -DNDEBUG
 
-//No help, variable specified on the command line.
+//Full path to the compiler used for language <LANG>. Set by CMake
+// during compiler detection on the first configure; users may
+// override on the command line to select a specific toolchain.
 CMAKE_C_COMPILER:FILEPATH=/usr/bin/gcc
 
 //A wrapper around 'ar' adding the appropriate '--plugin' option
@@ -96,7 +102,9 @@ CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO:STRING=
 //Enable/Disable output of build database during the build.
 CMAKE_EXPORT_BUILD_DATABASE:BOOL=
 
-//No help, variable specified on the command line.
+//Enable output of a compile_commands.json file listing the exact
+// compiler invocation for each translation unit. Implemented by
+// the Makefile and Ninja generators; ignored elsewhere.
 CMAKE_EXPORT_COMPILE_COMMANDS:BOOL=TRUE
 
 //Value Computed by CMake.
@@ -150,7 +158,7 @@ CMAKE_PROJECT_DESCRIPTION:STATIC=
 CMAKE_PROJECT_HOMEPAGE_URL:STATIC=
 
 //Value Computed by CMake
-CMAKE_PROJECT_NAME:STATIC=sdl_app
+CMAKE_PROJECT_NAME:STATIC=terebi
 
 //Value Computed by CMake
 CMAKE_PROJECT_SPDX_LICENSE:STATIC=
@@ -220,17 +228,83 @@ CMAKE_TAPI:FILEPATH=CMAKE_TAPI-NOTFOUND
 // Studio IDE projects all commands are done without /nologo.
 CMAKE_VERBOSE_MAKEFILE:BOOL=FALSE
 
-//The directory containing a CMake configuration file for SDL2.
-SDL2_DIR:PATH=/usr/lib/cmake/SDL2
+//Path to a file.
+LAYER_SHELL_XML:FILEPATH=/usr/share/wlr-protocols/unstable/wlr-layer-shell-unstable-v1.xml
+
+//Arguments to supply to pkg-config
+PKG_CONFIG_ARGN:STRING=
+
+//pkg-config executable
+PKG_CONFIG_EXECUTABLE:FILEPATH=/usr/bin/pkg-config
+
+//Path to a program.
+WAYLAND_SCANNER:FILEPATH=/usr/bin/wayland-scanner
+
+//Path to a library.
+pkgcfg_lib_LIBDRM_drm:FILEPATH=/usr/lib/libdrm.so
+
+//Path to a library.
+pkgcfg_lib_PIXMAN_pixman-1:FILEPATH=/usr/lib/libpixman-1.so
+
+//Path to a library.
+pkgcfg_lib_SDL2_IMAGE_SDL2:FILEPATH=/usr/lib/libSDL2.so
+
+//Path to a library.
+pkgcfg_lib_SDL2_IMAGE_SDL2_image:FILEPATH=/usr/lib/libSDL2_image.so
+
+//Path to a library.
+pkgcfg_lib_SDL2_SDL2:FILEPATH=/usr/lib/libSDL2.so
+
+//Path to a library.
+pkgcfg_lib_SDL2_TTF_SDL2:FILEPATH=/usr/lib/libSDL2.so
+
+//Path to a library.
+pkgcfg_lib_SDL2_TTF_SDL2_ttf:FILEPATH=/usr/lib/libSDL2_ttf.so
+
+//Path to a library.
+pkgcfg_lib_SDL3_IMAGE_SDL3:FILEPATH=/usr/lib/libSDL3.so
+
+//Path to a library.
+pkgcfg_lib_SDL3_IMAGE_SDL3_image:FILEPATH=/usr/lib/libSDL3_image.so
+
+//Path to a library.
+pkgcfg_lib_SDL3_SDL3:FILEPATH=/usr/lib/libSDL3.so
+
+//Path to a library.
+pkgcfg_lib_SDL3_TTF_SDL3:FILEPATH=/usr/lib/libSDL3.so
+
+//Path to a library.
+pkgcfg_lib_SDL3_TTF_SDL3_ttf:FILEPATH=/usr/lib/libSDL3_ttf.so
+
+//Path to a library.
+pkgcfg_lib_WAYLAND_m:FILEPATH=/usr/lib/libm.so
+
+//Path to a library.
+pkgcfg_lib_WAYLAND_wayland-server:FILEPATH=/usr/lib/libwayland-server.so
+
+//Path to a library.
+pkgcfg_lib_WLROOTS_wlroots-0.20:FILEPATH=/usr/lib/libwlroots-0.20.so
+
+//Path to a library.
+pkgcfg_lib_XKBCOMMON_xkbcommon:FILEPATH=/usr/lib/libxkbcommon.so
 
 //Value Computed by CMake
-sdl_app_BINARY_DIR:STATIC=/home/yfz/Documents/Projects/terebi/build
+terebi_BINARY_DIR:STATIC=/home/yfz/Documents/Projects/terebi/build
 
 //Value Computed by CMake
-sdl_app_IS_TOP_LEVEL:STATIC=ON
+terebi_IS_TOP_LEVEL:STATIC=ON
 
 //Value Computed by CMake
-sdl_app_SOURCE_DIR:STATIC=/home/yfz/Documents/Projects/terebi
+terebi_SOURCE_DIR:STATIC=/home/yfz/Documents/Projects/terebi
+
+//Value Computed by CMake
+tinywl_BINARY_DIR:STATIC=/home/yfz/Documents/Projects/terebi/build
+
+//Value Computed by CMake
+tinywl_IS_TOP_LEVEL:STATIC=ON
+
+//Value Computed by CMake
+tinywl_SOURCE_DIR:STATIC=/home/yfz/Documents/Projects/terebi
 
 
 ########################
@@ -246,7 +320,7 @@ CMAKE_CACHEFILE_DIR:INTERNAL=/home/yfz/Documents/Projects/terebi/build
 //Major version of cmake used to create the current loaded cache
 CMAKE_CACHE_MAJOR_VERSION:INTERNAL=4
 //Minor version of cmake used to create the current loaded cache
-CMAKE_CACHE_MINOR_VERSION:INTERNAL=3
+CMAKE_CACHE_MINOR_VERSION:INTERNAL=4
 //Patch version of cmake used to create the current loaded cache
 CMAKE_CACHE_PATCH_VERSION:INTERNAL=2
 //Path to CMake executable.
@@ -287,10 +361,15 @@ CMAKE_C_FLAGS_MINSIZEREL-ADVANCED:INTERNAL=1
 CMAKE_C_FLAGS_RELEASE-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_C_FLAGS_RELWITHDEBINFO
 CMAKE_C_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
+//Set initial state for CMake diagnostics; used to persist state
+// set by command-line options across invocations.
+CMAKE_DIAGNOSTIC_INIT:INTERNAL=CMD_AUTHOR=WARN;CMD_DEPRECATED=WARN;CMD_EXPERIMENTAL=WARN;CMD_INSTALL_ABSOLUTE_DESTINATION=IGNORE;CMD_POLICY=WARN;CMD_UNINITIALIZED=IGNORE;CMD_UNUSED_CLI=IGNORE
 //ADVANCED property for variable: CMAKE_DLLTOOL
 CMAKE_DLLTOOL-ADVANCED:INTERNAL=1
 //Path to cache edit program executable.
 CMAKE_EDIT_COMMAND:INTERNAL=/usr/bin/ccmake
+//Deprecated.  Use -W[no-]error=deprecated instead.
+CMAKE_ERROR_DEPRECATED:INTERNAL=OFF
 //Executable file format
 CMAKE_EXECUTABLE_FORMAT:INTERNAL=ELF
 //ADVANCED property for variable: CMAKE_EXE_LINKER_FLAGS
@@ -386,4 +465,452 @@ CMAKE_TAPI-ADVANCED:INTERNAL=1
 CMAKE_UNAME:INTERNAL=/usr/bin/uname
 //ADVANCED property for variable: CMAKE_VERBOSE_MAKEFILE
 CMAKE_VERBOSE_MAKEFILE-ADVANCED:INTERNAL=1
+//Deprecated.  Use -W[no-]deprecated instead.
+CMAKE_WARN_DEPRECATED:INTERNAL=ON
+//Details about finding PkgConfig
+FIND_PACKAGE_MESSAGE_DETAILS_PkgConfig:INTERNAL=[/usr/bin/pkg-config][v3.0.5()]
+LIBDRM_CFLAGS:INTERNAL=-I/usr/include;-I/usr/include/libdrm
+LIBDRM_CFLAGS_I:INTERNAL=
+LIBDRM_CFLAGS_OTHER:INTERNAL=
+LIBDRM_FOUND:INTERNAL=1
+LIBDRM_INCLUDEDIR:INTERNAL=/usr/include
+LIBDRM_INCLUDE_DIRS:INTERNAL=/usr/include;/usr/include/libdrm
+LIBDRM_LDFLAGS:INTERNAL=-L/usr/lib;-ldrm
+LIBDRM_LDFLAGS_OTHER:INTERNAL=
+LIBDRM_LIBDIR:INTERNAL=/usr/lib
+LIBDRM_LIBRARIES:INTERNAL=drm
+LIBDRM_LIBRARY_DIRS:INTERNAL=/usr/lib
+LIBDRM_LIBS:INTERNAL=
+LIBDRM_LIBS_L:INTERNAL=
+LIBDRM_LIBS_OTHER:INTERNAL=
+LIBDRM_LIBS_PATHS:INTERNAL=
+LIBDRM_MODULE_NAME:INTERNAL=libdrm
+LIBDRM_PREFIX:INTERNAL=/usr
+LIBDRM_STATIC_CFLAGS:INTERNAL=-I/usr/include;-I/usr/include/libdrm
+LIBDRM_STATIC_CFLAGS_I:INTERNAL=
+LIBDRM_STATIC_CFLAGS_OTHER:INTERNAL=
+LIBDRM_STATIC_INCLUDE_DIRS:INTERNAL=/usr/include;/usr/include/libdrm
+LIBDRM_STATIC_LDFLAGS:INTERNAL=-L/usr/lib;-ldrm
+LIBDRM_STATIC_LDFLAGS_OTHER:INTERNAL=
+LIBDRM_STATIC_LIBDIR:INTERNAL=
+LIBDRM_STATIC_LIBRARIES:INTERNAL=drm
+LIBDRM_STATIC_LIBRARY_DIRS:INTERNAL=/usr/lib
+LIBDRM_STATIC_LIBS:INTERNAL=
+LIBDRM_STATIC_LIBS_L:INTERNAL=
+LIBDRM_STATIC_LIBS_OTHER:INTERNAL=
+LIBDRM_STATIC_LIBS_PATHS:INTERNAL=
+LIBDRM_VERSION:INTERNAL=2.4.134
+LIBDRM_libdrm_INCLUDEDIR:INTERNAL=
+LIBDRM_libdrm_LIBDIR:INTERNAL=
+LIBDRM_libdrm_PREFIX:INTERNAL=
+LIBDRM_libdrm_VERSION:INTERNAL=
+PIXMAN_CFLAGS:INTERNAL=-I/usr/include/pixman-1
+PIXMAN_CFLAGS_I:INTERNAL=
+PIXMAN_CFLAGS_OTHER:INTERNAL=
+PIXMAN_FOUND:INTERNAL=1
+PIXMAN_INCLUDEDIR:INTERNAL=/usr/include
+PIXMAN_INCLUDE_DIRS:INTERNAL=/usr/include/pixman-1
+PIXMAN_LDFLAGS:INTERNAL=-L/usr/lib;-lpixman-1
+PIXMAN_LDFLAGS_OTHER:INTERNAL=
+PIXMAN_LIBDIR:INTERNAL=/usr/lib
+PIXMAN_LIBRARIES:INTERNAL=pixman-1
+PIXMAN_LIBRARY_DIRS:INTERNAL=/usr/lib
+PIXMAN_LIBS:INTERNAL=
+PIXMAN_LIBS_L:INTERNAL=
+PIXMAN_LIBS_OTHER:INTERNAL=
+PIXMAN_LIBS_PATHS:INTERNAL=
+PIXMAN_MODULE_NAME:INTERNAL=pixman-1
+PIXMAN_PREFIX:INTERNAL=/usr
+PIXMAN_STATIC_CFLAGS:INTERNAL=-I/usr/include/pixman-1
+PIXMAN_STATIC_CFLAGS_I:INTERNAL=
+PIXMAN_STATIC_CFLAGS_OTHER:INTERNAL=
+PIXMAN_STATIC_INCLUDE_DIRS:INTERNAL=/usr/include/pixman-1
+PIXMAN_STATIC_LDFLAGS:INTERNAL=-L/usr/lib;-lpixman-1;-lm;-pthread
+PIXMAN_STATIC_LDFLAGS_OTHER:INTERNAL=-pthread
+PIXMAN_STATIC_LIBDIR:INTERNAL=
+PIXMAN_STATIC_LIBRARIES:INTERNAL=pixman-1;m
+PIXMAN_STATIC_LIBRARY_DIRS:INTERNAL=/usr/lib
+PIXMAN_STATIC_LIBS:INTERNAL=
+PIXMAN_STATIC_LIBS_L:INTERNAL=
+PIXMAN_STATIC_LIBS_OTHER:INTERNAL=
+PIXMAN_STATIC_LIBS_PATHS:INTERNAL=
+PIXMAN_VERSION:INTERNAL=0.46.4
+PIXMAN_pixman-1_INCLUDEDIR:INTERNAL=
+PIXMAN_pixman-1_LIBDIR:INTERNAL=
+PIXMAN_pixman-1_PREFIX:INTERNAL=
+PIXMAN_pixman-1_VERSION:INTERNAL=
+//ADVANCED property for variable: PKG_CONFIG_ARGN
+PKG_CONFIG_ARGN-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: PKG_CONFIG_EXECUTABLE
+PKG_CONFIG_EXECUTABLE-ADVANCED:INTERNAL=1
+SDL2_CFLAGS:INTERNAL=-I/usr/include;-I/usr/include/SDL2;-D_GNU_SOURCE=1;-D_REENTRANT
+SDL2_CFLAGS_I:INTERNAL=
+SDL2_CFLAGS_OTHER:INTERNAL=-D_GNU_SOURCE=1;-D_REENTRANT
+SDL2_FOUND:INTERNAL=1
+SDL2_IMAGE_CFLAGS:INTERNAL=-I/usr/include/SDL2;-I/usr/include;-D_GNU_SOURCE=1;-D_REENTRANT;-I/usr/include/libpng16;-DHWY_SHARED_DEFINE;-DAVIF_DLL;-I/usr/include/rav1e;-I/usr/include/svt-av1;-DEB_DLL;-DRTC_BUILD=0;-I/usr/include/webp
+SDL2_IMAGE_CFLAGS_I:INTERNAL=
+SDL2_IMAGE_CFLAGS_OTHER:INTERNAL=-D_GNU_SOURCE=1;-D_REENTRANT;-DHWY_SHARED_DEFINE;-DAVIF_DLL;-DEB_DLL;-DRTC_BUILD=0
+SDL2_IMAGE_FOUND:INTERNAL=1
+SDL2_IMAGE_INCLUDEDIR:INTERNAL=/usr/include
+SDL2_IMAGE_INCLUDE_DIRS:INTERNAL=/usr/include/SDL2;/usr/include;/usr/include/libpng16;/usr/include/rav1e;/usr/include/svt-av1;/usr/include/webp
+SDL2_IMAGE_LDFLAGS:INTERNAL=-L/usr/lib;-lSDL2_image;-lSDL2
+SDL2_IMAGE_LDFLAGS_OTHER:INTERNAL=
+SDL2_IMAGE_LIBDIR:INTERNAL=/usr/lib
+SDL2_IMAGE_LIBRARIES:INTERNAL=SDL2_image;SDL2
+SDL2_IMAGE_LIBRARY_DIRS:INTERNAL=/usr/lib
+SDL2_IMAGE_LIBS:INTERNAL=
+SDL2_IMAGE_LIBS_L:INTERNAL=
+SDL2_IMAGE_LIBS_OTHER:INTERNAL=
+SDL2_IMAGE_LIBS_PATHS:INTERNAL=
+SDL2_IMAGE_MODULE_NAME:INTERNAL=SDL2_image
+SDL2_IMAGE_PREFIX:INTERNAL=/usr
+SDL2_IMAGE_SDL2_image_INCLUDEDIR:INTERNAL=
+SDL2_IMAGE_SDL2_image_LIBDIR:INTERNAL=
+SDL2_IMAGE_SDL2_image_PREFIX:INTERNAL=
+SDL2_IMAGE_SDL2_image_VERSION:INTERNAL=
+SDL2_IMAGE_STATIC_CFLAGS:INTERNAL=-I/usr/include/SDL2;-I/usr/include;-D_GNU_SOURCE=1;-D_REENTRANT;-I/usr/include/libpng16;-DHWY_SHARED_DEFINE;-DAVIF_DLL;-I/usr/include/rav1e;-I/usr/include/svt-av1;-DEB_DLL;-DRTC_BUILD=0;-I/usr/include/webp;-DJXL_STATIC_DEFINE;-DJXL_CMS_STATIC_DEFINE;-DLZMA_API_STATIC;-UAVIF_DLL;-UEB_DLL
+SDL2_IMAGE_STATIC_CFLAGS_I:INTERNAL=
+SDL2_IMAGE_STATIC_CFLAGS_OTHER:INTERNAL=-D_GNU_SOURCE=1;-D_REENTRANT;-DHWY_SHARED_DEFINE;-DAVIF_DLL;-DEB_DLL;-DRTC_BUILD=0;-DJXL_STATIC_DEFINE;-DJXL_CMS_STATIC_DEFINE;-DLZMA_API_STATIC;-UAVIF_DLL;-UEB_DLL
+SDL2_IMAGE_STATIC_INCLUDE_DIRS:INTERNAL=/usr/include/SDL2;/usr/include;/usr/include/libpng16;/usr/include/rav1e;/usr/include/svt-av1;/usr/include/webp
+SDL2_IMAGE_STATIC_LDFLAGS:INTERNAL=-L/usr/lib;-lSDL2_image;-lSDL2;-lpng16;-lm;-lm;-ljxl;-lm;-lstdc++;-lhwy;-lbrotlienc;-lbrotlidec;-lbrotlicommon;-ljxl_cms;-lm;-lstdc++;-ltiff;-ljbig;-lm;-lz;-ldeflate;-ljpeg;-llzma;-pthread;-lpthread;-lzstd;-lavif;-lyuv;-ldav1d;-pthread;-ldl;-lrav1e;-lgcc_s;-lutil;-lrt;-lpthread;-lm;-ldl;-lc;-lSvtAv1Enc;-lm;-laom;-lm;-lwebpdemux;-lwebp;-lm;-lsharpyuv;-lm
+SDL2_IMAGE_STATIC_LDFLAGS_OTHER:INTERNAL=-pthread;-pthread
+SDL2_IMAGE_STATIC_LIBDIR:INTERNAL=
+SDL2_IMAGE_STATIC_LIBRARIES:INTERNAL=SDL2_image;SDL2;png16;m;m;jxl;m;stdc++;hwy;brotlienc;brotlidec;brotlicommon;jxl_cms;m;stdc++;tiff;jbig;m;z;deflate;jpeg;lzma;pthread;zstd;avif;yuv;dav1d;dl;rav1e;gcc_s;util;rt;pthread;m;dl;c;SvtAv1Enc;m;aom;m;webpdemux;webp;m;sharpyuv;m
+SDL2_IMAGE_STATIC_LIBRARY_DIRS:INTERNAL=/usr/lib
+SDL2_IMAGE_STATIC_LIBS:INTERNAL=
+SDL2_IMAGE_STATIC_LIBS_L:INTERNAL=
+SDL2_IMAGE_STATIC_LIBS_OTHER:INTERNAL=
+SDL2_IMAGE_STATIC_LIBS_PATHS:INTERNAL=
+SDL2_IMAGE_VERSION:INTERNAL=2.8.12
+SDL2_INCLUDEDIR:INTERNAL=/usr/include
+SDL2_INCLUDE_DIRS:INTERNAL=/usr/include;/usr/include/SDL2
+SDL2_LDFLAGS:INTERNAL=-L/usr/lib;-lSDL2
+SDL2_LDFLAGS_OTHER:INTERNAL=
+SDL2_LIBDIR:INTERNAL=/usr/lib
+SDL2_LIBRARIES:INTERNAL=SDL2
+SDL2_LIBRARY_DIRS:INTERNAL=/usr/lib
+SDL2_LIBS:INTERNAL=
+SDL2_LIBS_L:INTERNAL=
+SDL2_LIBS_OTHER:INTERNAL=
+SDL2_LIBS_PATHS:INTERNAL=
+SDL2_MODULE_NAME:INTERNAL=sdl2
+SDL2_PREFIX:INTERNAL=/usr
+SDL2_STATIC_CFLAGS:INTERNAL=-I/usr/include;-I/usr/include/SDL2;-D_GNU_SOURCE=1;-D_REENTRANT
+SDL2_STATIC_CFLAGS_I:INTERNAL=
+SDL2_STATIC_CFLAGS_OTHER:INTERNAL=-D_GNU_SOURCE=1;-D_REENTRANT
+SDL2_STATIC_INCLUDE_DIRS:INTERNAL=/usr/include;/usr/include/SDL2
+SDL2_STATIC_LDFLAGS:INTERNAL=-L/usr/lib;-lSDL2
+SDL2_STATIC_LDFLAGS_OTHER:INTERNAL=
+SDL2_STATIC_LIBDIR:INTERNAL=
+SDL2_STATIC_LIBRARIES:INTERNAL=SDL2
+SDL2_STATIC_LIBRARY_DIRS:INTERNAL=/usr/lib
+SDL2_STATIC_LIBS:INTERNAL=
+SDL2_STATIC_LIBS_L:INTERNAL=
+SDL2_STATIC_LIBS_OTHER:INTERNAL=
+SDL2_STATIC_LIBS_PATHS:INTERNAL=
+SDL2_TTF_CFLAGS:INTERNAL=-I/usr/include/SDL2;-I/usr/include;-D_GNU_SOURCE=1;-D_REENTRANT;-I/usr/include/harfbuzz;-I/usr/include/glib-2.0;-I/usr/lib/glib-2.0/include;-I/usr/include/sysprof-6;-pthread;-I/usr/include/freetype2;-I/usr/include/libpng16
+SDL2_TTF_CFLAGS_I:INTERNAL=
+SDL2_TTF_CFLAGS_OTHER:INTERNAL=-D_GNU_SOURCE=1;-D_REENTRANT;-pthread
+SDL2_TTF_FOUND:INTERNAL=1
+SDL2_TTF_INCLUDEDIR:INTERNAL=/usr/include
+SDL2_TTF_INCLUDE_DIRS:INTERNAL=/usr/include/SDL2;/usr/include;/usr/include/harfbuzz;/usr/include/glib-2.0;/usr/lib/glib-2.0/include;/usr/include/sysprof-6;/usr/include/freetype2;/usr/include/libpng16
+SDL2_TTF_LDFLAGS:INTERNAL=-L/usr/lib;-lSDL2_ttf;-lSDL2
+SDL2_TTF_LDFLAGS_OTHER:INTERNAL=
+SDL2_TTF_LIBDIR:INTERNAL=/usr/lib
+SDL2_TTF_LIBRARIES:INTERNAL=SDL2_ttf;SDL2
+SDL2_TTF_LIBRARY_DIRS:INTERNAL=/usr/lib
+SDL2_TTF_LIBS:INTERNAL=
+SDL2_TTF_LIBS_L:INTERNAL=
+SDL2_TTF_LIBS_OTHER:INTERNAL=
+SDL2_TTF_LIBS_PATHS:INTERNAL=
+SDL2_TTF_MODULE_NAME:INTERNAL=SDL2_ttf
+SDL2_TTF_PREFIX:INTERNAL=/usr
+SDL2_TTF_SDL2_ttf_INCLUDEDIR:INTERNAL=
+SDL2_TTF_SDL2_ttf_LIBDIR:INTERNAL=
+SDL2_TTF_SDL2_ttf_PREFIX:INTERNAL=
+SDL2_TTF_SDL2_ttf_VERSION:INTERNAL=
+SDL2_TTF_STATIC_CFLAGS:INTERNAL=-I/usr/include/SDL2;-I/usr/include;-D_GNU_SOURCE=1;-D_REENTRANT;-I/usr/include/harfbuzz;-I/usr/include/glib-2.0;-I/usr/lib/glib-2.0/include;-I/usr/include/sysprof-6;-pthread;-I/usr/include/freetype2;-I/usr/include/libpng16
+SDL2_TTF_STATIC_CFLAGS_I:INTERNAL=
+SDL2_TTF_STATIC_CFLAGS_OTHER:INTERNAL=-D_GNU_SOURCE=1;-D_REENTRANT;-pthread
+SDL2_TTF_STATIC_INCLUDE_DIRS:INTERNAL=/usr/include/SDL2;/usr/include;/usr/include/harfbuzz;/usr/include/glib-2.0;/usr/lib/glib-2.0/include;/usr/include/sysprof-6;/usr/include/freetype2;/usr/include/libpng16
+SDL2_TTF_STATIC_LDFLAGS:INTERNAL=-L/usr/lib;-lSDL2_ttf;-lSDL2;-lharfbuzz;-pthread;-lm;-lglib-2.0;-latomic;-lm;-lsysprof-capture-4;-Wl,-z,nodelete;-pthread;-lpcre2-8;-pthread;-lpthread;-lgraphite2;-lfreetype;-ldl;-lbz2;-lpng16;-lm;-lm;-lz;-lbrotlidec;-lbrotlicommon
+SDL2_TTF_STATIC_LDFLAGS_OTHER:INTERNAL=-pthread;-Wl,-z,nodelete;-pthread;-pthread
+SDL2_TTF_STATIC_LIBDIR:INTERNAL=
+SDL2_TTF_STATIC_LIBRARIES:INTERNAL=SDL2_ttf;SDL2;harfbuzz;m;glib-2.0;atomic;m;sysprof-capture-4;pcre2-8;pthread;graphite2;freetype;dl;bz2;png16;m;m;z;brotlidec;brotlicommon
+SDL2_TTF_STATIC_LIBRARY_DIRS:INTERNAL=/usr/lib
+SDL2_TTF_STATIC_LIBS:INTERNAL=
+SDL2_TTF_STATIC_LIBS_L:INTERNAL=
+SDL2_TTF_STATIC_LIBS_OTHER:INTERNAL=
+SDL2_TTF_STATIC_LIBS_PATHS:INTERNAL=
+SDL2_TTF_VERSION:INTERNAL=2.24.0
+SDL2_VERSION:INTERNAL=2.32.70
+SDL2_sdl2_INCLUDEDIR:INTERNAL=
+SDL2_sdl2_LIBDIR:INTERNAL=
+SDL2_sdl2_PREFIX:INTERNAL=
+SDL2_sdl2_VERSION:INTERNAL=
+SDL3_CFLAGS:INTERNAL=-I/usr/include
+SDL3_CFLAGS_I:INTERNAL=
+SDL3_CFLAGS_OTHER:INTERNAL=
+SDL3_FOUND:INTERNAL=1
+SDL3_IMAGE_CFLAGS:INTERNAL=-I/usr/include
+SDL3_IMAGE_CFLAGS_I:INTERNAL=
+SDL3_IMAGE_CFLAGS_OTHER:INTERNAL=
+SDL3_IMAGE_FOUND:INTERNAL=1
+SDL3_IMAGE_INCLUDEDIR:INTERNAL=/usr/include
+SDL3_IMAGE_INCLUDE_DIRS:INTERNAL=/usr/include
+SDL3_IMAGE_LDFLAGS:INTERNAL=-L/usr/lib;-lSDL3_image;-lSDL3
+SDL3_IMAGE_LDFLAGS_OTHER:INTERNAL=
+SDL3_IMAGE_LIBDIR:INTERNAL=/usr/lib
+SDL3_IMAGE_LIBRARIES:INTERNAL=SDL3_image;SDL3
+SDL3_IMAGE_LIBRARY_DIRS:INTERNAL=/usr/lib
+SDL3_IMAGE_LIBS:INTERNAL=
+SDL3_IMAGE_LIBS_L:INTERNAL=
+SDL3_IMAGE_LIBS_OTHER:INTERNAL=
+SDL3_IMAGE_LIBS_PATHS:INTERNAL=
+SDL3_IMAGE_MODULE_NAME:INTERNAL=sdl3-image
+SDL3_IMAGE_PREFIX:INTERNAL=/usr
+SDL3_IMAGE_STATIC_CFLAGS:INTERNAL=-I/usr/include
+SDL3_IMAGE_STATIC_CFLAGS_I:INTERNAL=
+SDL3_IMAGE_STATIC_CFLAGS_OTHER:INTERNAL=
+SDL3_IMAGE_STATIC_INCLUDE_DIRS:INTERNAL=/usr/include
+SDL3_IMAGE_STATIC_LDFLAGS:INTERNAL=-L/usr/lib;-lSDL3_image;-lSDL3;-pthread;-lm
+SDL3_IMAGE_STATIC_LDFLAGS_OTHER:INTERNAL=-pthread
+SDL3_IMAGE_STATIC_LIBDIR:INTERNAL=
+SDL3_IMAGE_STATIC_LIBRARIES:INTERNAL=SDL3_image;SDL3;m
+SDL3_IMAGE_STATIC_LIBRARY_DIRS:INTERNAL=/usr/lib
+SDL3_IMAGE_STATIC_LIBS:INTERNAL=
+SDL3_IMAGE_STATIC_LIBS_L:INTERNAL=
+SDL3_IMAGE_STATIC_LIBS_OTHER:INTERNAL=
+SDL3_IMAGE_STATIC_LIBS_PATHS:INTERNAL=
+SDL3_IMAGE_VERSION:INTERNAL=3.4.4
+SDL3_IMAGE_sdl3-image_INCLUDEDIR:INTERNAL=
+SDL3_IMAGE_sdl3-image_LIBDIR:INTERNAL=
+SDL3_IMAGE_sdl3-image_PREFIX:INTERNAL=
+SDL3_IMAGE_sdl3-image_VERSION:INTERNAL=
+SDL3_INCLUDEDIR:INTERNAL=/usr/include
+SDL3_INCLUDE_DIRS:INTERNAL=/usr/include
+SDL3_LDFLAGS:INTERNAL=-L/usr/lib;-lSDL3
+SDL3_LDFLAGS_OTHER:INTERNAL=
+SDL3_LIBDIR:INTERNAL=/usr/lib
+SDL3_LIBRARIES:INTERNAL=SDL3
+SDL3_LIBRARY_DIRS:INTERNAL=/usr/lib
+SDL3_LIBS:INTERNAL=
+SDL3_LIBS_L:INTERNAL=
+SDL3_LIBS_OTHER:INTERNAL=
+SDL3_LIBS_PATHS:INTERNAL=
+SDL3_MODULE_NAME:INTERNAL=sdl3
+SDL3_PREFIX:INTERNAL=/usr
+SDL3_STATIC_CFLAGS:INTERNAL=-I/usr/include
+SDL3_STATIC_CFLAGS_I:INTERNAL=
+SDL3_STATIC_CFLAGS_OTHER:INTERNAL=
+SDL3_STATIC_INCLUDE_DIRS:INTERNAL=/usr/include
+SDL3_STATIC_LDFLAGS:INTERNAL=-L/usr/lib;-lSDL3;-pthread;-lm
+SDL3_STATIC_LDFLAGS_OTHER:INTERNAL=-pthread
+SDL3_STATIC_LIBDIR:INTERNAL=
+SDL3_STATIC_LIBRARIES:INTERNAL=SDL3;m
+SDL3_STATIC_LIBRARY_DIRS:INTERNAL=/usr/lib
+SDL3_STATIC_LIBS:INTERNAL=
+SDL3_STATIC_LIBS_L:INTERNAL=
+SDL3_STATIC_LIBS_OTHER:INTERNAL=
+SDL3_STATIC_LIBS_PATHS:INTERNAL=
+SDL3_TTF_CFLAGS:INTERNAL=-I/usr/include;-I/usr/include/harfbuzz;-I/usr/include/glib-2.0;-I/usr/lib/glib-2.0/include;-I/usr/include/sysprof-6;-pthread;-I/usr/include/freetype2;-I/usr/include/libpng16
+SDL3_TTF_CFLAGS_I:INTERNAL=
+SDL3_TTF_CFLAGS_OTHER:INTERNAL=-pthread
+SDL3_TTF_FOUND:INTERNAL=1
+SDL3_TTF_INCLUDEDIR:INTERNAL=/usr/include
+SDL3_TTF_INCLUDE_DIRS:INTERNAL=/usr/include;/usr/include/harfbuzz;/usr/include/glib-2.0;/usr/lib/glib-2.0/include;/usr/include/sysprof-6;/usr/include/freetype2;/usr/include/libpng16
+SDL3_TTF_LDFLAGS:INTERNAL=-L/usr/lib;-lSDL3_ttf;-lSDL3
+SDL3_TTF_LDFLAGS_OTHER:INTERNAL=
+SDL3_TTF_LIBDIR:INTERNAL=/usr/lib
+SDL3_TTF_LIBRARIES:INTERNAL=SDL3_ttf;SDL3
+SDL3_TTF_LIBRARY_DIRS:INTERNAL=/usr/lib
+SDL3_TTF_LIBS:INTERNAL=
+SDL3_TTF_LIBS_L:INTERNAL=
+SDL3_TTF_LIBS_OTHER:INTERNAL=
+SDL3_TTF_LIBS_PATHS:INTERNAL=
+SDL3_TTF_MODULE_NAME:INTERNAL=sdl3-ttf
+SDL3_TTF_PREFIX:INTERNAL=/usr
+SDL3_TTF_STATIC_CFLAGS:INTERNAL=-I/usr/include;-I/usr/include/harfbuzz;-I/usr/include/glib-2.0;-I/usr/lib/glib-2.0/include;-I/usr/include/sysprof-6;-pthread;-I/usr/include/freetype2;-I/usr/include/libpng16
+SDL3_TTF_STATIC_CFLAGS_I:INTERNAL=
+SDL3_TTF_STATIC_CFLAGS_OTHER:INTERNAL=-pthread
+SDL3_TTF_STATIC_INCLUDE_DIRS:INTERNAL=/usr/include;/usr/include/harfbuzz;/usr/include/glib-2.0;/usr/lib/glib-2.0/include;/usr/include/sysprof-6;/usr/include/freetype2;/usr/include/libpng16
+SDL3_TTF_STATIC_LDFLAGS:INTERNAL=-L/usr/lib;-lSDL3_ttf;-lSDL3;-lm;-lharfbuzz;-pthread;-lm;-lglib-2.0;-latomic;-lm;-pthread;-lsysprof-capture-4;-Wl,-z,nodelete;-pthread;-lpcre2-8;-pthread;-lpthread;-lgraphite2;-lfreetype;-ldl;-lbz2;-lpng16;-lm;-lm;-lz;-lbrotlidec;-lbrotlicommon
+SDL3_TTF_STATIC_LDFLAGS_OTHER:INTERNAL=-pthread;-pthread;-Wl,-z,nodelete;-pthread;-pthread
+SDL3_TTF_STATIC_LIBDIR:INTERNAL=
+SDL3_TTF_STATIC_LIBRARIES:INTERNAL=SDL3_ttf;SDL3;m;harfbuzz;m;glib-2.0;atomic;m;sysprof-capture-4;pcre2-8;pthread;graphite2;freetype;dl;bz2;png16;m;m;z;brotlidec;brotlicommon
+SDL3_TTF_STATIC_LIBRARY_DIRS:INTERNAL=/usr/lib
+SDL3_TTF_STATIC_LIBS:INTERNAL=
+SDL3_TTF_STATIC_LIBS_L:INTERNAL=
+SDL3_TTF_STATIC_LIBS_OTHER:INTERNAL=
+SDL3_TTF_STATIC_LIBS_PATHS:INTERNAL=
+SDL3_TTF_VERSION:INTERNAL=3.2.2
+SDL3_TTF_sdl3-ttf_INCLUDEDIR:INTERNAL=
+SDL3_TTF_sdl3-ttf_LIBDIR:INTERNAL=
+SDL3_TTF_sdl3-ttf_PREFIX:INTERNAL=
+SDL3_TTF_sdl3-ttf_VERSION:INTERNAL=
+SDL3_VERSION:INTERNAL=3.4.14
+SDL3_sdl3_INCLUDEDIR:INTERNAL=
+SDL3_sdl3_LIBDIR:INTERNAL=
+SDL3_sdl3_PREFIX:INTERNAL=
+SDL3_sdl3_VERSION:INTERNAL=
+WAYLAND_CFLAGS:INTERNAL=-I/usr/include
+WAYLAND_CFLAGS_I:INTERNAL=
+WAYLAND_CFLAGS_OTHER:INTERNAL=
+WAYLAND_FOUND:INTERNAL=1
+WAYLAND_INCLUDEDIR:INTERNAL=/usr/include
+WAYLAND_INCLUDE_DIRS:INTERNAL=/usr/include
+WAYLAND_LDFLAGS:INTERNAL=-L/usr/lib;-lwayland-server;-lm
+WAYLAND_LDFLAGS_OTHER:INTERNAL=
+WAYLAND_LIBDIR:INTERNAL=/usr/lib
+WAYLAND_LIBRARIES:INTERNAL=wayland-server;m
+WAYLAND_LIBRARY_DIRS:INTERNAL=/usr/lib
+WAYLAND_LIBS:INTERNAL=
+WAYLAND_LIBS_L:INTERNAL=
+WAYLAND_LIBS_OTHER:INTERNAL=
+WAYLAND_LIBS_PATHS:INTERNAL=
+WAYLAND_MODULE_NAME:INTERNAL=wayland-server
+WAYLAND_PREFIX:INTERNAL=/usr
+WAYLAND_STATIC_CFLAGS:INTERNAL=-I/usr/include
+WAYLAND_STATIC_CFLAGS_I:INTERNAL=
+WAYLAND_STATIC_CFLAGS_OTHER:INTERNAL=
+WAYLAND_STATIC_INCLUDE_DIRS:INTERNAL=/usr/include
+WAYLAND_STATIC_LDFLAGS:INTERNAL=-L/usr/lib;-lwayland-server;-lm;-pthread;-lrt;-lffi
+WAYLAND_STATIC_LDFLAGS_OTHER:INTERNAL=-pthread
+WAYLAND_STATIC_LIBDIR:INTERNAL=
+WAYLAND_STATIC_LIBRARIES:INTERNAL=wayland-server;m;rt;ffi
+WAYLAND_STATIC_LIBRARY_DIRS:INTERNAL=/usr/lib
+WAYLAND_STATIC_LIBS:INTERNAL=
+WAYLAND_STATIC_LIBS_L:INTERNAL=
+WAYLAND_STATIC_LIBS_OTHER:INTERNAL=
+WAYLAND_STATIC_LIBS_PATHS:INTERNAL=
+WAYLAND_VERSION:INTERNAL=1.25.0
+WAYLAND_wayland-server_INCLUDEDIR:INTERNAL=
+WAYLAND_wayland-server_LIBDIR:INTERNAL=
+WAYLAND_wayland-server_PREFIX:INTERNAL=
+WAYLAND_wayland-server_VERSION:INTERNAL=
+WLROOTS_CFLAGS:INTERNAL=-I/usr/include/wlroots-0.20;-I/usr/include;-I/usr/include/pixman-1;-I/usr/include/libdrm
+WLROOTS_CFLAGS_I:INTERNAL=
+WLROOTS_CFLAGS_OTHER:INTERNAL=
+WLROOTS_FOUND:INTERNAL=1
+WLROOTS_INCLUDEDIR:INTERNAL=/usr/include
+WLROOTS_INCLUDE_DIRS:INTERNAL=/usr/include/wlroots-0.20;/usr/include;/usr/include/pixman-1;/usr/include/libdrm
+WLROOTS_LDFLAGS:INTERNAL=-L/usr/lib;-lwlroots-0.20
+WLROOTS_LDFLAGS_OTHER:INTERNAL=
+WLROOTS_LIBDIR:INTERNAL=/usr/lib
+WLROOTS_LIBRARIES:INTERNAL=wlroots-0.20
+WLROOTS_LIBRARY_DIRS:INTERNAL=/usr/lib
+WLROOTS_LIBS:INTERNAL=
+WLROOTS_LIBS_L:INTERNAL=
+WLROOTS_LIBS_OTHER:INTERNAL=
+WLROOTS_LIBS_PATHS:INTERNAL=
+WLROOTS_MODULE_NAME:INTERNAL=wlroots-0.20
+WLROOTS_PREFIX:INTERNAL=/usr
+WLROOTS_STATIC_CFLAGS:INTERNAL=-I/usr/include/wlroots-0.20;-I/usr/include;-I/usr/include/pixman-1;-I/usr/include/libdrm
+WLROOTS_STATIC_CFLAGS_I:INTERNAL=
+WLROOTS_STATIC_CFLAGS_OTHER:INTERNAL=
+WLROOTS_STATIC_INCLUDE_DIRS:INTERNAL=/usr/include/wlroots-0.20;/usr/include;/usr/include/pixman-1;/usr/include/libdrm
+WLROOTS_STATIC_LDFLAGS:INTERNAL=-L/usr/lib;-lwlroots-0.20;-lrt;-lwayland-server;-lm;-pthread;-lrt;-lxkbcommon;-lpixman-1;-pthread;-lEGL;-lgbm;-lGLESv2;-lvulkan;-llcms2;-lm;-lpthread;-lseat;-lrt;-lsystemd;-ldisplay-info;-lm;-lliftoff;-ldrm;-linput;-ludev;-lxcb-present;-lxcb-randr;-lxcb-sync;-lxcb-dri3;-lxcb-render-util;-lxcb-shm;-lxcb-xinput;-lwayland-client;-lm;-pthread;-lrt;-lffi;-lxcb-composite;-lxcb-xfixes;-lxcb-render;-lxcb-shape;-lxcb-ewmh;-lxcb-icccm;-lxcb-res;-lxcb-errors;-lxcb;-lXau;-lXdmcp
+WLROOTS_STATIC_LDFLAGS_OTHER:INTERNAL=-pthread;-pthread;-pthread
+WLROOTS_STATIC_LIBDIR:INTERNAL=
+WLROOTS_STATIC_LIBRARIES:INTERNAL=wlroots-0.20;rt;wayland-server;m;rt;xkbcommon;pixman-1;EGL;gbm;GLESv2;vulkan;lcms2;m;pthread;seat;rt;systemd;display-info;m;liftoff;drm;input;udev;xcb-present;xcb-randr;xcb-sync;xcb-dri3;xcb-render-util;xcb-shm;xcb-xinput;wayland-client;m;rt;ffi;xcb-composite;xcb-xfixes;xcb-render;xcb-shape;xcb-ewmh;xcb-icccm;xcb-res;xcb-errors;xcb;Xau;Xdmcp
+WLROOTS_STATIC_LIBRARY_DIRS:INTERNAL=/usr/lib
+WLROOTS_STATIC_LIBS:INTERNAL=
+WLROOTS_STATIC_LIBS_L:INTERNAL=
+WLROOTS_STATIC_LIBS_OTHER:INTERNAL=
+WLROOTS_STATIC_LIBS_PATHS:INTERNAL=
+WLROOTS_VERSION:INTERNAL=0.20.2
+WLROOTS_wlroots-0.20_INCLUDEDIR:INTERNAL=
+WLROOTS_wlroots-0.20_LIBDIR:INTERNAL=
+WLROOTS_wlroots-0.20_PREFIX:INTERNAL=
+WLROOTS_wlroots-0.20_VERSION:INTERNAL=
+XKBCOMMON_CFLAGS:INTERNAL=-I/usr/include
+XKBCOMMON_CFLAGS_I:INTERNAL=
+XKBCOMMON_CFLAGS_OTHER:INTERNAL=
+XKBCOMMON_FOUND:INTERNAL=1
+XKBCOMMON_INCLUDEDIR:INTERNAL=/usr/include
+XKBCOMMON_INCLUDE_DIRS:INTERNAL=/usr/include
+XKBCOMMON_LDFLAGS:INTERNAL=-L/usr/lib;-lxkbcommon
+XKBCOMMON_LDFLAGS_OTHER:INTERNAL=
+XKBCOMMON_LIBDIR:INTERNAL=/usr/lib
+XKBCOMMON_LIBRARIES:INTERNAL=xkbcommon
+XKBCOMMON_LIBRARY_DIRS:INTERNAL=/usr/lib
+XKBCOMMON_LIBS:INTERNAL=
+XKBCOMMON_LIBS_L:INTERNAL=
+XKBCOMMON_LIBS_OTHER:INTERNAL=
+XKBCOMMON_LIBS_PATHS:INTERNAL=
+XKBCOMMON_MODULE_NAME:INTERNAL=xkbcommon
+XKBCOMMON_PREFIX:INTERNAL=/usr
+XKBCOMMON_STATIC_CFLAGS:INTERNAL=-I/usr/include
+XKBCOMMON_STATIC_CFLAGS_I:INTERNAL=
+XKBCOMMON_STATIC_CFLAGS_OTHER:INTERNAL=
+XKBCOMMON_STATIC_INCLUDE_DIRS:INTERNAL=/usr/include
+XKBCOMMON_STATIC_LDFLAGS:INTERNAL=-L/usr/lib;-lxkbcommon
+XKBCOMMON_STATIC_LDFLAGS_OTHER:INTERNAL=
+XKBCOMMON_STATIC_LIBDIR:INTERNAL=
+XKBCOMMON_STATIC_LIBRARIES:INTERNAL=xkbcommon
+XKBCOMMON_STATIC_LIBRARY_DIRS:INTERNAL=/usr/lib
+XKBCOMMON_STATIC_LIBS:INTERNAL=
+XKBCOMMON_STATIC_LIBS_L:INTERNAL=
+XKBCOMMON_STATIC_LIBS_OTHER:INTERNAL=
+XKBCOMMON_STATIC_LIBS_PATHS:INTERNAL=
+XKBCOMMON_VERSION:INTERNAL=1.13.2
+XKBCOMMON_xkbcommon_INCLUDEDIR:INTERNAL=
+XKBCOMMON_xkbcommon_LIBDIR:INTERNAL=
+XKBCOMMON_xkbcommon_PREFIX:INTERNAL=
+XKBCOMMON_xkbcommon_VERSION:INTERNAL=
+__pkg_config_arguments_LIBDRM:INTERNAL=REQUIRED;IMPORTED_TARGET;libdrm
+__pkg_config_arguments_PIXMAN:INTERNAL=REQUIRED;IMPORTED_TARGET;pixman-1
+__pkg_config_arguments_SDL2:INTERNAL=REQUIRED;IMPORTED_TARGET;sdl2
+__pkg_config_arguments_SDL2_IMAGE:INTERNAL=REQUIRED;IMPORTED_TARGET;SDL2_image
+__pkg_config_arguments_SDL2_TTF:INTERNAL=REQUIRED;IMPORTED_TARGET;SDL2_ttf
+__pkg_config_arguments_SDL3:INTERNAL=REQUIRED;IMPORTED_TARGET;sdl3
+__pkg_config_arguments_SDL3_IMAGE:INTERNAL=REQUIRED;IMPORTED_TARGET;sdl3-image
+__pkg_config_arguments_SDL3_TTF:INTERNAL=REQUIRED;IMPORTED_TARGET;sdl3-ttf
+__pkg_config_arguments_WAYLAND:INTERNAL=REQUIRED;IMPORTED_TARGET;wayland-server
+__pkg_config_arguments_WLROOTS:INTERNAL=REQUIRED;IMPORTED_TARGET;wlroots-0.20
+__pkg_config_arguments_XKBCOMMON:INTERNAL=REQUIRED;IMPORTED_TARGET;xkbcommon
+__pkg_config_checked_LIBDRM:INTERNAL=1
+__pkg_config_checked_PIXMAN:INTERNAL=1
+__pkg_config_checked_SDL2:INTERNAL=1
+__pkg_config_checked_SDL2_IMAGE:INTERNAL=1
+__pkg_config_checked_SDL2_TTF:INTERNAL=1
+__pkg_config_checked_SDL3:INTERNAL=1
+__pkg_config_checked_SDL3_IMAGE:INTERNAL=1
+__pkg_config_checked_SDL3_TTF:INTERNAL=1
+__pkg_config_checked_WAYLAND:INTERNAL=1
+__pkg_config_checked_WLROOTS:INTERNAL=1
+__pkg_config_checked_XKBCOMMON:INTERNAL=1
+//ADVANCED property for variable: pkgcfg_lib_LIBDRM_drm
+pkgcfg_lib_LIBDRM_drm-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: pkgcfg_lib_PIXMAN_pixman-1
+pkgcfg_lib_PIXMAN_pixman-1-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: pkgcfg_lib_SDL2_IMAGE_SDL2
+pkgcfg_lib_SDL2_IMAGE_SDL2-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: pkgcfg_lib_SDL2_IMAGE_SDL2_image
+pkgcfg_lib_SDL2_IMAGE_SDL2_image-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: pkgcfg_lib_SDL2_SDL2
+pkgcfg_lib_SDL2_SDL2-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: pkgcfg_lib_SDL2_TTF_SDL2
+pkgcfg_lib_SDL2_TTF_SDL2-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: pkgcfg_lib_SDL2_TTF_SDL2_ttf
+pkgcfg_lib_SDL2_TTF_SDL2_ttf-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: pkgcfg_lib_SDL3_IMAGE_SDL3
+pkgcfg_lib_SDL3_IMAGE_SDL3-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: pkgcfg_lib_SDL3_IMAGE_SDL3_image
+pkgcfg_lib_SDL3_IMAGE_SDL3_image-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: pkgcfg_lib_SDL3_SDL3
+pkgcfg_lib_SDL3_SDL3-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: pkgcfg_lib_SDL3_TTF_SDL3
+pkgcfg_lib_SDL3_TTF_SDL3-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: pkgcfg_lib_SDL3_TTF_SDL3_ttf
+pkgcfg_lib_SDL3_TTF_SDL3_ttf-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: pkgcfg_lib_WAYLAND_m
+pkgcfg_lib_WAYLAND_m-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: pkgcfg_lib_WAYLAND_wayland-server
+pkgcfg_lib_WAYLAND_wayland-server-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: pkgcfg_lib_WLROOTS_wlroots-0.20
+pkgcfg_lib_WLROOTS_wlroots-0.20-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: pkgcfg_lib_XKBCOMMON_xkbcommon
+pkgcfg_lib_XKBCOMMON_xkbcommon-ADVANCED:INTERNAL=1
+prefix_result:INTERNAL=/usr/lib
 

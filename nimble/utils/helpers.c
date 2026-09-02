@@ -19,7 +19,7 @@ inline void UpdateUIAnimations(float dt)
     // --- Focus Animation (New) ---
     if (anim.focusDuration > 0.001f)
     {
-      if (anim.isFocused)
+      if (anim.isFocused || anim.isSecondaryFocused)
         anim.focusProgress += dt / anim.focusDuration;
       else
         anim.focusProgress -= dt / anim.focusDuration;
@@ -70,6 +70,7 @@ inline void StartUIFrame()
   // Clear the debug rects map so it's fresh for this frame's layout
   g_WidgetRects.clear();
   g_DebugNavDrawQueue.clear();
+  g_WidgetInspectorRecords.clear();
 }
 
 inline void ApplySurfaceGradient(SDL_Surface *surface, const Gradient &grad)
@@ -79,7 +80,8 @@ inline void ApplySurfaceGradient(SDL_Surface *surface, const Gradient &grad)
   SDL_LockSurface(surface);
   Uint32 *pixels = (Uint32 *)surface->pixels;
   int w = surface->w, h = surface->h;
-  SDL_PixelFormat *fmt = surface->format;
+  const SDL_PixelFormatDetails *fmt = SDL_GetPixelFormatDetails(surface->format);
+  SDL_Palette *palette = SDL_GetSurfacePalette(surface);
 
   float angleRad = grad.angle * (M_PI / 180.0f);
   float dx = std::cos(angleRad), dy = std::sin(angleRad);
@@ -90,7 +92,7 @@ inline void ApplySurfaceGradient(SDL_Surface *surface, const Gradient &grad)
     for (int x = 0; x < w; ++x)
     {
       Uint8 r, g, b, a;
-      SDL_GetRGBA(pixels[y * w + x], fmt, &r, &g, &b, &a);
+      SDL_GetRGBA(pixels[y * w + x], fmt, palette, &r, &g, &b, &a);
       if (a == 0)
         continue;
 
@@ -111,7 +113,7 @@ inline void ApplySurfaceGradient(SDL_Surface *surface, const Gradient &grad)
       }
 
       SDL_Color c = LerpColor(grad.startColor, grad.endColor, t);
-      pixels[y * w + x] = SDL_MapRGBA(fmt, (r * c.r) / 255, (g * c.g) / 255, (b * c.b) / 255, (a * c.a) / 255);
+      pixels[y * w + x] = SDL_MapSurfaceRGBA(surface, (r * c.r) / 255, (g * c.g) / 255, (b * c.b) / 255, (a * c.a) / 255);
     }
   }
   SDL_UnlockSurface(surface);
@@ -151,7 +153,7 @@ inline SDL_Texture *GetShadowTexture(SDL_Renderer *renderer, int w, int h, int r
   float scale = (tw > 256 || th > 256) ? 0.5f : 1.0f;
 
   int gen_w = std::max(1, (int)(tw * scale)), gen_h = std::max(1, (int)(th * scale));
-  SDL_Surface *surf = SDL_CreateRGBSurfaceWithFormat(0, gen_w, gen_h, 32, SDL_PIXELFORMAT_RGBA32);
+  SDL_Surface *surf = SDL_CreateSurface(gen_w, gen_h, SDL_PIXELFORMAT_RGBA32);
 
   float cx = gen_w / 2.0f, cy = gen_h / 2.0f;
   float box_w = (w + 2 * spread) * scale, box_h = (h + 2 * spread) * scale;
@@ -173,13 +175,13 @@ inline SDL_Texture *GetShadowTexture(SDL_Renderer *renderer, int w, int h, int r
       float t = std::clamp(0.5f - dist / (b * 2.0f), 0.0f, 1.0f);
       float alpha = t * t * (3.0f - 2.0f * t);
 
-      pixels[y * pitch_pixels + x] = SDL_MapRGBA(surf->format, 255, 255, 255, (Uint8)(alpha * 255));
+      pixels[y * pitch_pixels + x] = SDL_MapSurfaceRGBA(surf, 255, 255, 255, (Uint8)(alpha * 255));
     }
   }
 
   SDL_Texture *tex = SDL_CreateTextureFromSurface(renderer, surf);
   SDL_SetTextureBlendMode(tex, SDL_BLENDMODE_BLEND);
-  SDL_SetTextureScaleMode(tex, SDL_ScaleModeLinear);
+  SDL_SetTextureScaleMode(tex, SDL_SCALEMODE_LINEAR);
   SDL_FreeSurface(surf);
 
   return g_ShadowCache[key] = tex;
@@ -326,9 +328,9 @@ inline void RenderGPUGaussian(SDL_Renderer *renderer, SDL_Texture *srcTexture, i
   SDL_Texture *tX = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ABGR8888, SDL_TEXTUREACCESS_TARGET, dw, dh);
   SDL_Texture *tY = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ABGR8888, SDL_TEXTUREACCESS_TARGET, dw, dh);
 
-  SDL_SetTextureScaleMode(tDown, SDL_ScaleModeLinear);
-  SDL_SetTextureScaleMode(tX, SDL_ScaleModeLinear);
-  SDL_SetTextureScaleMode(tY, SDL_ScaleModeLinear);
+  SDL_SetTextureScaleMode(tDown, SDL_SCALEMODE_LINEAR);
+  SDL_SetTextureScaleMode(tX, SDL_SCALEMODE_LINEAR);
+  SDL_SetTextureScaleMode(tY, SDL_SCALEMODE_LINEAR);
 
   // 1. Downscale & Premultiply Alpha
   // Rendering BLENDMODE_BLEND onto transparent black mathematically premultiplies RGB by Alpha on the GPU
@@ -443,7 +445,7 @@ inline void DrawRoundedBoxOutlineAA(SDL_Renderer *renderer, SDL_Rect rect, int r
     SDL_Color transColor = {color.r, color.g, color.b, 0};
 
     auto add_vert = [&](float px, float py, SDL_Color c) {
-        vertices.push_back({{px, py}, c, {0, 0}});
+        vertices.push_back({{px, py}, SDL_ColorToFColor(c), {0, 0}});
     };
 
     for (int i = 0; i < 4; ++i)
@@ -551,10 +553,16 @@ inline void FillRoundedBoxAA(SDL_Renderer *renderer, SDL_Rect rect, int radius, 
     return c;
   };
 
+  auto getVertFColor = [&](float px, float py, float alpha_mult) -> SDL_FColor
+  {
+    SDL_Color c = getVertColor(px, py, alpha_mult);
+    return SDL_ColorToFColor(c);
+  };
+
   std::vector<SDL_Vertex> vertices;
   std::vector<int> indices;
   float center_x = rect.x + rect.w / 2.0f, center_y = rect.y + rect.h / 2.0f;
-  vertices.push_back({{center_x, center_y}, getVertColor(center_x, center_y, 1.0f), {0, 0}});
+  vertices.push_back({{center_x, center_y}, getVertFColor(center_x, center_y, 1.0f), {0, 0}});
   int center_idx = 0;
 
   const int N = 10;
@@ -572,9 +580,9 @@ inline void FillRoundedBoxAA(SDL_Renderer *renderer, SDL_Rect rect, int radius, 
       float angle = corners[i].start_angle + (j / (float)N) * (M_PI / 2.0f);
       float c_cos = std::cos(angle), c_sin = std::sin(angle);
       float px_in = corners[i].cx + R_in * c_cos, py_in = corners[i].cy + R_in * c_sin;
-      vertices.push_back({{px_in, py_in}, getVertColor(px_in, py_in, 1.0f), {0, 0}});
+      vertices.push_back({{px_in, py_in}, getVertFColor(px_in, py_in, 1.0f), {0, 0}});
       float px_out = corners[i].cx + R_out * c_cos, py_out = corners[i].cy + R_out * c_sin;
-      vertices.push_back({{px_out, py_out}, getVertColor(px_out, py_out, 0.0f), {0, 0}});
+      vertices.push_back({{px_out, py_out}, getVertFColor(px_out, py_out, 0.0f), {0, 0}});
     }
   }
 
@@ -667,10 +675,10 @@ inline void FillBox(SDL_Renderer *renderer, SDL_Rect rect, SDL_Color color, Grad
         };
     };
 
-    vertices[0].color = getColor((float)rect.x, (float)rect.y);
-    vertices[1].color = getColor((float)rect.x + rect.w, (float)rect.y);
-    vertices[2].color = getColor((float)rect.x + rect.w, (float)rect.y + rect.h);
-    vertices[3].color = getColor((float)rect.x, (float)rect.y + rect.h);
+    vertices[0].color = SDL_ColorToFColor(getColor((float)rect.x, (float)rect.y));
+    vertices[1].color = SDL_ColorToFColor(getColor((float)rect.x + rect.w, (float)rect.y));
+    vertices[2].color = SDL_ColorToFColor(getColor((float)rect.x + rect.w, (float)rect.y + rect.h));
+    vertices[3].color = SDL_ColorToFColor(getColor((float)rect.x, (float)rect.y + rect.h));
 
     int indices[] = { 0, 1, 2, 0, 2, 3 };
 

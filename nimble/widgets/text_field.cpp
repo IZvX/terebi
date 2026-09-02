@@ -47,7 +47,7 @@ namespace Widgets
             {
                 int relX = input.mouseX - (rect.x + tfStyle.padding.x);
                 tfState.cursorPosition = GetTextIndexFromMouse(tfStyle.font, text, relX);
-                if (!(input.keyMod & KMOD_SHIFT))
+                if (!(input.keyMod & SDL_KMOD_SHIFT))
                     tfState.selectionAnchor = tfState.cursorPosition;
                 tfState.isDragging = true;
             }

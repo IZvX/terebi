@@ -8,19 +8,19 @@ static SDL_SystemCursor GetSDLSystemCursor(CursorType type)
 {
     switch (type)
     {
-        case CursorType::Arrow:      return SDL_SYSTEM_CURSOR_ARROW;
-        case CursorType::Hand:       return SDL_SYSTEM_CURSOR_HAND;
+        case CursorType::Arrow:      return SDL_SYSTEM_CURSOR_DEFAULT;
+        case CursorType::Hand:       return SDL_SYSTEM_CURSOR_POINTER;
         case CursorType::Wait:       return SDL_SYSTEM_CURSOR_WAIT;
-        case CursorType::IBeam:      return SDL_SYSTEM_CURSOR_IBEAM;
+        case CursorType::IBeam:      return SDL_SYSTEM_CURSOR_TEXT;
         case CursorType::Crosshair:  return SDL_SYSTEM_CURSOR_CROSSHAIR;
-        case CursorType::SizeNS:     return SDL_SYSTEM_CURSOR_SIZENS;
-        case CursorType::SizeWE:     return SDL_SYSTEM_CURSOR_SIZEWE;
-        case CursorType::SizeNWSE:   return SDL_SYSTEM_CURSOR_SIZENWSE;
-        case CursorType::SizeNESW:   return SDL_SYSTEM_CURSOR_SIZENESW;
-        case CursorType::SizeAll:    return SDL_SYSTEM_CURSOR_SIZEALL;
-        case CursorType::No:         return SDL_SYSTEM_CURSOR_NO;
-        case CursorType::WaitArrow:  return SDL_SYSTEM_CURSOR_WAITARROW;
-        default:                     return SDL_SYSTEM_CURSOR_ARROW;
+        case CursorType::SizeNS:     return SDL_SYSTEM_CURSOR_NS_RESIZE;
+        case CursorType::SizeWE:     return SDL_SYSTEM_CURSOR_EW_RESIZE;
+        case CursorType::SizeNWSE:   return SDL_SYSTEM_CURSOR_NWSE_RESIZE;
+        case CursorType::SizeNESW:   return SDL_SYSTEM_CURSOR_NESW_RESIZE;
+        case CursorType::SizeAll:    return SDL_SYSTEM_CURSOR_MOVE;
+        case CursorType::No:         return SDL_SYSTEM_CURSOR_NOT_ALLOWED;
+        case CursorType::WaitArrow:  return SDL_SYSTEM_CURSOR_PROGRESS;
+        default:                     return SDL_SYSTEM_CURSOR_DEFAULT;
     }
 }
 
@@ -67,7 +67,7 @@ void Cursors_Quit()
 {
     for (auto& pair : g_cursorCache)
         if (pair.second)
-            SDL_FreeCursor(pair.second);
+            SDL_DestroyCursor(pair.second);
 
     g_cursorCache.clear();
     g_defaultCursor = nullptr;

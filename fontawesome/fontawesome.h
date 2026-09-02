@@ -105,8 +105,14 @@ namespace FontAwesome {
     inline IconData Patreon()          { return { 0xf3f9 }; }
     inline IconData Paypal()           { return { 0xf1ed }; }
     inline IconData Stripe()           { return { 0xf42d }; }
-
-
+    inline IconData Backspace()        { return { 0xf55a }; }
+    inline IconData SpaceBar()         { return { 0xf242 }; }
+    inline IconData Shift()            { return { 0xf062 }; }
+    inline IconData ShiftOutline()     { return { 0xf077 }; }
+    inline IconData KeyboardDown()     { return { 0xf3fa }; }
+    inline IconData ArrowPointer()     { return { 0xf245 }; }
+    inline IconData ICursor()          { return { 0xf246 }; }
+    inline IconData HandPointer()      { return { 0xf25a }; }
     inline IconData RaspberryPi()           { return { 0xf7bb }; }
 
     // 

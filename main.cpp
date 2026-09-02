@@ -2,48 +2,59 @@
 #include "nimble/debug.h"
 #include "terebi/app.h"
 
+#include <iostream>
+#include <cstring>
+#include <string>
+#include <unistd.h>
+#include <signal.h>
+#include <sys/wait.h>
+
 int main(int argc, char** argv)
 {
-    Nimble::Init();
-    Nimble::ApplicationConfig config;
-    config.title = "Terebi UI";
-    config.width = 1280;
-    config.height = 720;
-    config.sdlWindowFlags = SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI;
-    config.enableVSync = true;
-    config.enableGPU = false;
+    // -------------------------------------------------------------
+    // 1. UI CLIENT MODE (Runs inside the Compositor)
+    // -------------------------------------------------------------
+    // if (argc > 1 && strcmp(argv[1], "--ui") == 0) {
+        Nimble::Init();
+        Nimble::ApplicationConfig config;
+        config.title = "Terebi";
+        config.width = 1280;
+        config.height = 720;
+        config.sdlWindowFlags = SDL_WINDOW_TRANSPARENT | SDL_WINDOW_RESIZABLE | SDL_WINDOW_FULLSCREEN | SDL_WINDOW_BORDERLESS | SDL_WINDOW_ALWAYS_ON_TOP;
+        config.enableVSync = true;
+        config.enableGPU = true;
 
-    Nimble::OnInit([]() {
-        Nimble::LoadFont("assets/fonts/Arial.ttf", 16);
-    });
+        Nimble::OnInit([]() {
+            Nimble::LoadFont("assets/fonts/Arial.ttf", 16);
+        });
 
-    NimbleDebug::ImGui([]() {
-        ImGui::Begin("Debug");
-        ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);
-        ImGui::Text("Focused Widget: %s", Nimble::FocusedWidget().c_str());
-        ImGui::Text("Input focused: %s", Nimble::IsTextFieldFocused() ? "true" : "false");
-        ImGui::Text("OSK visible: %s", g_Context.oskVisible ? "true" : "false");
-        ImGui::Checkbox("Show Bounds", &Nimble::Debug::showBounds);
-        ImGui::Checkbox("Show Layout", &Nimble::Debug::showLayout);
-        ImGui::End();
-    });
+        Nimble::OnShutdown([]() {
+            SDL_ShowCursor();
+        });
 
-    Nimble::OnTextFieldFocus([](const std::string& id, bool focused) {
-        g_Context.oskVisible = focused;
-        g_Context.oskTargetFieldId = focused ? id : "";
-        if (focused) {
-            SDL_StartTextInput();
-            printf("TextField '%s' gained focus\n", id.c_str());
-        } else {
-            SDL_StopTextInput();
-            printf("TextField '%s' lost focus\n", id.c_str());
+        NimbleDebug::ImGui([]() {
+            ImGui::Begin("Debug");
+            ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);
+            ImGui::End();
+        });
+
+        auto app = std::make_unique<TerebiApp>();
+        Nimble::Application application(config, std::move(app));
+        if (application.Initialize()) {
+            application.Run();
         }
-    });
+        return 0;
+    // }
 
-    auto app = std::make_unique<TerebiApp>();
-    Nimble::Application application(config, std::move(app));
-    if (!application.Initialize())
-        return -1;
-    application.Run();
-    return 0;
+    // -------------------------------------------------------------
+    // 2. COMPOSITOR SERVER MODE
+    // -------------------------------------------------------------
+    // signal(SIGINT, cleanup_children);
+    // signal(SIGTERM, cleanup_children);
+
+    // std::string startup_cmd = std::string(argv[0]) + " --ui";
+    // int ret = tinywl_main(argc, argv, startup_cmd.c_str());
+
+    // cleanup_children(0);
+    // return ret;
 }

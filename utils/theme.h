@@ -1,5 +1,5 @@
 #pragma once
-#include <SDL2/SDL.h>
+#include <SDL3/SDL.h>
 
 // Default color palette (Nova OS-like monochrome theme)
 namespace DefaultTheme {
